@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="阿茶 AI 減脂小管家——給每天吃外食的你，不用算卡路里也能 3 秒微調的減脂隨身隊友。先免費試玩測評器，NT$299 終身買斷。">
+<meta property="og:title" content="阿茶 AI 減脂小管家｜NT$299 終身買斷">
+<meta property="og:description" content="最懂台灣超商、便當、速食、手搖飲的減脂隨身隊友。先免費玩測評器。">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_TW">
+<title>阿茶 AI 減脂小管家｜先免費試玩測評器，NT$299 終身買斷</title>
+<style>
+/* ═══════════════════════════════════════════════
+   阿茶奶茶暖系設計系統 · 可愛人物食物風 v5
+   大人物 · 情緒暖系 · 參考排版
+   ═══════════════════════════════════════════════ */
+:root{
+  --c-bg: #FBF4E6;
+  --c-bg-2: #F5EAD3;
+  --c-surface: #FFFFFF;
+  --c-surface-2: #FDF8EC;
+  --c-primary: #E08A3C;
+  --c-primary-d: #C77328;
+  --c-primary-l: #F2C895;
+  --c-primary-soft: #FBE4CC;
+  --c-accent: #7FA960;
+  --c-accent-d: #5E8A45;
+  --c-accent-soft: #E8F0DC;
+  --c-text: #5C4A38;
+  --c-text-2: #8B7355;
+  --c-text-3: #B5A088;
+  --c-line: #E8DBC5;
+  --c-shadow: rgba(92,74,56,.10);
+  --c-shadow-2: rgba(92,74,56,.16);
+  --c-red: #D85B5B;
+  --c-pink: #F4C2C2;
+  --c-cream: #FFF9F0;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.9375rem;
+  --fs-base: 1rem;
+  --fs-md: 1.25rem;
+  --fs-lg: 1.5625rem;
+  --fs-xl: 1.953rem;
+  --fs-2xl: 2.441rem;
+  --fs-3xl: 3.052rem;
+
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 20px;
+  --r-xl: 26px;
+  --r-2xl: 32px;
+  --r-full: 999px;
+
+  --sh-sm: 0 2px 8px var(--c-shadow);
+  --sh-md: 0 4px 16px var(--c-shadow);
+  --sh-lg: 0 8px 28px var(--c-shadow-2);
+  --sh-float: 0 12px 40px var(--c-shadow-2);
+  --sh-glow: 0 0 0 4px rgba(224,138,60,.16);
+
+  --sp-section: 56px;
+  --sp-section-m: 36px;
+
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --font-body: "PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font-body);
+  background:var(--c-bg);
+  color:var(--c-text);
+  line-height:1.7;
+  font-size:var(--fs-base);
+  overflow-x:hidden;
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+:focus-visible{outline:3px solid var(--c-accent);outline-offset:3px;border-radius:4px}
+
+.container{max-width:680px;margin:0 auto;padding:0 20px}
+@media(min-width:900px){.hero .container,.emotion .container,.section .container,.pricing-grid{max-width:1100px}}
+
+/* ═══ 按鈕系統 ═══ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 28px;border-radius:var(--r-full);font-size:var(--fs-base);
+  font-weight:700;text-decoration:none;border:none;cursor:pointer;
+  transition:all .25s var(--ease);letter-spacing:.5px;line-height:1.4;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--c-primary),var(--c-primary-d));
+  color:#fff;box-shadow:var(--sh-md);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
+.btn-primary:active{transform:translateY(0)}
+.btn-line{background:#06C755;color:#fff;box-shadow:var(--sh-sm)}
+.btn-line:hover{transform:translateY(-2px);box-shadow:var(--sh-md)}
+.btn-lg{padding:16px 36px;font-size:var(--fs-md)}
+
+/* ═══ 浮動食物裝飾 ═══ */
+.float-deco{
+  position:absolute;width:36px;height:36px;pointer-events:none;
+  opacity:.28;animation:floatBob 4s ease-in-out infinite;
+}
+.float-deco svg{width:100%;height:100%}
+@keyframes floatBob{
+  0%,100%{transform:translateY(0) rotate(-5deg)}
+  50%{transform:translateY(-12px) rotate(5deg)}
+}
+.float-deco.f2{animation-delay:.6s;animation-duration:5s}
+.float-deco.f3{animation-delay:1.2s;animation-duration:4.5s}
+.float-deco.f4{animation-delay:1.8s;animation-duration:5.5s}
+.float-deco.f5{animation-delay:.3s;animation-duration:6s}
+
+/* ═══ 可愛食物插畫排 ═══ */
+.food-row{
+  display:flex;justify-content:center;gap:8px;flex-wrap:wrap;
+  margin:16px 0;position:relative;z-index:2;
+}
+.food-illust{
+  width:56px;height:56px;
+  background:var(--c-surface);border-radius:var(--r-full);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--sh-sm);
+  border:2px solid var(--c-line);
+  transition:transform .3s var(--ease);
+  padding:10px;
+}
+.food-illust svg{width:100%;height:100%}
+.food-illust:hover{transform:scale(1.15) rotate(-5deg)}
+
+/* ═══ 阿茶大吉祥物 SVG 共用 ═══ */
+.mascot-big-wrap{
+  position:relative;z-index:2;margin-bottom:8px;
+  display:inline-block;animation:floatY 3s ease-in-out infinite;
+}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.mascot-big-wrap{display:flex;justify-content:center;align-items:center;position:relative;z-index:1;margin-bottom:8px}
+      .mascot-svg-big{width:260px;height:276px;animation:floatY 3.5s ease-in-out infinite;filter:drop-shadow(0 18px 30px rgba(92,74,56,.15))}
+
+/* ═══ Hero ═══ */
+.hero{
+  background:linear-gradient(180deg,var(--c-bg) 0%,var(--c-bg-2) 100%);
+  padding:36px 0 40px;text-align:center;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:"";position:absolute;top:-60px;right:-40px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,var(--c-primary-l) 0%,transparent 70%);
+  opacity:.45;pointer-events:none;
+}
+.hero::after{
+  content:"";position:absolute;bottom:-80px;left:-50px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,var(--c-accent-soft) 0%,transparent 70%);
+  opacity:.6;pointer-events:none;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--c-surface);border:1px solid var(--c-primary-l);
+  border-radius:var(--r-full);padding:6px 16px;
+  font-size:var(--fs-sm);color:var(--c-primary-d);font-weight:600;
+  margin-bottom:14px;box-shadow:var(--sh-sm);
+  position:relative;z-index:2;
+}
+.hero h1{
+  font-size:var(--fs-2xl);line-height:1.3;color:var(--c-text);
+  margin-bottom:10px;font-weight:800;letter-spacing:-.5px;
+  position:relative;z-index:2;
+}
+.hero h1 .hl{color:var(--c-primary-d)}
+.hero-sub{
+  font-size:var(--fs-md);color:var(--c-text-2);
+  max-width:520px;margin:0 auto 20px;line-height:1.65;
+  position:relative;z-index:2;
+}
+.hero-cta-group{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;position:relative;z-index:2}
+.hero-price{
+  font-size:var(--fs-sm);color:var(--c-text-3);position:relative;z-index:2;
+}
+.hero-price s{color:var(--c-text-3);text-decoration-color:var(--c-red)}
+.hero-price b{color:var(--c-primary-d);font-size:var(--fs-md)}
+
+/* ═══ Hero 桌面兩欄排版 ═══ */
+.hero-grid{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  position:relative;z-index:2;
+}
+.hero-text{text-align:center;width:100%}
+.hero-visual{
+  order:-1;display:flex;justify-content:center;align-items:center;
+  position:relative;width:100%;padding:20px 0 8px;
+}
+.hero-visual::before{
+  content:"";position:absolute;
+  width:260px;height:260px;
+  background:linear-gradient(135deg,var(--c-accent-soft) 0%,var(--c-bg-2) 60%,var(--c-primary-soft) 100%);
+  border-radius:45% 55% 55% 45%/55% 45% 55% 45%;
+  opacity:.75;z-index:0;
+  animation:blobPulse 6s ease-in-out infinite;
+}
+@keyframes blobPulse{
+  0%,100%{border-radius:45% 55% 55% 45%/55% 45% 55% 45%;transform:scale(1)}
+  50%{border-radius:55% 45% 45% 55%/45% 55% 45% 55%;transform:scale(1.04)}
+}
+.hero-visual .mascot-big-wrap{position:relative;z-index:1;margin-bottom:0}
+
+@media(min-width:768px){
+  .hero{
+    padding:80px 0 72px;
+    background:linear-gradient(135deg,var(--c-bg) 0%,var(--c-bg-2) 55%,var(--c-primary-soft) 100%);
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.08fr .92fr;
+    gap:48px;
+    align-items:center;
+    text-align:left;
+  }
+  .hero-text{text-align:left;order:1}
+  .hero-visual{order:2;padding:0}
+  .hero h1{
+    font-size:clamp(2.3rem,4.8vw,3.4rem);
+    line-height:1.15;
+    margin-bottom:14px;
+    letter-spacing:-1px;
+  }
+  .hero-sub{
+    text-align:left;
+    margin-left:0;margin-right:0;
+    max-width:460px;
+    font-size:var(--fs-lg);
+    margin-bottom:26px;
+  }
+  .hero-cta-group{justify-content:flex-start;margin-bottom:14px}
+  .hero-price{text-align:left}
+  .hero-text .food-row{justify-content:flex-start;margin:18px 0 0}
+  .mascot-svg-big{width:360px;height:382px}
+  .hero-visual::before{width:380px;height:380px;opacity:.85}
+}
+
+/* ═══ 暖心情緒區 ═══ */
+.emotion{
+  text-align:center;padding:var(--sp-section) 0;position:relative;
+  background:var(--c-surface-2);
+}
+.emotion::before{
+  content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:680px;height:100%;
+  background:linear-gradient(180deg,var(--c-bg) 0%,var(--c-surface-2) 30%,var(--c-surface-2) 70%,var(--c-bg) 100%);
+  z-index:0;
+}
+.emotion > .container{position:relative;z-index:1}
+.emotion .label-pair{
+  display:inline-flex;gap:24px;margin-bottom:16px;
+}
+.emotion .label-pair span{
+  font-size:var(--fs-md);font-weight:700;color:var(--c-primary-d);
+  position:relative;
+}
+.emotion .label-pair span:first-child::after{
+  content:"";position:absolute;right:-16px;top:50%;transform:translateY(-50%);
+  width:6px;height:6px;border-radius:50%;background:var(--c-primary-l);
+}
+.emotion .heart{
+  font-size:1.5rem;color:var(--c-red);margin-top:8px;
+}
+.emotion h2{
+  font-size:var(--fs-xl);font-weight:800;color:var(--c-text);
+  margin-bottom:14px;line-height:1.4;
+}
+.emotion h2 .hl{color:var(--c-primary-d);font-style:italic}
+.emotion p{
+  font-size:var(--fs-md);color:var(--c-text-2);
+  max-width:480px;margin:0 auto 16px;line-height:1.75;
+}
+.emotion .quote{
+  font-size:var(--fs-sm);color:var(--c-text-3);
+  padding:14px 22px;background:var(--c-surface);border-radius:var(--r-md);
+  box-shadow:var(--sh-sm);max-width:420px;margin:0 auto;
+  border:1px solid var(--c-line);
+}
+.emotion .quote b{color:var(--c-primary-d)}
+
+/* ═══ 情緒區桌面兩欄 ═══ */
+.emotion-grid{display:flex;flex-direction:column;align-items:center;gap:20px}
+.emotion-text{text-align:center;max-width:520px}
+.emotion-visual{width:100%;display:flex;justify-content:center}
+.emotion-visual .quote{max-width:420px}
+
+/* ═══ 產品三件套桌面三欄 ═══ */
+@media(min-width:768px){
+  .products{grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
+  .product-card{display:flex;flex-direction:column}
+  .product-card .body{flex:1;display:flex;flex-direction:column}
+  .product-card .feats{margin-top:auto}
+  .product-card .top h3{font-size:var(--fs-base)}
+}
+
+/* ═══ 情緒區桌面兩欄 ═══ */
+@media(min-width:768px){
+  .emotion{padding:72px 0}
+  .emotion::before{max-width:1100px}
+  .emotion-grid{
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    gap:56px;align-items:center;
+    text-align:left;
+  }
+  .emotion-text{text-align:left;max-width:none;
+    display:flex;flex-direction:column;align-items:flex-start}
+  .emotion .label-pair{margin-bottom:18px}
+  .emotion .label-pair span{font-size:var(--fs-lg)}
+  .emotion .heart{font-size:2rem;margin-top:4px;margin-bottom:8px}
+  .emotion h2{font-size:clamp(1.9rem,3.6vw,2.6rem);line-height:1.2;text-align:left;margin-bottom:16px}
+  .emotion p{font-size:var(--fs-lg);text-align:left;margin-left:0;margin-right:0;max-width:420px}
+  .emotion-visual{justify-content:flex-end}
+  .emotion .quote{
+    max-width:none;padding:28px 30px;font-size:var(--fs-md);
+    border-left:4px solid var(--c-primary);line-height:1.7;
+  }
+}
+
+/* ═══ 定價比較桌面兩欄 ═══ */
+.pricing-grid{display:flex;flex-direction:column;gap:28px}
+.pricing-left{text-align:center}
+.pricing-cta{margin-top:8px;text-align:center}
+.pricing-cta p{margin-top:12px;font-size:var(--fs-xs);color:var(--c-text-3)}
+.pricing-right{width:100%}
+
+@media(min-width:768px){
+  .pricing-grid{
+    display:grid;
+    grid-template-columns:.95fr 1.05fr;
+    gap:56px;align-items:center;
+  }
+  .pricing-left{display:flex;flex-direction:column;align-items:flex-start}
+  .pricing-cta{margin-top:24px;text-align:left}
+  .pricing-compare{gap:12px}
+  .price-row{padding:20px 24px}
+  .price-row .name{font-size:var(--fs-base)}
+  .price-row .price{font-size:var(--fs-lg)}
+}
+
+/* ═══ 測評器區 ═══ */
+.quiz-section{padding:var(--sp-section) 0;position:relative}
+.quiz-section::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:100%;
+  background:linear-gradient(180deg,transparent 0%,var(--c-surface-2) 20%,var(--c-surface-2) 80%,transparent 100%);
+  z-index:0;
+}
+.quiz-intro{text-align:center;position:relative;z-index:1;margin-bottom:20px}
+.quiz-intro .label{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--c-accent);color:#fff;
+  border-radius:var(--r-full);padding:5px 14px;
+  font-size:var(--fs-xs);font-weight:700;letter-spacing:.06em;
+  margin-bottom:10px;
+}
+.quiz-intro h2{
+  font-size:var(--fs-xl);font-weight:800;color:var(--c-text);
+  margin-bottom:6px;line-height:1.35;
+}
+.quiz-intro h2 .hl{color:var(--c-primary-d)}
+.quiz-intro p{font-size:var(--fs-sm);color:var(--c-text-2);max-width:420px;margin:0 auto}
+
+.quiz-card{
+  position:relative;z-index:1;
+  background:var(--c-surface);
+  border-radius:var(--r-2xl);
+  padding:26px 22px 22px;
+  box-shadow:var(--sh-float);
+  border:1px solid var(--c-line);
+}
+.quiz-card-head{
+  display:flex;align-items:center;gap:12px;margin-bottom:18px;
+  padding-bottom:12px;border-bottom:2px dashed var(--c-line);
+}
+.quiz-card-head .acha-mini svg{width:64px;height:64px}
+.quiz-card-head .who{font-weight:700;font-size:var(--fs-sm);color:var(--c-text)}
+.quiz-card-head .who small{display:block;font-weight:400;font-size:var(--fs-xs);color:var(--c-text-3)}
+.quiz-card-head .free-tag{
+  margin-left:auto;background:var(--c-accent-soft);color:var(--c-accent-d);
+  border-radius:var(--r-full);padding:4px 12px;
+  font-size:var(--fs-xs);font-weight:700;
+}
+
+.progress{margin-bottom:18px}
+.progress-track{height:8px;background:var(--c-bg-2);border-radius:var(--r-full);overflow:hidden}
+.progress-bar{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--c-primary),var(--c-primary-l));
+  border-radius:var(--r-full);transition:width .5s var(--ease);
+}
+.progress-label{display:flex;justify-content:space-between;font-size:var(--fs-xs);color:var(--c-text-3);margin-top:6px;font-weight:600}
+
+.step-head{margin-bottom:12px}
+.step-head .step-no{font-size:var(--fs-xs);color:var(--c-primary-d);font-weight:700;letter-spacing:.08em;margin-bottom:3px}
+.step-head h3{font-size:var(--fs-md);font-weight:700;color:var(--c-text)}
+
+.options{display:grid;gap:10px}
+.opt{
+  display:flex;align-items:center;gap:12px;
+  width:100%;text-align:left;
+  background:var(--c-surface-2);border:2px solid var(--c-line);
+  border-radius:var(--r-lg);padding:14px 16px;cursor:pointer;
+  font:inherit;color:var(--c-text);
+  transition:border-color .25s var(--ease),transform .2s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease);
+}
+.opt:hover{border-color:var(--c-primary);background:var(--c-primary-soft);transform:translateY(-2px);box-shadow:var(--sh-md)}
+.opt:focus-visible{outline:none;box-shadow:var(--sh-glow);border-color:var(--c-primary)}
+.opt.selected{border-color:var(--c-primary);background:var(--c-primary-soft);box-shadow:var(--sh-glow)}
+.opt-emoji{
+  font-size:1.5rem;width:42px;height:42px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--c-bg);border-radius:var(--r-sm);flex-shrink:0;
+  transition:transform .3s var(--ease);
+}
+.opt:hover .opt-emoji{transform:scale(1.15) rotate(-5deg)}
+.opt-text .opt-title{font-weight:700;font-size:var(--fs-sm)}
+.opt-text .opt-desc{font-size:var(--fs-xs);color:var(--c-text-2)}
+
+.result{display:none;animation:fadeUp .5s var(--ease)}
+.result.show{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+.result-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px dashed var(--c-line)}
+.result-head .acha-mini svg{width:56px;height:56px}
+.result-head .who{font-weight:700;font-size:var(--fs-sm)}
+.result-head .who small{display:block;font-size:var(--fs-xs);color:var(--c-text-3);font-weight:400}
+
+.msg-block{border-radius:var(--r-md);padding:14px 16px;margin-bottom:10px;border-left:4px solid;background:var(--c-surface-2)}
+.msg-block .tag{font-size:var(--fs-xs);font-weight:700;letter-spacing:.06em;margin-bottom:4px}
+.msg-block .txt{font-size:var(--fs-sm);color:var(--c-text);line-height:1.7}
+.msg-emo{border-color:var(--c-primary);background:linear-gradient(90deg,var(--c-primary-soft),var(--c-surface-2))}
+.msg-emo .tag{color:var(--c-primary-d)}
+.msg-tip{border-color:var(--c-accent);background:linear-gradient(90deg,var(--c-accent-soft),var(--c-surface-2))}
+.msg-tip .tag{color:var(--c-accent-d)}
+.msg-tip .tip-item{display:flex;gap:8px;align-items:flex-start;margin-top:5px}
+.msg-tip .tip-num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--c-accent);color:#fff;font-size:var(--fs-xs);font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.msg-end{border-color:var(--c-text-3);background:var(--c-bg-2)}
+.msg-end .tag{color:var(--c-text-2)}
+
+.upsell{margin-top:14px;background:var(--c-bg-2);border:1px dashed var(--c-line);border-radius:var(--r-md);padding:12px 16px;display:flex;gap:10px;align-items:flex-start;animation:fadeUp .6s var(--ease) .15s both}
+.upsell-ico{font-size:1.1rem;flex-shrink:0;line-height:1.6}
+.upsell-title{font-size:var(--fs-xs);font-weight:700;color:var(--c-accent-d);margin-bottom:3px;letter-spacing:.03em}
+.upsell-txt{font-size:var(--fs-xs);color:var(--c-text-2);line-height:1.65}
+.upsell-txt b{color:var(--c-text)}
+.upsell-cta{font-size:var(--fs-xs);color:var(--c-primary-d);font-weight:600;text-decoration:none;margin-top:5px;display:inline-block}
+.upsell-cta:hover{text-decoration:underline}
+
+.result-actions{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+.btn-again{
+  flex:1;min-width:120px;padding:11px;
+  border:2px solid var(--c-line);background:var(--c-surface-2);color:var(--c-text);
+  border-radius:var(--r-full);cursor:pointer;font:inherit;font-weight:600;font-size:var(--fs-sm);
+  transition:all .25s var(--ease);
+}
+.btn-again:hover{border-color:var(--c-primary);color:var(--c-primary-d)}
+
+.quiz-cta{
+  margin-top:18px;text-align:center;
+  background:linear-gradient(135deg,var(--c-primary),var(--c-primary-d));
+  border-radius:var(--r-xl);padding:20px;box-shadow:var(--sh-md);position:relative;overflow:hidden;
+}
+.quiz-cta::before{content:"";position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.12)}
+.quiz-cta h4{color:#fff;font-size:var(--fs-md);font-weight:800;margin-bottom:6px;position:relative}
+.quiz-cta p{color:rgba(255,255,255,.9);font-size:var(--fs-sm);margin-bottom:14px;position:relative}
+.quiz-cta .btn{background:#fff;color:var(--c-primary-d);font-weight:800;position:relative}
+.quiz-cta .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+
+/* ═══ 通用區塊 ═══ */
+.section{padding:var(--sp-section) 0;position:relative}
+.section-m{padding:var(--sp-section-m) 0}
+.section-label{text-align:center;font-size:var(--fs-sm);color:var(--c-primary-d);font-weight:700;letter-spacing:1px;margin-bottom:6px}
+.section-title{text-align:center;font-size:var(--fs-xl);font-weight:800;color:var(--c-text);margin-bottom:12px;line-height:1.35}
+.section-title .hl{color:var(--c-primary-d);font-style:italic}
+.section-sub{text-align:center;font-size:var(--fs-sm);color:var(--c-text-2);max-width:480px;margin:0 auto 28px;line-height:1.65}
+
+/* 區塊小插畫 */
+.section-illust{text-align:center;margin-bottom:16px}
+.section-illust svg{width:80px;height:80px}
+.section-illust .emoji-big{font-size:2.5rem;display:inline-block;animation:floatY 3s ease-in-out infinite}
+
+/* ═══ Problem ═══ */
+.problem{background:var(--c-bg-2)}
+.problem-cards{display:grid;gap:12px}
+.problem-card{background:var(--c-surface);border-radius:var(--r-lg);padding:18px;display:flex;gap:14px;box-shadow:var(--sh-sm);transition:transform .25s var(--ease)}
+.problem-card:hover{transform:translateY(-2px)}
+.problem-card .ico{width:40px;height:40px;border-radius:var(--r-md);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.3rem;background:var(--c-surface-2)}
+.problem-card .body h3{font-size:var(--fs-sm);font-weight:700;margin-bottom:4px;color:var(--c-text)}
+.problem-card .body p{font-size:var(--fs-xs);color:var(--c-text-2);line-height:1.6}
+.problem-card .body .pain{color:var(--c-red);font-weight:600}
+
+/* ═══ 數字卡片區（01/02/03 風格，參考排版） ═══ */
+.feature-cards{display:grid;gap:20px}
+.feature-card{
+  background:var(--c-surface);border-radius:var(--r-xl);
+  padding:28px 24px;box-shadow:var(--sh-md);
+  position:relative;overflow:hidden;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease);
+}
+.feature-card:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
+.feature-card .f-num{
+  position:absolute;top:18px;right:22px;
+  font-size:var(--fs-2xl);font-weight:900;
+  color:var(--c-bg-2);line-height:1;
+}
+.feature-card .f-arrow{
+  font-size:var(--fs-lg);color:var(--c-primary);
+  margin-bottom:8px;
+}
+.feature-card .f-ico{
+  width:52px;height:52px;border-radius:var(--r-md);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;margin-bottom:10px;
+}
+.feature-card h3{font-size:var(--fs-md);font-weight:800;color:var(--c-text);margin-bottom:8px;line-height:1.4}
+.feature-card p{font-size:var(--fs-sm);color:var(--c-text-2);line-height:1.7}
+.feature-card .f-cta{
+  margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;
+}
+
+/* ═══ 三件套 ═══ */
+.products{display:grid;gap:14px}
+.product-card{background:var(--c-surface);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-md);transition:transform .25s var(--ease)}
+.product-card:hover{transform:translateY(-3px)}
+.product-card .top{padding:18px 20px;display:flex;align-items:center;gap:14px}
+.product-card .top .ico{width:46px;height:46px;border-radius:var(--r-md);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.product-card .top h3{font-size:var(--fs-md);font-weight:800;color:var(--c-text)}
+.product-card .top h3 small{display:block;font-size:var(--fs-xs);font-weight:600;color:var(--c-accent-d);margin-top:2px}
+.product-card .body{padding:0 20px 18px}
+.product-card .body p{font-size:var(--fs-sm);color:var(--c-text-2);line-height:1.65;margin-bottom:10px}
+.product-card .feats{list-style:none;display:grid;gap:6px}
+.product-card .feats li{font-size:var(--fs-xs);color:var(--c-text);padding-left:20px;position:relative;line-height:1.55}
+.product-card .feats li::before{content:"✓";position:absolute;left:0;top:0;color:var(--c-accent);font-weight:700}
+
+/* ═══ 定價比較 ═══ */
+.pricing-compare{display:grid;gap:10px;margin-bottom:24px}
+.price-row{display:grid;grid-template-columns:1fr auto;align-items:center;padding:16px 20px;border-radius:var(--r-md);gap:12px}
+.price-row.acha{background:linear-gradient(135deg,var(--c-primary),var(--c-primary-d));color:#fff;box-shadow:var(--sh-md)}
+.price-row.other{background:var(--c-surface);box-shadow:var(--sh-sm)}
+.price-row .name{font-weight:700;font-size:var(--fs-sm)}
+.price-row .name small{display:block;font-weight:400;font-size:var(--fs-xs);opacity:.8}
+.price-row .price{text-align:right;font-weight:800;font-size:var(--fs-md)}
+.price-row.other .price{color:var(--c-red)}
+.price-row.acha .price{color:#fff}
+
+/* ═══ FAQ ═══ */
+.faq{background:var(--c-bg-2)}
+.faq-item{background:var(--c-surface);border-radius:var(--r-md);margin-bottom:10px;overflow:hidden;box-shadow:var(--sh-sm)}
+.faq-q{padding:14px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:700;font-size:var(--fs-sm);color:var(--c-text);gap:12px}
+.faq-q .arrow{font-size:var(--fs-sm);color:var(--c-primary-d);transition:transform .3s var(--ease);flex-shrink:0}
+.faq-item.open .arrow{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s var(--ease)}
+.faq-item.open .faq-a{max-height:300px}
+.faq-a-inner{padding:0 18px 14px;font-size:var(--fs-sm);color:var(--c-text-2);line-height:1.65}
+
+/* ═══ 最終 CTA ═══ */
+.final-cta{background:linear-gradient(135deg,var(--c-primary),var(--c-primary-d));padding:var(--sp-section) 0;text-align:center;position:relative;overflow:hidden}
+.final-cta::before{content:"";position:absolute;bottom:-80px;left:-60px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.12) 0%,transparent 70%);pointer-events:none}
+.final-cta::after{content:"";position:absolute;top:-60px;right:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.1) 0%,transparent 70%);pointer-events:none}
+.final-cta .mascot-big{position:relative;z-index:1;margin-bottom:12px;display:inline-block;animation:floatY 3s ease-in-out infinite}
+.final-cta .mascot-big svg{width:160px;height:160px}
+.final-cta h2{color:#fff;font-size:var(--fs-xl);font-weight:800;margin-bottom:8px;line-height:1.35;position:relative;z-index:1}
+.final-cta p{color:rgba(255,255,255,.9);font-size:var(--fs-sm);margin-bottom:20px;position:relative;z-index:1}
+.final-cta .price-big{font-size:var(--fs-3xl);font-weight:900;color:#fff;margin-bottom:6px;position:relative;z-index:1}
+.final-cta .price-big small{font-size:var(--fs-md);font-weight:600}
+.final-cta .price-sub{color:rgba(255,255,255,.85);font-size:var(--fs-xs);margin-bottom:24px;position:relative;z-index:1}
+.final-cta .btn-w{background:#fff;color:var(--c-primary-d);font-size:var(--fs-md);font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.2);position:relative;z-index:1}
+.final-cta .btn-w:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.25)}
+.final-cta .btn-line-w{background:#06C755;color:#fff;margin-top:10px;position:relative;z-index:1}
+.final-cta .trust-line{margin-top:18px;font-size:var(--fs-xs);color:rgba(255,255,255,.7);position:relative;z-index:1}
+
+/* ═══ 中段情緒過場 ═══ */
+.interlude{
+  text-align:center;padding:var(--sp-section) 0;position:relative;
+}
+.interlude .il-mascot{display:inline-block;margin-bottom:12px;animation:floatY 3s ease-in-out infinite}
+.interlude .il-mascot svg{width:140px;height:140px}
+.interlude h2{font-size:var(--fs-xl);font-weight:800;color:var(--c-text);margin-bottom:10px;line-height:1.4}
+.interlude h2 .hl{color:var(--c-primary-d);font-style:italic}
+.interlude p{font-size:var(--fs-md);color:var(--c-text-2);max-width:480px;margin:0 auto;line-height:1.75}
+
+/* ═══ 步驟區 ═══ */
+.steps{display:grid;gap:16px;max-width:520px;margin:0 auto}
+.step-item{
+  display:flex;gap:16px;align-items:flex-start;
+  background:var(--c-surface);border-radius:var(--r-lg);
+  padding:18px 20px;box-shadow:var(--sh-sm);
+}
+.step-item .s-no{
+  flex-shrink:0;width:36px;height:36px;border-radius:50%;
+  background:var(--c-primary);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:var(--fs-sm);font-weight:800;
+}
+.step-item .s-body h3{font-size:var(--fs-sm);font-weight:700;color:var(--c-text);margin-bottom:4px}
+.step-item .s-body p{font-size:var(--fs-xs);color:var(--c-text-2);line-height:1.65}
+
+/* ═══ Footer ═══ */
+.footer{background:var(--c-text);color:var(--c-text-3);padding:28px 0;text-align:center;font-size:var(--fs-sm)}
+.footer a{color:var(--c-primary-l);text-decoration:none}
+.footer .links{display:flex;gap:14px;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
+.footer .links a:hover{text-decoration:underline}
+
+@media(max-width:520px){
+  .hero h1{font-size:var(--fs-xl)}
+  .hero{padding-top:28px}
+  .hero-visual{padding-top:10px;padding-bottom:4px}
+  .hero-visual::before{width:220px;height:220px}
+  .section-title{font-size:var(--fs-lg)}
+  .quiz-card{padding:22px 18px}
+  .feature-card{padding:24px 18px}
+  .btn{padding:12px 22px;font-size:var(--fs-sm)}
+  .btn-lg{padding:14px 28px}
+  .final-cta .price-big{font-size:var(--fs-2xl)}
+  .float-deco{width:28px;height:28px}
+  .food-illust{width:48px;height:48px;padding:8px}
+  .mascot-svg-big{width:220px;height:234px}
+  .interlude .il-mascot svg{width:110px;height:110px}
+  .final-cta .mascot-big svg{width:130px;height:130px}
+  .emotion .label-pair span{font-size:var(--fs-sm)}
+}
+
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeInUp .6s var(--ease) forwards;opacity:0}
+.fade-up.d1{animation-delay:.1s}
+.fade-up.d2{animation-delay:.2s}
+.fade-up.d3{animation-delay:.3s}
+</style>
+</head>
+<body>
+
+<!-- 阿茶：吉卜力風茶杯吉祥物 -->
+
+<!-- ═══════════════ Hero ═══════════════ -->
+<section class="hero">
+  <div class="float-deco" style="top:8%;left:6%"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="12" width="36" height="28" rx="6" fill="#E08A3C" stroke="#5C4A38" stroke-width="2"/><rect x="6" y="24" width="36" height="4" fill="#C77328" opacity="0.4"/><circle cx="16" cy="19" r="5" fill="#FFFBF5"/><circle cx="16" cy="33" r="5" fill="#FFFBF5"/><ellipse cx="34" cy="18" rx="5" ry="4" fill="#D97B4A"/><circle cx="34" cy="32" r="4" fill="#7FA960"/></svg></div>
+  <div class="float-deco f2" style="top:14%;right:8%"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M16 8 L19 40 Q20 44 24 44 Q28 44 29 40 L32 8 Z" fill="#C49A6C" stroke="#5C4A38" stroke-width="2" stroke-linejoin="round"/><circle cx="21" cy="36" r="3" fill="#4A3728"/><circle cx="27" cy="38" r="3" fill="#4A3728"/><circle cx="24" cy="30" r="3" fill="#4A3728"/><ellipse cx="24" cy="8" rx="10" ry="3" fill="#E8DBC5" stroke="#5C4A38" stroke-width="1.5"/><path d="M28 8 L34 -6" stroke="#7FA960" stroke-width="3" stroke-linecap="round"/></svg></div>
+  <div class="float-deco f3" style="top:40%;left:3%"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><ellipse cx="24" cy="24" rx="14" ry="18" fill="#F2C895" stroke="#5C4A38" stroke-width="2"/><ellipse cx="24" cy="24" rx="10" ry="13" fill="#E08A3C" opacity="0.5"/><path d="M15 14 Q20 9 25 14" stroke="#5C4A38" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>
+  <div class="float-deco f4" style="bottom:12%;right:4%"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M12 16 L14 38 Q15 42 24 42 Q33 42 34 38 L36 16 Z" fill="#FFFBF5" stroke="#5C4A38" stroke-width="2" stroke-linejoin="round"/><ellipse cx="24" cy="16" rx="12" ry="5" fill="#7FA960" stroke="#5C4A38" stroke-width="1.5"/><path d="M18 8 Q22 2 20 -2" stroke="#B5A088" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/><path d="M24 6 Q28 0 26 -4" stroke="#B5A088" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/><path d="M30 8 Q34 2 32 -2" stroke="#B5A088" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/></svg></div>
+  <div class="float-deco f5" style="bottom:20%;left:8%"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M10 38 Q14 20 24 18 Q34 20 38 38 Z" fill="#7FA960" stroke="#5C4A38" stroke-width="2" stroke-linejoin="round"/><path d="M24 18 L24 10" stroke="#7FA960" stroke-width="3" stroke-linecap="round"/><path d="M18 14 L24 8 L30 14" fill="none" stroke="#7FA960" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-text">
+        <!-- 大阿茶吉祥物：吉卜力風茶杯，手捧食物 --><div class="hero-eyebrow"><span style="display:inline-flex;width:18px;height:18px;vertical-align:middle"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M12 16 L14 38 Q15 42 24 42 Q33 42 34 38 L36 16 Z" fill="#FFFBF5" stroke="#5C4A38" stroke-width="2" stroke-linejoin="round"/><ellipse cx="24" cy="16" rx="12" ry="5" fill="#7FA960" stroke="#5C4A38" stroke-width="1.5"/><path d="M18 8 Q22 2 20 -2" stroke="#B5A088" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/><path d="M24 6 Q28 0 26 -4" stroke="#B5A088" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/><path d="M30 8 Q34 2 32 -2" stroke="#B5A088" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/></svg></span> 阿茶 AI 減脂小管家</div>
+    <h1>每天吃外食，<br>也能 <span class="hl">3 秒微調</span></h1>
+    <p class="hero-sub">告訴阿茶你想吃什麼，3 秒給你微調建議。<br>超商、便當、速食、手搖都能問。</p>
+    <div class="hero-cta-group">
+      <a href="#quiz" class="btn btn-primary btn-lg">先免費試玩測評器 ↓</a>
+    </div>
+    <p class="hero-price"><s>海外 App 年繳 NT$911+ 月月扣</s>　→　<b>阿茶 NT$299 一次買斷</b></p>
+
+    <div class="food-row" aria-label="阿茶支援的外食情境">
+      <div class="food-illust" title="超商">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="14" width="36" height="30" rx="4" fill="#E08A3C" stroke="#5C4A38" stroke-width="2"/>
+          <rect x="6" y="14" width="36" height="8" rx="2" fill="#F5E6D3"/>
+          <rect x="11" y="26" width="8" height="12" rx="1" fill="#FFFBF5" stroke="#5C4A38" stroke-width="1.5"/>
+          <rect x="29" y="26" width="8" height="12" rx="1" fill="#FFFBF5" stroke="#5C4A38" stroke-width="1.5"/>
+          <rect x="20" y="26" width="8" height="6" rx="1" fill="#7FA960"/>
+        </svg>
+      </div>
+      <div class="food-illust" title="便當">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="12" width="36" height="28" rx="6" fill="#E08A3C" stroke="#5C4A38" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="4" fill="#C77328" opacity="0.4"/>
+          <circle cx="16" cy="19" r="5" fill="#FFFBF5"/>
+          <circle cx="16" cy="33" r="5" fill="#FFFBF5"/>
+          <ellipse cx="34" cy="18" rx="5" ry="4" fill="#D97B4A"/>
+          <circle cx="34" cy="32" r="4" fill="#7FA960"/>
+        </svg>
+      </div>
+      <div class="food-illust" title="手搖飲">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 8 L19 40 Q20 44 24 44 Q28 44 29 40 L32 8 Z" fill="#C49A6C" stroke="#5C4A38" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="21" cy="36" r="3" fill="#4A3728"/>
+          <circle cx="27" cy="38" r="3" fill="#4A3728"/>
+          <circle cx="24" cy="30" r="3" fill="#4A3728"/>
+          <ellipse cx="24" cy="8" rx="10" ry="3" fill="#E8DBC5" stroke="#5C4A38" stroke-width="1.5"/>
+          <path d="M28 8 L34 -6" stroke="#7FA960" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="food-illust" title="自助餐">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="24" cy="26" rx="16" ry="12" fill="#FFFBF5" stroke="#5C4A38" stroke-width="2"/>
+          <path d="M18 20 L18 36" stroke="#B5A088" stroke-width="3" stroke-linecap="round"/>
+          <path d="M24 18 L24 38" stroke="#B5A088" stroke-width="3" stroke-linecap="round"/>
+          <path d="M30 20 L30 36" stroke="#B5A088" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="34" cy="14" r="5" fill="#7FA960"/>
+        </svg>
+      </div>
+      <div class="food-illust" title="速食">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="24" cy="30" rx="18" ry="10" fill="#FFFBF5" stroke="#5C4A38" stroke-width="2"/>
+          <ellipse cx="24" cy="24" rx="18" ry="10" fill="#D97B4A" stroke="#5C4A38" stroke-width="2"/>
+          <path d="M14 18 Q24 14 34 18" stroke="#7FA960" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <rect x="10" y="10" width="28" height="6" rx="2" fill="#FFFBF5" stroke="#5C4A38" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="food-illust" title="茶葉蛋">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="24" cy="24" rx="14" ry="18" fill="#F2C895" stroke="#5C4A38" stroke-width="2"/>
+          <ellipse cx="24" cy="24" rx="10" ry="13" fill="#E08A3C" opacity="0.5"/>
+          <path d="M15 14 Q20 9 25 14" stroke="#5C4A38" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="food-illust" title="熱茶">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 16 L14 38 Q15 42 24 42 Q33 42 34 38 L36 16 Z" fill="#FFFBF5" stroke="#5C4A38" stroke-width="2" stroke-linejoin="round"/>
+          <ellipse cx="24" cy="16" rx="12" ry="5" fill="#7FA960" stroke="#5C4A38" stroke-width="1.5"/>
+          <path d="M18 8 Q22 2 20 -2" stroke="#B5A088" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+          <path d="M24 6 Q28 0 26 -4" stroke="#B5A088" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+          <path d="M30 8 Q34 2 32 -2" stroke="#B5A088" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+        </svg>
+      </div>
+    </div>
+      </div>
+      <div class="hero-visual">
+        <div class="mascot-big-wrap">
+      <svg class="mascot-svg-big" viewBox="0 0 320 340" xmlns="http://www.w3.org/2000/svg" aria-label="阿茶：可愛的茶杯吉祥物">
+        <defs>
+          <linearGradient id="mSkin" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFF8EF"/>
+            <stop offset="100%" stop-color="#F5E6D3"/>
+          </linearGradient>
+          <linearGradient id="mCup" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F5C28C"/>
+            <stop offset="60%" stop-color="#E08A3C"/>
+            <stop offset="100%" stop-color="#C77328"/>
+          </linearGradient>
+          <linearGradient id="mTea" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#A8C97A"/>
+            <stop offset="100%" stop-color="#7FA960"/>
+          </linearGradient>
+          <radialGradient id="mHalo" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FBF4E6"/>
+            <stop offset="100%" stop-color="#FDF3E0" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="mShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#5C4A38" flood-opacity="0.16"/>
+          </filter>
+        </defs>
+
+        <!-- 背景光暈 -->
+        <circle cx="160" cy="170" r="145" fill="url(#mHalo)"/>
+        <circle cx="160" cy="170" r="118" fill="#FDF3E0" opacity="0.65"/>
+
+        <!-- 飄浮小愛心與星星 -->
+        <g opacity="0.65">
+          <path d="M42 78 C42 70 52 70 52 78 C52 70 62 70 62 78 C62 88 52 96 52 96 C52 96 42 88 42 78 Z" fill="#F4AFAF"/>
+          <path d="M268 62 C268 56 276 56 276 62 C276 56 284 56 284 62 C284 70 276 76 276 76 C276 76 268 70 268 62 Z" fill="#F4AFAF"/>
+          <path d="M32 132 L35 140 L43 142 L35 144 L32 152 L29 144 L21 142 L29 140 Z" fill="#F2C895"/>
+          <path d="M286 118 L289 126 L297 128 L289 130 L286 138 L283 130 L275 128 L283 126 Z" fill="#F2C895"/>
+        </g>
+
+        <!-- 左後方：小漢堡與薯條 -->
+        <g transform="translate(22, 225)" filter="url(#mShadow)">
+          <ellipse cx="20" cy="28" rx="16" ry="10" fill="#E08A3C" stroke="#5C4A38" stroke-width="2"/>
+          <rect x="6" y="20" width="28" height="6" rx="2" fill="#7FA960"/>
+          <ellipse cx="20" cy="16" rx="15" ry="8" fill="#D97B4A" stroke="#5C4A38" stroke-width="2"/>
+          <path d="M8 8 L12 0 L16 8 L20 0 L24 8 L28 0 L32 8" stroke="#E08A3C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <g transform="translate(270, 240)" filter="url(#mShadow)">
+          <rect x="0" y="0" width="8" height="26" rx="2" fill="#E08A3C" stroke="#5C4A38" stroke-width="1.5"/>
+          <rect x="10" y="6" width="8" height="20" rx="2" fill="#E08A3C" stroke="#5C4A38" stroke-width="1.5"/>
+          <rect x="20" y="2" width="8" height="24" rx="2" fill="#E08A3C" stroke="#5C4A38" stroke-width="1.5"/>
+        </g>
+
+        <!-- 左手捧便當 -->
+        <g transform="translate(28, 175) rotate(-8)" filter="url(#mShadow)">
+          <rect x="0" y="0" width="74" height="52" rx="14" fill="#E08A3C" stroke="#5C4A38" stroke-width="2.5"/>
+          <rect x="0" y="24" width="74" height="6" fill="#C77328" opacity="0.45"/>
+          <circle cx="22" cy="16" r="10" fill="#FFFBF5"/>
+          <circle cx="22" cy="38" r="10" fill="#FFFBF5"/>
+          <ellipse cx="52" cy="14" rx="9" ry="7" fill="#D97B4A"/>
+          <circle cx="50" cy="34" r="6" fill="#7FA960"/>
+          <circle cx="56" cy="46" r="5" fill="#F2C895"/>
+          <path d="M18 22 Q24 28 30 22" stroke="#E08A3C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </g>
+
+        <!-- 右手捧珍奶 -->
+        <g transform="translate(218, 168) rotate(8)" filter="url(#mShadow)">
+          <path d="M6 10 L12 64 Q14 74 30 74 Q46 74 48 64 L54 10 Z" fill="#C49A6C" stroke="#5C4A38" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M10 20 L14 62 Q16 70 30 70 Q44 70 46 62 L50 20 Z" fill="#A67C52"/>
+          <circle cx="20" cy="62" r="5" fill="#4A3728"/>
+          <circle cx="30" cy="65" r="5" fill="#4A3728"/>
+          <circle cx="40" cy="62" r="5" fill="#4A3728"/>
+          <circle cx="26" cy="56" r="4" fill="#4A3728"/>
+          <ellipse cx="30" cy="12" rx="28" ry="8" fill="#E8DBC5" stroke="#5C4A38" stroke-width="2"/>
+          <path d="M38 12 L46 -22" stroke="#7FA960" stroke-width="6" stroke-linecap="round"/>
+          <path d="M38 12 L46 -22" stroke="#A8D988" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+        </g>
+
+        <!-- 茶杯把手 -->
+        <path d="M228 115 Q270 115 270 155 Q270 195 228 195" stroke="#E08A3C" stroke-width="14" fill="none" stroke-linecap="round"/>
+
+        <!-- 茶杯身體 -->
+        <ellipse cx="160" cy="170" rx="82" ry="78" fill="url(#mCup)" filter="url(#mShadow)" stroke="#5C4A38" stroke-width="2.5"/>
+
+        <!-- 茶湯 -->
+        <ellipse cx="160" cy="132" rx="64" ry="24" fill="url(#mTea)" stroke="#5C4A38" stroke-width="2"/>
+        <ellipse cx="160" cy="128" rx="58" ry="18" fill="#A8C97A" opacity="0.5"/>
+
+        <!-- 小手（連接杯子與食物） -->
+        <ellipse cx="90" cy="195" rx="12" ry="9" fill="#F5C28C" stroke="#5C4A38" stroke-width="2"/>
+        <ellipse cx="230" cy="195" rx="12" ry="9" fill="#F5C28C" stroke="#5C4A38" stroke-width="2"/>
+
+        <!-- 腳腳 -->
+        <ellipse cx="125" cy="252" rx="16" ry="11" fill="#E08A3C" stroke="#5C4A38" stroke-width="2"/>
+        <ellipse cx="195" cy="252" rx="16" ry="11" fill="#E08A3C" stroke="#5C4A38" stroke-width="2"/>
+
+        <!-- 臉 -->
+        <g>
+          <path d="M120 128 Q135 122 150 128" stroke="#6B4423" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M170 128 Q185 122 200 128" stroke="#6B4423" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="135" cy="150" rx="10" ry="13" fill="#5C4A38"/>
+          <ellipse cx="185" cy="150" rx="10" ry="13" fill="#5C4A38"/>
+          <circle cx="138" cy="145" r="3.5" fill="#FFFFFF"/>
+          <circle cx="188" cy="145" r="3.5" fill="#FFFFFF"/>
+          <circle cx="132" cy="153" r="2" fill="#FFFFFF" opacity="0.5"/>
+          <circle cx="182" cy="153" r="2" fill="#FFFFFF" opacity="0.5"/>
+          <ellipse cx="108" cy="172" rx="14" ry="9" fill="#F4C2C2" opacity="0.8"/>
+          <ellipse cx="212" cy="172" rx="14" ry="9" fill="#F4C2C2" opacity="0.8"/>
+          <path d="M150 165 L148 172" stroke="#C79A6B" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M145 184 Q160 196 175 184" stroke="#5C4A38" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </g>
+
+        <!-- 熱氣 -->
+        <path d="M125 60 Q135 38 125 16" stroke="#B5A088" stroke-width="3" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M160 52 Q170 30 160 8" stroke="#B5A088" stroke-width="3" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M195 60 Q205 38 195 16" stroke="#B5A088" stroke-width="3" fill="none" opacity="0.45" stroke-linecap="round"/>
+
+        <!-- 地面陰影 -->
+        <ellipse cx="160" cy="270" rx="80" ry="14" fill="#5C4A38" opacity="0.1"/>
+      </svg>
+    </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 暖心情緒區 ═══════════════ -->
+<section class="emotion">
+  <div class="container">
+    <div class="emotion-grid">
+      <div class="emotion-text fade-up">
+        <div class="label-pair">
+          <span>先肯定</span>
+          <span>再微調</span>
+        </div>
+        <div class="heart">♡</div>
+        <h2>今天也<br><span class="hl">有照顧自己</span></h2>
+        <p>不用算熱量。3 秒選一選，阿茶送你今天就能試的小調整。</p>
+      </div>
+      <div class="emotion-visual fade-up d2">
+        <div class="quote">「不用完美，先讓照顧自己變得比較容易。」<br>— <b>阿茶</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 嵌入式測評器 ═══════════════ -->
+<section class="quiz-section" id="quiz">
+  <div class="container">
+    <div class="quiz-intro fade-up">
+      <span class="label">✨ 免費試玩</span>
+      <h2>3 秒外食小測評</h2>
+      <p>不用註冊，直接點。看看阿茶怎麼陪你吃外食。</p>
+    </div>
+
+    <div class="quiz-card fade-up d1">
+      <div class="quiz-card-head">
+        <div class="acha-mini">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <path d="M98 58 Q116 58 116 76 Q116 94 98 94" stroke="#E08A3C" stroke-width="7" fill="none" stroke-linecap="round"/>
+            <ellipse cx="60" cy="66" rx="42" ry="38" fill="#E08A3C"/>
+            <ellipse cx="60" cy="48" rx="34" ry="14" fill="#7FA960"/>
+            <ellipse cx="48" cy="62" rx="4" ry="5" fill="#5C4A38"/>
+            <ellipse cx="72" cy="62" rx="4" ry="5" fill="#5C4A38"/>
+            <circle cx="49" cy="60" r="1.5" fill="#fff"/>
+            <circle cx="73" cy="60" r="1.5" fill="#fff"/>
+            <ellipse cx="40" cy="74" rx="6" ry="4" fill="#F4C2C2" opacity="0.7"/>
+            <ellipse cx="80" cy="74" rx="6" ry="4" fill="#F4C2C2" opacity="0.7"/>
+            <path d="M50 76 Q60 84 70 76" stroke="#5C4A38" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="who">阿茶<small>你的隨身減脂隊友</small></div>
+        <span class="free-tag">FREE</span>
+      </div>
+
+      <div class="progress">
+        <div class="progress-track"><div class="progress-bar" id="bar"></div></div>
+        <div class="progress-label"><span id="stepNo">步驟 1 / 2</span><span id="stepHint">選一個今天想吃的情境</span></div>
+      </div>
+
+      <div id="step1">
+        <div class="step-head"><div class="step-no">第一步</div><h3>今天想吃哪一種？</h3></div>
+        <div class="options" id="sceneOpts"></div>
+      </div>
+
+      <div id="step2" style="display:none">
+        <div class="step-head"><div class="step-no">第二步</div><h3 id="mealTitle">選一個餐點看看阿茶怎麼說</h3></div>
+        <div class="options" id="mealOpts"></div>
+        <div style="margin-top:12px"><button class="btn-again" onclick="backToScene()">← 換一個情境</button></div>
+      </div>
+
+      <div class="result" id="result">
+        <div class="result-head">
+          <div class="acha-mini">
+            <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+              <path d="M98 58 Q116 58 116 76 Q116 94 98 94" stroke="#E08A3C" stroke-width="7" fill="none" stroke-linecap="round"/>
+              <ellipse cx="60" cy="66" rx="42" ry="38" fill="#E08A3C"/>
+              <ellipse cx="60" cy="48" rx="34" ry="14" fill="#7FA960"/>
+              <ellipse cx="48" cy="62" rx="4" ry="5" fill="#5C4A38"/>
+              <ellipse cx="72" cy="62" rx="4" ry="5" fill="#5C4A38"/>
+              <circle cx="49" cy="60" r="1.5" fill="#fff"/>
+              <circle cx="73" cy="60" r="1.5" fill="#fff"/>
+              <ellipse cx="40" cy="74" rx="6" ry="4" fill="#F4C2C2" opacity="0.7"/>
+              <ellipse cx="80" cy="74" rx="6" ry="4" fill="#F4C2C2" opacity="0.7"/>
+              <path d="M50 76 Q60 84 70 76" stroke="#5C4A38" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="who">阿茶<small>你的隨身減脂隊友</small></div>
+        </div>
+        <div id="resultContent"></div>
+        <div class="upsell" id="upsellCard">
+          <div class="upsell-ico">🌿</div>
+          <div class="upsell-body">
+            <div class="upsell-title">阿茶順手提醒</div>
+            <div class="upsell-txt">你微調得超棒！吃對了之外，阿茶平常也會順手給身體一點小支持——<b>好奇的話，加阿茶 LINE 順手問呀</b>。</div>
+            <a class="upsell-cta" href="https://lin.ee/rOydflm" target="_blank" rel="noopener">加阿茶 LINE，順手聊聊 →</a>
+          </div>
+        </div>
+        <div class="result-actions"><button class="btn-again" onclick="resetQuiz()">再測一餐</button></div>
+      </div>
+    </div>
+
+    <div class="quiz-cta fade-up d2">
+      <h4>覺得阿茶好用嗎？</h4>
+      <p>NT$299 買斷，永久陪你吃外食</p>
+      <a href="https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw" target="_blank" rel="noopener" class="btn">NT$299 立即購買 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 情緒過場 ═══════════════ -->
+<section class="interlude" style="background:var(--c-bg-2)">
+  <div class="container">
+    <div class="il-mascot">
+      <svg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 16 Q54 4 50 -4" stroke="#B5A088" stroke-width="2.5" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <path d="M70 10 Q74 -2 70 -10" stroke="#B5A088" stroke-width="2.5" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <path d="M90 16 Q94 4 90 -4" stroke="#B5A088" stroke-width="2.5" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <path d="M112 66 Q132 66 132 88 Q132 110 112 110" stroke="#E08A3C" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <ellipse cx="70" cy="76" rx="48" ry="42" fill="#E08A3C"/>
+        <ellipse cx="70" cy="56" rx="38" ry="14" fill="#7FA960"/>
+        <ellipse cx="56" cy="72" rx="4.5" ry="6" fill="#5C4A38"/>
+        <ellipse cx="84" cy="72" rx="4.5" ry="6" fill="#5C4A38"/>
+        <circle cx="57" cy="70" r="1.5" fill="#fff"/>
+        <circle cx="85" cy="70" r="1.5" fill="#fff"/>
+        <ellipse cx="44" cy="86" rx="7" ry="4.5" fill="#F4C2C2" opacity="0.7"/>
+        <ellipse cx="96" cy="86" rx="7" ry="4.5" fill="#F4C2C2" opacity="0.7"/>
+        <path d="M60 88 Q70 96 80 88" stroke="#5C4A38" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h2 class="fade-up">你不是做不到，<br><span class="hl">只是每一天都有好多事要顧</span></h2>
+    <p class="fade-up d1">忙到只能外帶、偶爾吃多，都不是失敗。下一餐，先做一個輕鬆的選擇。</p>
+  </div>
+</section>
+
+<!-- ═══════════════ 數字卡片區（01/02/03） ═══════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">阿茶把陪伴放在你本來就會用的地方</div>
+    <h2 class="section-title">一個小動作，<br>也值得被<span class="hl">記住</span></h2>
+    <p class="section-sub">把每天的外食，拆成做得到的小步驟。</p>
+
+    <div class="feature-cards">
+      <div class="feature-card fade-up">
+        <div class="f-num">01</div>
+        <div class="f-arrow">↗</div>
+        <div class="f-ico" style="background:var(--c-primary-soft)"><svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="6" width="28" height="36" rx="4" fill="#FFFBF5" stroke="#5C4A38" stroke-width="2.5"/><path d="M19 6 L19 42" stroke="#5C4A38" stroke-width="2.5"/><line x1="25" y1="15" x2="34" y2="15" stroke="#5C4A38" stroke-width="2.5" stroke-linecap="round"/><line x1="25" y1="24" x2="34" y2="24" stroke="#5C4A38" stroke-width="2.5" stroke-linecap="round"/><line x1="25" y1="33" x2="31" y2="33" stroke="#5C4A38" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+        <h3>隨手查得到</h3>
+        <p>Notion 手帳隨身翻。超商、速食、手搖點餐公式，不用等回覆。</p>
+        <div class="f-cta">
+          <a href="https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw" target="_blank" rel="noopener" class="btn btn-primary">立即試試 →</a>
+        </div>
+      </div>
+
+      <div class="feature-card fade-up d1">
+        <div class="f-num">02</div>
+        <div class="f-arrow">＋</div>
+        <div class="f-ico" style="background:var(--c-accent-soft)"><svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M10 12 Q10 8 14 8 L34 8 Q38 8 38 12 L38 30 Q38 34 34 34 L18 34 L10 40 L10 12" fill="#F8FBF4" stroke="#5C4A38" stroke-width="2.5" stroke-linejoin="round"/><line x1="16" y1="18" x2="32" y2="18" stroke="#7FA960" stroke-width="2.5" stroke-linecap="round"/><line x1="16" y1="26" x2="28" y2="26" stroke="#7FA960" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+        <h3>3 秒問得到</h3>
+        <p>AI 工作台 3 秒回覆。先肯定、再微調、最後鼓勵。不算卡路里，不焦慮。</p>
+        <div class="f-cta">
+          <a href="#quiz" class="btn btn-primary">免費試玩 ↑</a>
+        </div>
+      </div>
+
+      <div class="feature-card fade-up d2">
+        <div class="f-num">03</div>
+        <div class="f-arrow">⌁</div>
+        <div class="f-ico" style="background:var(--c-bg-2)"><svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="12" width="36" height="24" rx="4" fill="#FFF8F0" stroke="#5C4A38" stroke-width="2.5"/><path d="M6 16 L24 28 L42 16" stroke="#5C4A38" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 22 C24 22 18 17 18 14 C18 11 20 9 23 9 C24 9 24 10 24 10 C24 10 25 9 26 9 C29 9 31 11 31 14 C31 17 24 22 24 22 Z" fill="#D85B5B"/></svg></div>
+        <h3>有人陪你走</h3>
+        <p>LINE 有人陪你。諮詢、售後、日常微提醒。</p>
+        <div class="f-cta">
+          <a href="https://lin.ee/rOydflm" target="_blank" rel="noopener" class="btn btn-line">加 LINE 找阿茶 →</a>
+        </div>
+      </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 三件套明細 ═══════════════ -->
+<section class="section" style="background:var(--c-bg-2)">
+  <div class="container">
+    <div class="section-label">你會得到什麼</div>
+    <h2 class="section-title">三件套，<span class="hl">查得到、問得到、有人陪</span></h2>
+    <p class="section-sub">NT$299 買斷，三個能實際用的工具。</p>
+
+    <div class="products">
+      <div class="product-card fade-up">
+        <div class="top">
+          <div class="ico" style="background:var(--c-primary-soft)"><svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="6" width="28" height="36" rx="4" fill="#FFFBF5" stroke="#5C4A38" stroke-width="2.5"/><path d="M19 6 L19 42" stroke="#5C4A38" stroke-width="2.5"/><line x1="25" y1="15" x2="34" y2="15" stroke="#5C4A38" stroke-width="2.5" stroke-linecap="round"/><line x1="25" y1="24" x2="34" y2="24" stroke="#5C4A38" stroke-width="2.5" stroke-linecap="round"/><line x1="25" y1="33" x2="31" y2="33" stroke="#5C4A38" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+          <h3>隨身 Notion 減脂陪伴手帳<small>查得到 · 離線翻</small></h3>
+        </div>
+        <div class="body">
+          <p>隨身翻的 Notion 手帳。超商、便當、速食走到哪查到哪。</p>
+          <ul class="feats">
+            <li>超商 / 速食高蛋白 30 選</li>
+            <li>無罪惡點餐公式（便當 / 速食 / 手搖）</li>
+            <li>阿茶微調小辭典（飯留三分之一、去皮、補豆漿）</li>
+            <li>情緒急救包</li>
+          </ul>
+        </div>
+      </div>
+      <div class="product-card fade-up d1">
+        <div class="top">
+          <div class="ico" style="background:var(--c-accent-soft)"><svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M10 12 Q10 8 14 8 L34 8 Q38 8 38 12 L38 30 Q38 34 34 34 L18 34 L10 40 L10 12" fill="#F8FBF4" stroke="#5C4A38" stroke-width="2.5" stroke-linejoin="round"/><line x1="16" y1="18" x2="32" y2="18" stroke="#7FA960" stroke-width="2.5" stroke-linecap="round"/><line x1="16" y1="26" x2="28" y2="26" stroke="#7FA960" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+          <h3>AI 減脂互動工作台<small>問得到 · 3 秒回</small></h3>
+        </div>
+        <div class="body">
+          <p>3 秒三段式回覆：先肯定、再微調、最後鼓勵。</p>
+          <ul class="feats">
+            <li>外食點餐諮詢（超商 / 便當 / 速食 / 自助餐 / 手搖飲）</li>
+            <li>無腦記錄</li>
+            <li>微調建議</li>
+            <li>不算卡路里、不製造焦慮</li>
+          </ul>
+        </div>
+      </div>
+      <div class="product-card fade-up d2">
+        <div class="top">
+          <div class="ico" style="background:var(--c-bg-2)"><svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="12" width="36" height="24" rx="4" fill="#FFF8F0" stroke="#5C4A38" stroke-width="2.5"/><path d="M6 16 L24 28 L42 16" stroke="#5C4A38" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 22 C24 22 18 17 18 14 C18 11 20 9 23 9 C24 9 24 10 24 10 C24 10 25 9 26 9 C29 9 31 11 31 14 C31 17 24 22 24 22 Z" fill="#D85B5B"/></svg></div>
+          <h3>LINE 官方帳號<small>有人陪 · 售後通道</small></h3>
+        </div>
+        <div class="body">
+          <p>需要人的時候，阿茶在 LINE 陪你。</p>
+          <ul class="feats">
+            <li>諮詢入口：不會用、不確定吃什麼，加 LINE 問</li>
+            <li>售後陪伴：阿茶在 LINE 陪你</li>
+            <li>日常微提醒</li>
+          </ul>
+        </div>
+      </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 步驟區 ═══════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">從今天這一餐</div>
+    <h2 class="section-title"><span class="hl">慢慢走就好</span></h2>
+    <p class="section-sub">先從一個今天做得到的小選擇開始。</p>
+
+    <div class="steps">
+      <div class="step-item fade-up">
+        <div class="s-no">1</div>
+        <div class="s-body">
+          <h3>免費試玩測評器</h3>
+          <p>選今天想吃的場景，3 秒看阿茶怎麼回。</p>
+        </div>
+      </div>
+      <div class="step-item fade-up d1">
+        <div class="s-no">2</div>
+        <div class="s-body">
+          <h3>NT$299 帶阿茶回家</h3>
+          <p>一次買斷，永久使用。拿到 Notion 手帳 + AI 工作台 + LINE 陪伴。</p>
+        </div>
+      </div>
+      <div class="step-item fade-up d2">
+        <div class="s-no">3</div>
+        <div class="s-body">
+          <h3>每天吃一餐，微調一餐</h3>
+          <p>不拍照、不算卡。手帳查、AI 問、LINE 聊。</p>
+        </div>
+      </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 定價比較 ═══════════════ -->
+<section class="section" id="buy" style="background:var(--c-bg-2)">
+  <div class="container">
+    <div class="pricing-grid">
+      <div class="pricing-left fade-up">
+        <div class="section-label" style="text-align:left">價格比較</div>
+        <h2 class="section-title" style="text-align:left">一次買斷 vs <span class="hl">月月被扣</span></h2>
+        <p class="section-sub" style="text-align:left;margin-left:0;margin-right:0">海外 App 一年扣多少？阿茶一次 NT$299，永久用。</p>
+        <div class="pricing-cta">
+          <a href="https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw" target="_blank" rel="noopener" class="btn btn-primary btn-lg">NT$299 終身買斷 →</a>
+          <p>完成購買後，立刻開通 Notion 手帳 + AI 工作台</p>
+        </div>
+      </div>
+      <div class="pricing-right fade-up d1">
+        <div class="pricing-compare">
+          <div class="price-row acha">
+            <div class="name">阿茶 終身尊爵包<small>Notion 手帳 + AI 工作台 + LINE 陪伴</small></div>
+            <div class="price">NT$299 買斷</div>
+          </div>
+          <div class="price-row other">
+            <div class="name">海外拍照 App<small>辨識常出錯，年繳月月扣</small></div>
+            <div class="price">~NT$911/年</div>
+          </div>
+          <div class="price-row other">
+            <div class="name">海外卡路里記帳 App<small>台灣外食資料不全，年繳月月扣</small></div>
+            <div class="price">~NT$1,300+/年</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FAQ ═══════════════ -->
+<section class="section faq">
+  <div class="container">
+    <div class="section-label">常見問題</div>
+    <h2 class="section-title">你可能想問的</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">買斷之後還會再收費嗎？ <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">不會。NT$299 一次付清，永久使用。沒有月費、沒有年費、沒有隱藏升級。</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">AI 會不會像海外 App 一樣辨識出錯？ <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">阿茶不做拍照辨識。台灣外食太複雜，拍照一定出錯。你打一句話、選場景，阿茶給你微調。</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">我不會用 Notion 怎麼辦？ <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">不用學。給你連結就能用，加到手機主畫面像 App。不會用加 LINE 問阿茶。</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">跟免費的海外記帳 App 差在哪？ <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">海外 App 搜不到台灣外食、要你自己算卡路里、還月月扣。阿茶專為台灣設計，一次 299 買斷。</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">適合什麼樣的人？不適合什麼人？ <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">適合：每天吃外食、不想算卡、不想月扣的人。<br><br>不適合：需要醫療級飲食控制的人。阿茶是陪伴，不是醫療處方。</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ 最終 CTA ═══════════════ -->
+<section class="final-cta">
+  <div class="container">
+    <div class="mascot-big">
+      <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <path d="M58 20 Q62 8 58 -2" stroke="#fff" stroke-width="3" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <path d="M80 14 Q84 2 80 -8" stroke="#fff" stroke-width="3" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <path d="M102 20 Q106 8 102 -2" stroke="#fff" stroke-width="3" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <path d="M128 76 Q152 76 152 100 Q152 124 128 124" stroke="#E08A3C" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <ellipse cx="80" cy="88" rx="56" ry="50" fill="#E08A3C"/>
+        <ellipse cx="80" cy="64" rx="45" ry="18" fill="#7FA960"/>
+        <ellipse cx="64" cy="82" rx="5" ry="7" fill="#5C4A38"/>
+        <ellipse cx="96" cy="82" rx="5" ry="7" fill="#5C4A38"/>
+        <circle cx="65" cy="79" r="2" fill="#fff"/>
+        <circle cx="97" cy="79" r="2" fill="#fff"/>
+        <ellipse cx="52" cy="98" rx="8" ry="5" fill="#F4C2C2" opacity="0.7"/>
+        <ellipse cx="108" cy="98" rx="8" ry="5" fill="#F4C2C2" opacity="0.7"/>
+        <path d="M68 100 Q80 110 92 100" stroke="#5C4A38" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h2>讓阿茶陪你，<br>從這一餐開始</h2>
+    <p>不算卡、不月扣、不焦慮。</p>
+    <div class="price-big">NT$299<small> 終身買斷</small></div>
+    <div class="price-sub">Notion 手帳 + AI 工作台 + LINE 陪伴 · 永久使用</div>
+    <a href="https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw" target="_blank" rel="noopener" class="btn btn-lg btn-w">NT$299 立即購買 →</a>
+    <br>
+    <a href="https://lin.ee/rOydflm" target="_blank" rel="noopener" class="btn btn-line-w">先聊聊也行，阿茶在 LINE 等你</a>
+    <p class="trust-line">一次買斷 · 無月費 · 無隱藏升級 · 永久使用</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="links">
+    <a href="https://lin.ee/rOydflm" target="_blank" rel="noopener">加 LINE</a>
+    <span>|</span>
+    <a href="#buy">購買方案</a>
+    <span>|</span>
+    <a href="#quiz">試玩測評器</a>
+    <span>|</span>
+    <a href="#">退費政策</a>
+    <span>|</span>
+    <a href="#">隱私權條款</a>
+  </div>
+  <p>© 2026 阿茶 AI 減脂小管家 · 台灣外食減脂陪伴服務</p>
+  <p style="font-size:var(--fs-xs);margin-top:6px;color:var(--c-text-3)">本服務為飲食陪伴建議，非醫療處方。有特殊健康需求請諮詢專業醫療人員。</p>
+</footer>
+
+<script>
+const DATA={
+  scene:{
+    conv:{emoji:"🏪",title:"超商",desc:"7-11 / 全家 / 萊爾富"},
+    bento:{emoji:"🍱",title:"便當店",desc:"排骨、雞腿、爌肉飯"},
+    fastfood:{emoji:"🍔",title:"速食店",desc:"麥當勞、肯德基、摩斯、漢堡王、Subway"},
+    buffet:{emoji:"🍽️",title:"自助餐",desc:"夾夾樂、自助餐盤"},
+    drink:{emoji:"🧋",title:"手搖飲",desc:"珍奶、綠、拿鐵"}
+  },
+  meals:{
+    conv:[
+      {emoji:"🥚",title:"茶葉蛋",desc:"超商蛋白質天花板"},
+      {emoji:"🥛",title:"無糖豆漿",desc:"植物蛋白好朋友"},
+      {emoji:"🍗",title:"舒肥雞胸",desc:"減脂冷藏櫃常客"},
+      {emoji:"🍎",title:"水果盒",desc:"清爽解膩選擇"}
+    ],
+    bento:[
+      {emoji:"🍖",title:"排骨便當",desc:"經典療癒系"},
+      {emoji:"🍗",title:"雞腿便當",desc:"蛋白質滿滿"},
+      {emoji:"🍲",title:"爌肉飯",desc:"肥瘦交織香"},
+      {emoji:"🍚",title:"魯肉飯",desc:"台灣靈魂美食"}
+    ],
+    buffet:[
+      {emoji:"🥚",title:"三色豆炒蛋",desc:"色彩豐富"},
+      {emoji:"🐟",title:"炸魚排",desc:"酥脆解饞"},
+      {emoji:"🧈",title:"滷豆腐",desc:"低調蛋白質"},
+      {emoji:"🥬",title:"燙青菜",desc:"纖維好朋友"}
+    ],
+    fastfood:[
+      {emoji:"🍔",title:"漢堡",desc:"經典速食"},
+      {emoji:"🍗",title:"炸雞",desc:"酥脆解饞"},
+      {emoji:"🍟",title:"薯條",desc:"快樂小確幸"},
+      {emoji:"🥪",title:"潛艇堡",desc:"清爽有蔬菜"}
+    ],
+    drink:[
+      {emoji:"🧋",title:"珍珠奶茶",desc:"快樂源泉"},
+      {emoji:"🍵",title:"微糖綠茶",desc:"清爽解膩"},
+      {emoji:"☕",title:"拿鐵",desc:"奶香蛋白質"},
+      {emoji:"🍋",title:"檸檬汁",desc:"維C療癒"}
+    ]
+  },
+  reply:{
+    "conv-0":{emo:"超商選茶葉蛋，你超懂蛋白質的天花板呀！",tips:["順手再拿一罐無糖豆漿，飽足感直接升級","蛋黃留著吃，營養才完整囉"],end:"你今天有好好照顧自己，阿茶都看見了，超棒的！"},
+    "conv-1":{emo:"選無糖豆漿，這決定超聰明的！",tips:["配一顆茶葉蛋，蛋白質就更夠囉","餐後喝，飽足感更持久呀"],end:"你正在幫身體打底，阿茶陪你慢慢來，順手就好"},
+    "conv-2":{emo:"舒肥雞胸是超商減脂好朋友，你選得很專業！",tips:["搭一盒沙拉或燙青菜，纖維就補上了","醬包用一半，風味還在、負擔更輕"],end:"吃得好又吃得巧，你真的很會照顧自己囉！"},
+    "conv-3":{emo:"想吃水果盒，身體在跟你要營養呢，超棒的選擇！",tips:["再加一個茶葉蛋或豆漿，蛋白質就齊了","水果當餐後甜點，飽足感剛剛好"],end:"你聽見身體的聲音了，阿茶覺得你超貼心自己的！"},
+    "bento-0":{emo:"排骨便當真的很療癒呀，懂你今天想被慰勞的心情！",tips:["飯留三分之一，配菜多吃一點","排骨去皮吃，油膩感少一半囉"],end:"吃飽也吃得巧，你有在微調，阿茶都記得，超厲害的！"},
+    "bento-1":{emo:"雞腿便當蛋白質滿滿，你選得很實在！",tips:["雞腿去皮，一個動作就輕鬆不少","飯吃七分滿，配菜多夾一點蔬菜呀"],end:"你願意為自己微調，這份心意超珍貴，阿茶陪你！"},
+    "bento-2":{emo:"爌肉飯香氣撲鼻，懂你今天想吃點好的！",tips:["肥肉咬掉、瘦肉留著，風味還在囉","配一碗清湯或燙青菜，平衡一下呀"],end:"享受也兼顧，你拿捏得超好的，慢慢來就好！"},
+    "bento-3":{emo:"魯肉飯是台灣魂呀，你選它阿茶完全懂！",tips:["飯淋半碗就好，肉汁少一點風味還在","加一碟燙青菜，纖維幫你平衡囉"],end:"在地味也能吃得巧，你真的很會，阿茶陪你順順吃！"},
+    "buffet-0":{emo:"三色豆炒蛋色彩豐富，你夾得超有概念的！",tips:["油瀝一下再夾，負擔更輕囉","再補一塊滷豆腐或雞胸，蛋白質就夠了呀"],end:"你懂得挑顏色，阿茶覺得你超有營養直覺的！"},
+    "buffet-1":{emo:"炸魚排偶爾吃很療癒，懂你想解饞的心情！",tips:["裹粉剝掉一半，魚肉蛋白質還在囉","搭一份燙青菜，平衡一下油膩感呀"],end:"解饞也兼顧，你拿捏得超好的，慢慢來！"},
+    "buffet-2":{emo:"滷豆腐是低調的蛋白質冠軍，你選得超好！",tips:["淋汁少一點，清淡一點風味還在","配一份青菜，這餐就超完整囉"],end:"你看到別人沒看到的營養價值，阿茶超欣賞你的！"},
+    "buffet-3":{emo:"主動夾燙青菜，你身體會超感謝你的！",tips:["醬油膏少淋一半，清爽就夠了","再加一塊豆製品或蛋，蛋白質就齊了呀"],end:"你願意為身體多夾一菜，這份心意超棒的，阿茶陪你！"},
+    "drink-0":{emo:"珍奶是快樂源泉呀，懂你今天想被療癒！",tips:["微糖、去冰，甜度少一半快樂還在","珍珠喝半杯就好，下次換鮮奶茶試試囉"],end:"快樂也能微調，你超會的，阿茶陪你享受！"},
+    "drink-1":{emo:"選微糖綠茶，你已經在幫自己微調了，超棒的！",tips:["去冰更清爽呀","餐後喝，解膩又順手"],end:"你每天都在進步一點點，阿茶都看見了，超棒的！"},
+    "drink-2":{emo:"拿鐵有蛋白質又有奶香，你選得很聰明！",tips:["換低脂或燕麥奶，負擔更輕囉","不另加糖，奶香就夠甜了呀"],end:"你懂得挑對的飲品，阿茶覺得你超有概念的！"},
+    "drink-3":{emo:"檸檬汁清爽解膩，你選得超療癒！",tips:["微糖或無糖，維他命C不打折呀","餐後喝，幫助消化順順的"],end:"你給身體清爽的選擇，阿茶覺得你超貼心自己的！"},
+    "fastfood-0":{emo:"漢堡就是速食界的療癒代表，懂你想吃點好的！",tips:["麥當勞選單層牛肉堡，肯德基選烤雞堡","飲料換無糖茶或零卡可樂","搭配一份沙拉或玉米杯，纖維就補上了"],end:"速食也能微調，你超會選的，阿茶陪你享受！"},
+    "fastfood-1":{emo:"炸雞酥脆超療癒，偶爾吃沒關係的！",tips:["去皮吃，熱量直接少一半","點小份或兩塊就好，分享更快樂","配無糖茶解膩，不搭含糖飲料呀"],end:"解饞也兼顧，你拿捏得超好的，慢慢來！"},
+    "fastfood-2":{emo:"薯條是快樂小確幸，你選它阿茶懂！",tips:["選小份或分享盒，吃幾根就滿足","不沾醬或番茄醬少一點","搭一個蛋白質主餐，比單吃薯條更飽足"],end:"快樂也能微調，你真的很會，阿茶陪你！"},
+    "fastfood-3":{emo:"Subway 潛艇堡選得好，蔬菜蛋白質一次到齊！",tips:["選全麥麵包，醬料選蜂蜜芥末或油醋","多放蔬菜，起司減半","不加可樂，配無糖茶或水呀"],end:"你選了一個很棒的速食選項，阿茶覺得你超有概念的！"}
+  }
+};
+
+let pickedScene=null, pickedMealIdx=null;
+
+function renderScenes(){
+  const box=document.getElementById("sceneOpts");box.innerHTML="";
+  Object.entries(DATA.scene).forEach(([key,v])=>{
+    const b=document.createElement("button");b.className="opt";b.type="button";
+    b.innerHTML=`<div class="opt-emoji">${v.emoji}</div><div class="opt-text"><div class="opt-title">${v.title}</div><div class="opt-desc">${v.desc}</div></div>`;
+    b.onclick=()=>pickScene(key,b);box.appendChild(b);
+  });
+}
+function pickScene(key,btn){
+  document.querySelectorAll("#sceneOpts .opt").forEach(o=>o.classList.remove("selected"));
+  btn.classList.add("selected");pickedScene=key;setBar(50);
+  setTimeout(()=>{
+    document.getElementById("step1").style.display="none";
+    document.getElementById("step2").style.display="block";
+    document.getElementById("stepNo").textContent="步驟 2 / 2";
+    document.getElementById("stepHint").textContent="選一個餐點，阿茶 3 秒回你";
+    document.getElementById("mealTitle").textContent=`選一個${DATA.scene[key].title}餐點看看阿茶怎麼說`;
+    renderMeals(key);
+  },260);
+}
+function renderMeals(scene){
+  const box=document.getElementById("mealOpts");box.innerHTML="";
+  DATA.meals[scene].forEach((m,i)=>{
+    const b=document.createElement("button");b.className="opt";b.type="button";
+    b.innerHTML=`<div class="opt-emoji">${m.emoji}</div><div class="opt-text"><div class="opt-title">${m.title}</div><div class="opt-desc">${m.desc}</div></div>`;
+    b.onclick=()=>pickMeal(scene,i,b);box.appendChild(b);
+  });
+}
+function pickMeal(scene,idx,btn){
+  document.querySelectorAll("#mealOpts .opt").forEach(o=>o.classList.remove("selected"));
+  btn.classList.add("selected");pickedMealIdx=idx;setBar(100);
+  setTimeout(()=>showResult(scene,idx),300);
+}
+function showResult(scene,idx){
+  const r=DATA.reply[`${scene}-${idx}`];const meal=DATA.meals[scene][idx];
+  let tips="";r.tips.forEach((t,i)=>{tips+=`<div class="tip-item"><div class="tip-num">${i+1}</div><div class="txt">${t}</div></div>`});
+  document.getElementById("resultContent").innerHTML=`
+    <div class="msg-block msg-emo"><div class="tag">情緒價值</div><div class="txt">${r.emo}</div></div>
+    <div class="msg-block msg-tip"><div class="tag">無壓力微調</div>${tips}</div>
+    <div class="msg-block msg-end"><div class="tag">暖心結尾</div><div class="txt">${r.end}</div></div>`;
+  document.getElementById("step2").style.display="none";
+  document.getElementById("result").classList.add("show");
+  document.getElementById("stepNo").textContent="阿茶回覆囉";
+  document.getElementById("stepHint").textContent=`${DATA.scene[scene].title} · ${meal.title}`;
+}
+function backToScene(){
+  document.getElementById("step2").style.display="none";
+  document.getElementById("step1").style.display="block";
+  document.getElementById("result").classList.remove("show");setBar(50);
+  document.getElementById("stepNo").textContent="步驟 1 / 2";
+  document.getElementById("stepHint").textContent="選一個今天想吃的情境";
+  document.querySelectorAll("#sceneOpts .opt").forEach(o=>o.classList.remove("selected"));pickedScene=null;
+}
+function resetQuiz(){
+  document.getElementById("result").classList.remove("show");
+  document.getElementById("step2").style.display="none";
+  document.getElementById("step1").style.display="block";setBar(0);
+  document.getElementById("stepNo").textContent="步驟 1 / 2";
+  document.getElementById("stepHint").textContent="選一個今天想吃的情境";
+  document.querySelectorAll(".opt").forEach(o=>o.classList.remove("selected"));pickedScene=null;pickedMealIdx=null;
+}
+function setBar(p){document.getElementById("bar").style.width=p+"%"}
+
+document.addEventListener("keydown",e=>{
+  if((e.key==="Enter"||e.key===" ")&&document.activeElement.classList.contains("opt")){e.preventDefault();document.activeElement.click();}
+});
+
+renderScenes();
+
+function toggleFaq(el){
+  const item=el.parentElement;const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(f=>f.classList.remove('open'));
+  if(!isOpen)item.classList.add('open');
+}
+document.querySelectorAll('.faq-q').forEach(q=>{
+  q.setAttribute('tabindex','0');q.setAttribute('role','button');
+  q.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleFaq(q);}});
+});
+
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{if(entry.isIntersecting){entry.target.style.animation='fadeInUp .6s var(--ease) forwards';observer.unobserve(entry.target);}});
+},{threshold:0.15,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.feature-card,.product-card,.problem-card,.quiz-cta,.step-item,.emotion .fade-up,.interlude .fade-up').forEach(el=>{el.style.opacity='0';observer.observe(el);});
+</script>
+</body>
+</html>
