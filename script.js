@@ -43,7 +43,7 @@ let activeScenario = null;
 function safe(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function showStepTwo(key){
   activeScenario=key; const scene=scenarios[key];
-  stepOne.hidden=true; stepTwo.hidden=false; resultEl.hidden=true;
+  stepOne.hidden=true; stepOne.style.display='none'; stepTwo.hidden=false; stepTwo.style.display=''; resultEl.hidden=true; resultEl.style.display='none';
   stepLabel.textContent='步驟 2／2'; stepHint.textContent='選一個餐點，阿茶 3 秒回你';
   stepTwoTitle.textContent=`選一個${scene.label}餐點看看阿茶怎麼說`;
   itemsEl.innerHTML=scene.items.map((it,i)=>`<button class="quiz-card quiz-item-card" data-item="${i}" type="button"><span class="food-icon">${it[0]}</span><span class="quiz-label">${safe(it[1])}</span><span class="quiz-hint">${safe(it[2])}</span><span class="card-arrow" aria-hidden="true">↗</span></button>`).join('');
@@ -52,11 +52,11 @@ function showStepTwo(key){
 }
 function showResult(index){
   const [icon,item,hint,affirm,tips1,tips2]=scenarios[activeScenario].items[index];
-  resultEl.hidden=false;
+  resultEl.hidden=false; resultEl.style.display='';
   resultEl.innerHTML=`<div class="result-inner"><div class="result-visual" aria-hidden="true">${icon}</div><div><span class="eyebrow">阿茶回覆囉・${safe(scenarios[activeScenario].label)} · ${safe(item)}</span><div class="result-section result-affirm"><span>先肯定</span><p>${safe(affirm)}</p></div><div class="result-section result-tweak"><span>今天就做的小微調</span><ol><li>${safe(tips1)}</li><li>${safe(tips2)}</li></ol></div><div class="result-section result-warm"><span>暖心收尾</span><p>你今天有好好照顧自己，阿茶都看見了。慢慢來，就很棒了！</p></div><div class="result-reminder"><strong>🌿 阿茶順手提醒</strong><p>你微調得超棒！吃對了之外，阿茶平常也會順手給身體一點小支持——好奇的話，加阿茶 LINE 順手問呀。</p><a class="result-line-link" href="${LINE_URL}" target="_blank" rel="noopener noreferrer">加阿茶 LINE，順手聊聊 →</a></div><div class="result-purchase-note"><span>覺得阿茶好用嗎？</span><a href="${PORTAL_URL}" target="_blank" rel="noopener noreferrer">NT$299 買斷 →</a></div><button class="quiz-retry" type="button" id="quiz-retry">再測一餐</button></div></div>`;
   document.querySelector('#quiz-retry').addEventListener('click',resetQuiz);
   resultEl.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});
 }
-function resetQuiz(){ activeScenario=null; resultEl.hidden=true; stepTwo.hidden=true; stepOne.hidden=false; stepLabel.textContent='步驟 1／2'; stepHint.textContent='選一個今天最常遇到的情境'; document.querySelector('.quiz-card')?.focus(); }
+function resetQuiz(){ activeScenario=null; resultEl.hidden=true; resultEl.style.display='none'; resultEl.innerHTML=''; stepTwo.hidden=true; stepTwo.style.display='none'; stepOne.hidden=false; stepOne.style.display=''; stepLabel.textContent='步驟 1／2'; stepHint.textContent='選一個今天最常遇到的情境'; document.querySelector('.quiz-scenarios .quiz-card')?.focus(); document.querySelector('#quiz')?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'}); }
 document.querySelectorAll('.quiz-scenarios .quiz-card').forEach(card=>card.addEventListener('click',()=>showStepTwo(card.dataset.scenario)));
 document.querySelector('#quiz-back').addEventListener('click',resetQuiz);
