@@ -632,6 +632,28 @@ body{
 .fade-up.d1{animation-delay:.1s}
 .fade-up.d2{animation-delay:.2s}
 .fade-up.d3{animation-delay:.3s}
+
+/* ═══ Day2 付費對標 ═══ */
+.benchmark-section{padding:var(--sp-section) 0;background:var(--c-surface);position:relative}
+.benchmark-intro{max-width:720px;margin:0 auto 24px;text-align:center}
+.benchmark-intro p{color:var(--c-text-2);margin:8px auto 0;max-width:620px}
+.benchmark-grid{display:grid;grid-template-columns:1fr;gap:18px}
+.benchmark-card{background:var(--c-surface-2);border:1px solid var(--c-line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-sm)}
+.benchmark-shot{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;object-position:top center;background:var(--c-bg-2);border-bottom:1px solid var(--c-line)}
+.benchmark-body{padding:20px}
+.benchmark-badge{display:inline-flex;background:var(--c-primary-soft);color:var(--c-primary-d);padding:4px 10px;border-radius:var(--r-full);font-size:var(--fs-xs);font-weight:700;margin-bottom:10px}
+.benchmark-body h3{font-size:var(--fs-md);line-height:1.4;margin-bottom:8px}
+.benchmark-body p{color:var(--c-text-2);font-size:var(--fs-sm);margin-bottom:12px}
+.benchmark-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.benchmark-stat{padding:10px 8px;background:var(--c-surface);border:1px solid var(--c-line);border-radius:var(--r-sm);text-align:center}
+.benchmark-stat b{display:block;color:var(--c-primary-d);font-size:var(--fs-md);line-height:1.2}
+.benchmark-stat span{display:block;color:var(--c-text-3);font-size:var(--fs-xs);margin-top:4px}
+.benchmark-learn{padding-top:12px;border-top:1px dashed var(--c-line);font-size:var(--fs-sm);color:var(--c-text-2)}
+.benchmark-learn b{color:var(--c-text)}
+.benchmark-source{display:inline-block;margin-top:12px;color:var(--c-accent-d);font-size:var(--fs-xs);font-weight:700}
+.benchmark-note{margin:20px auto 0;padding:14px 18px;max-width:780px;border-left:4px solid var(--c-primary);background:var(--c-primary-soft);border-radius:0 var(--r-md) var(--r-md) 0;color:var(--c-text-2);font-size:var(--fs-sm)}
+@media(min-width:768px){.benchmark-grid{grid-template-columns:repeat(2,1fr)}.benchmark-body{padding:22px}.benchmark-shot{aspect-ratio:1.78}}
+
 </style>
 </head>
 <body>
@@ -1072,6 +1094,52 @@ body{
   </div>
 </section>
 
+
+
+<!-- ═══════════════ Day2 付費對標 ═══════════════ -->
+<section class="benchmark-section" id="benchmarks">
+  <div class="container">
+    <div class="benchmark-intro">
+      <div class="section-label">Day2 對標研究</div>
+      <h2 class="section-title">不是免費 App，<span class="hl">是有成交證據的付費數位品</span></h2>
+      <p>選兩個同樣在 Etsy 販售、具明確價格與使用者評價的數位產品，學習它們怎麼把「完整工具」包裝成可立即購買的方案。</p>
+    </div>
+    <div class="benchmark-grid">
+      <article class="benchmark-card">
+        <img class="benchmark-shot" src="assets/benchmark-weight-loss-etsy.webp" alt="Etsy Weight Loss and Fitness Tracker 商品頁截圖">
+        <div class="benchmark-body">
+          <span class="benchmark-badge">Etsy｜低價流量型</span>
+          <h3>Weight Loss &amp; Fitness Tracker</h3>
+          <p>Google Sheets 減重／健身追蹤器，整合體重、熱量、運動、習慣、餐單、採買與身體數據。</p>
+          <div class="benchmark-stats">
+            <div class="benchmark-stat"><b>USD 1</b><span>促銷價</span></div>
+            <div class="benchmark-stat"><b>1.3k</b><span>商品評價</span></div>
+            <div class="benchmark-stat"><b>110.4k</b><span>店舖銷量</span></div>
+          </div>
+          <div class="benchmark-learn"><b>學到：</b>用 All-in-One、Instant Access、3 Easy Steps 降低購買門檻；但阿茶不複製它的健身大而全，改聚焦台灣外食。</div>
+          <a class="benchmark-source" href="https://www.etsy.com/listing/1464213625/weight-loss-fitness-tracker-google" target="_blank" rel="noopener">查看原始商品頁 →</a>
+        </div>
+      </article>
+      <article class="benchmark-card">
+        <img class="benchmark-shot" src="assets/benchmark-meal-planner-etsy.webp" alt="Etsy Weekly Meal Planner Spreadsheet 商品頁截圖">
+        <div class="benchmark-body">
+          <span class="benchmark-badge">Etsy｜功能價值型</span>
+          <h3>Weekly Meal Planner Spreadsheet</h3>
+          <p>Google Sheets／Excel 餐單工作台，整合自動購物清單、食譜、Pantry、食材準備與熱量／宏量營養。</p>
+          <div class="benchmark-stats">
+            <div class="benchmark-stat"><b>USD 9.06</b><span>促銷價</span></div>
+            <div class="benchmark-stat"><b>402</b><span>商品評價</span></div>
+            <div class="benchmark-stat"><b>63.3k</b><span>店舖銷量</span></div>
+          </div>
+          <div class="benchmark-learn"><b>學到：</b>工作台可以支撐更高價格；但它偏備餐／採買，阿茶改成外食上班族的快速選餐、微調與陪伴。</div>
+          <a class="benchmark-source" href="https://www.etsy.com/listing/1369401195/weekly-meal-planner-spreadsheet-google" target="_blank" rel="noopener">查看原始商品頁 →</a>
+        </div>
+      </article>
+    </div>
+    <div class="benchmark-note"><b>定位結論：</b>阿茶不做免費 App 下載漏斗，也不做複雜備餐表格；採用付費數位品的「立即使用＋一次買斷」模式，聚焦每天吃外食的台灣上班族。</div>
+  </div>
+</section>
+
 <!-- ═══════════════ 步驟區 ═══════════════ -->
 <section class="section">
   <div class="container">
@@ -1110,8 +1178,8 @@ body{
     <div class="pricing-grid">
       <div class="pricing-left fade-up">
         <div class="section-label" style="text-align:left">價格比較</div>
-        <h2 class="section-title" style="text-align:left">一次買斷 vs <span class="hl">月月被扣</span></h2>
-        <p class="section-sub" style="text-align:left;margin-left:0;margin-right:0">海外 App 一年扣多少？阿茶一次 NT$299，永久用。</p>
+        <h2 class="section-title" style="text-align:left">一次買斷 vs <span class="hl">數位品價格</span></h2>
+        <p class="section-sub" style="text-align:left;margin-left:0;margin-right:0">參考 Etsy 付費數位品的價格帶，阿茶用 NT$299 降低第一次使用門檻。</p>
         <div class="pricing-cta">
           <a href="https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw" target="_blank" rel="noopener" class="btn btn-primary btn-lg">NT$299 終身買斷 →</a>
           <p>完成購買後，立刻開通 Notion 手帳 + AI 工作台</p>
@@ -1124,12 +1192,12 @@ body{
             <div class="price">NT$299 買斷</div>
           </div>
           <div class="price-row other">
-            <div class="name">海外拍照 App<small>辨識常出錯，年繳月月扣</small></div>
-            <div class="price">~NT$911/年</div>
+            <div class="name">Etsy 減重追蹤器<small>低價、功能多、適合衝動購買</small></div>
+            <div class="price">約 NT$32 起</div>
           </div>
           <div class="price-row other">
-            <div class="name">海外卡路里記帳 App<small>台灣外食資料不全，年繳月月扣</small></div>
-            <div class="price">~NT$1,300+/年</div>
+            <div class="name">Etsy 餐單工作台<small>功能完整、價格較高、需要學習</small></div>
+            <div class="price">約 NT$290 起</div>
           </div>
         </div>
       </div>
