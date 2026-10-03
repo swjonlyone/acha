@@ -1,4 +1,4 @@
-# 阿茶 365 天外食減脂表｜Google Sheets 個人版
+# 阿茶 365 天外食減脂表｜Excel／Google Sheets 個人版
 
 ## 對標校正
 
