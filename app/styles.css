@@ -34,3 +34,9 @@ h1 em{color:var(--acha-tab)}
 .date-input,.date-label input,.stat strong,.progress strong,.habit-head>strong,.log-summary strong,.month-row strong{font-weight:700;color:var(--acha-number)}
 .date-input{letter-spacing:.4px}.stat strong{letter-spacing:.3px}
 @media(max-width:640px){.subtle,.source-note{font-size:14px}.view-tab{font-size:12px}.login-btn{font-size:12px}.access-strip a{font-size:12px}.hero h1{font-size:32px}}
+
+/* 最新圖表與手機安全留白修復 */
+html,body,body *{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif!important}
+body{line-height:1.6;padding-bottom:calc(110px + env(safe-area-inset-bottom))}.app-shell{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+.chart-card{padding-bottom:28px!important}.chart-canvas-wrap{padding-bottom:28px!important;overflow:visible}.chart-legend{display:flex!important;justify-content:center;align-items:center;gap:18px;flex-wrap:wrap;margin-top:12px!important;padding:0 4px 2px!important;line-height:1.6}.chart-legend span{display:inline-flex;align-items:center;gap:5px}
+@media(max-width:640px){.chart-card{padding-bottom:28px!important}.chart-canvas-wrap{padding-bottom:28px!important}.chart-legend{margin-top:12px!important;gap:12px;font-size:11px}}
