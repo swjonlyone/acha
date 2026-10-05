@@ -47,3 +47,14 @@ body{line-height:1.6;padding-bottom:calc(100px + env(safe-area-inset-bottom))}
 
 /* 最新落地頁：三大隨身工具卡片 */
 .tools-shell{max-width:1080px}.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1040px;margin:30px auto 0}.tool-card{min-height:210px;padding:26px 22px;border:1px solid #ead9c7;border-radius:24px;background:rgba(255,252,247,.94);box-shadow:0 14px 30px rgba(112,67,49,.08)}.tool-icon{font-size:34px;margin-bottom:16px}.tool-card h3{font-size:19px;color:#704331;margin:0 0 10px}.tool-card p{font-size:14px;line-height:1.75;color:#7A736E;margin:0}.hero-login{display:block;margin-top:10px;color:#8d6049;font-size:12px;text-decoration:underline;text-underline-offset:3px}.hero-cta{display:block}.hero-cta .button-primary{display:inline-flex;width:auto}.hero-actions{align-items:flex-start}@media(max-width:800px){.tool-grid{grid-template-columns:1fr;gap:12px;margin-top:22px}.tool-card{min-height:0;padding:20px}.tool-icon{font-size:30px;margin-bottom:10px}.tool-card h3{font-size:18px}.tool-card p{font-size:13px}.hero-cta .button-primary{width:100%;text-align:center;justify-content:center}.hero-login{text-align:center}}
+
+/* Product screenshots: layered phone mockup in Hero and compact proof cards */
+.hero-composite{position:relative;width:min(100%,590px);isolation:isolate}
+.hero-composite .hero-art{width:100%;z-index:1}
+.hero-phone{position:absolute;z-index:3;right:1%;top:7%;width:42%;padding:9px 7px 12px;border:7px solid #4c3328;border-radius:28px;background:#2f211c;box-shadow:18px 22px 35px rgba(61,35,24,.28),-4px 8px 0 rgba(255,255,255,.65);transform:rotate(4deg);overflow:hidden}
+.hero-phone:after{content:'';position:absolute;inset:0;border:1px solid rgba(255,255,255,.45);border-radius:20px;pointer-events:none}
+.hero-phone img{display:block;width:100%;height:auto;border-radius:16px;background:#f5faf7}
+.phone-speaker{position:absolute;z-index:2;top:4px;left:50%;width:34%;height:4px;transform:translateX(-50%);border-radius:99px;background:#18110e}
+.tool-preview{margin:18px -6px -6px;border:1px solid rgba(112,67,49,.16);border-radius:18px;background:#fffaf4;overflow:hidden;box-shadow:0 8px 18px rgba(112,67,49,.08)}
+.tool-preview img{display:block;width:100%;height:188px;object-fit:cover;object-position:top center}
+@media(max-width:800px){.hero-composite{width:min(100%,390px)}.hero-phone{right:0;top:4%;width:43%;padding:7px 5px 9px;border-width:5px;border-radius:22px}.hero-phone img{border-radius:13px}.tool-preview img{height:210px}}
