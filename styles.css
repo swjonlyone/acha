@@ -60,4 +60,5 @@ body{line-height:1.6;padding-bottom:calc(100px + env(safe-area-inset-bottom))}
 /* Mobile spacing: keep the Hero illustration and product mockup clear of the header CTA buttons. */
 @media (max-width: 800px){
   .hero-art-wrap{margin-top:64px;}
+  .hero-phone{right:-8%;width:31%;}
 }
