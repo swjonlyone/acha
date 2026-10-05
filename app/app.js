@@ -3,9 +3,11 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const $ = id => document.getElementById(id);
 const STORAGE = 'acha-supabase-config-v1';
 const DEMO_STORAGE = 'acha-demo-logs-v2';
+const ACCESS_STORAGE = 'acha-verified-email-v1';
 let supabase = null;
 let session = null;
 let cache = [];
+let paidAccess = false;
 
 const config = JSON.parse(localStorage.getItem(STORAGE) || '{}');
 $('supabaseUrl').value = config.url || '';
@@ -35,8 +37,8 @@ function connect() {
   supabase = createClient(c.url, c.key);
   supabase.auth.onAuthStateChange((_event, s) => {
     session = s;
-    updateAuth();
-    if (s) loadAll();
+    if (s) verifyPurchaseAccess();
+    else { paidAccess = false; updateAuth(); }
   });
   return true;
 }
@@ -53,27 +55,44 @@ function demoSeed() {
   }
   return rows;
 }
-function demoRows() {
-  const saved = localStorage.getItem(DEMO_STORAGE);
-  if (saved) { try { return JSON.parse(saved); } catch { /* reset below */ } }
-  const rows = demoSeed();
-  localStorage.setItem(DEMO_STORAGE, JSON.stringify(rows));
-  return rows;
+function demoRows() { return demoSeed(); }
+function saveDemoRows() { /* 免費體驗資料只存在記憶體，重新載入頁面即重置 */ }
+function updateAccessStrip(demo) {
+  const strip = $('accessStrip'), badge = $('accessBadge'), buy = $('accessBuy');
+  if (!strip || !badge || !buy) return;
+  strip.classList.toggle('is-paid', paidAccess);
+  if (paidAccess) {
+    badge.textContent = `正式版已解鎖 ｜ ${session?.user?.email || '已驗證購買者'}`;
+    buy.hidden = true;
+  } else if (demo) {
+    badge.textContent = '免費體驗中 ｜ 換頁將重置資料';
+    buy.hidden = false;
+  } else {
+    badge.textContent = '尚未解鎖 ｜ 請使用購買 Email 登入';
+    buy.hidden = false;
+  }
 }
-function saveDemoRows() { localStorage.setItem(DEMO_STORAGE, JSON.stringify(cache)); }
+async function verifyPurchaseAccess() {
+  if (!supabase || !session) { paidAccess = false; updateAuth(); return false; }
+  const { data, error } = await supabase.rpc('has_active_acha_entitlement');
+  paidAccess = !error && data === true;
+  if (paidAccess) localStorage.setItem(ACCESS_STORAGE, session.user.email || '');
+  updateAuth();
+  if (!paidAccess) msg('purchaseAuthMessage', error ? '付款權限驗證尚未完成，請確認 Supabase 權限表與 Webhook 設定。' : '找不到這個 Email 的有效購買紀錄，請使用付款時的相同 Email。', true);
+  return paidAccess;
+}
 function updateAuth() {
-  const demo = isDemo();
-  const logged = !!session || demo;
-  $('authView').classList.toggle('hidden', logged);
-  $('mainView').classList.toggle('hidden', !logged);
+  const demo = isDemo() && !paidAccess;
+  const accessible = paidAccess || demo;
+  $('authView').classList.toggle('hidden', accessible);
+  $('mainView').classList.toggle('hidden', !accessible);
   $('logoutBtn').classList.toggle('hidden', !session);
-  $('userLabel').textContent = demo && !session ? '示範模式（不儲存資料）' : session?.user?.email || '尚未登入';
-  if (logged && demo) {
-    cache = demoRows();
+  $('userLabel').textContent = paidAccess ? (session?.user?.email || '正式版已解鎖') : demo ? '免費體驗中（不保存資料）' : session?.user?.email || '尚未登入';
+  updateAccessStrip(demo);
+  if (!accessible && session) msg('authMessage', '已登入，但尚未找到有效購買紀錄；請使用購買 Email 或先完成 Portaly 付款。', true);
+  if (accessible) {
+    if (demo) cache = demoRows();
     renderMonth(); renderYear();
-    $('logDate').value = $('logDate').value || today();
-    loadLog($('logDate').value);
-  } else if (logged && !demo) {
     $('logDate').value = $('logDate').value || today();
     loadLog($('logDate').value);
   }
@@ -95,6 +114,17 @@ $('authForm').addEventListener('submit', e => { e.preventDefault(); auth('login'
 $('signupBtn').addEventListener('click', () => auth('signup'));
 $('logoutBtn').addEventListener('click', async () => { await supabase?.auth.signOut(); session = null; updateAuth(); });
 $('demoBtn').addEventListener('click', () => { const u = new URL(location.href); u.searchParams.set('demo', '1'); location.href = u.toString(); });
+$('purchaseLoginBtn').addEventListener('click', () => $('purchaseAuthModal').classList.remove('hidden'));
+$('closePurchaseAuth').addEventListener('click', () => $('purchaseAuthModal').classList.add('hidden'));
+$('purchaseAuthModal').addEventListener('click', e => { if (e.target.id === 'purchaseAuthModal') e.currentTarget.classList.add('hidden'); });
+$('purchaseAuthForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = $('purchaseEmail').value.trim().toLowerCase();
+  if (!supabase) { msg('purchaseAuthMessage', '請先到設定貼上 Supabase URL 與 anon key，才能驗證購買權限。', true); return; }
+  const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: location.href } });
+  if (error) msg('purchaseAuthMessage', error.message, true);
+  else msg('purchaseAuthMessage', '登入連結已寄出，請開啟信件完成驗證。完成後會自動檢查 Portaly 購買權限。');
+});
 $('configBtn').addEventListener('click', () => $('configView').classList.remove('hidden'));
 $('closeConfig').addEventListener('click', () => $('configView').classList.add('hidden'));
 $('saveConfig').addEventListener('click', () => {
@@ -171,7 +201,7 @@ function fill(d) {
   updateProgress();
 }
 async function loadLog(date) {
-  if (isDemo()) { fill(cache.find(x => x.log_date === date) || {}); return; }
+  if (isDemo() && !paidAccess) { fill(cache.find(x => x.log_date === date) || {}); return; }
   if (!session || !supabase) return;
   const { data, error } = await supabase.from('daily_logs').select('*').eq('log_date', date).maybeSingle();
   if (error) { msg('saveMessage', error.message, true); return; }
@@ -191,7 +221,7 @@ function updateProgress() {
 $('logForm').addEventListener('submit', async e => {
   e.preventDefault();
   const payload = formData();
-  if (isDemo() && !session) {
+  if (isDemo() && !paidAccess) {
     cache = cache.filter(x => x.log_date !== payload.log_date);
     cache.push({ ...payload, id: `demo-${payload.log_date}` });
     cache = sortRows(cache);
@@ -317,7 +347,7 @@ function chartFrame(ctx, w, h, min, max, labels, yUnit = 'kg') {
     ctx.fillText(value.toFixed(1), pad.left - 7, y);
   }
   ctx.strokeStyle = '#9aaca5'; ctx.beginPath(); ctx.moveTo(pad.left, pad.top); ctx.lineTo(pad.left, pad.top + plotH); ctx.lineTo(w - pad.right, pad.top + plotH); ctx.stroke();
-  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.font = '10px sans-serif'; ctx.fillStyle = '#999';
   const step = labels.length > 8 ? Math.ceil(labels.length / 6) : 1;
   labels.forEach((label, i) => {
     if (i % step && i !== labels.length - 1) return;
@@ -330,7 +360,7 @@ function chartFrame(ctx, w, h, min, max, labels, yUnit = 'kg') {
 }
 function drawChart(id, points) {
   const canvas = $(id); if (!canvas) return;
-  const dpr = devicePixelRatio || 1, w = canvas.clientWidth || 600, h = 260;
+  const dpr = devicePixelRatio || 1, w = canvas.clientWidth || 600, h = 230;
   canvas.width = w * dpr; canvas.height = h * dpr;
   const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr); ctx.clearRect(0, 0, w, h);
   if (!points.length) { ctx.fillStyle = '#748680'; ctx.font = '14px sans-serif'; ctx.fillText('有記錄後會顯示趨勢圖', 52, 120); return; }
@@ -343,7 +373,7 @@ function drawChart(id, points) {
 function drawDualChart(id, points) {
   const canvas = $(id); if (!canvas) return;
   const valid = points.filter(x => x[1] !== null || x[2] !== null);
-  const dpr = devicePixelRatio || 1, w = canvas.clientWidth || 600, h = 260;
+  const dpr = devicePixelRatio || 1, w = canvas.clientWidth || 600, h = 230;
   canvas.width = w * dpr; canvas.height = h * dpr;
   const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr); ctx.clearRect(0, 0, w, h);
   if (!valid.length) { ctx.fillStyle = '#748680'; ctx.font = '14px sans-serif'; ctx.fillText('同日有早晚體重後會顯示日夜比較', 52, 120); return; }
@@ -354,7 +384,6 @@ function drawDualChart(id, points) {
     valid.forEach((p, i) => { if (p[index] === null) return; const x = frame.x(i), y = frame.y(p[index]); started ? ctx.lineTo(x, y) : ctx.moveTo(x, y); started = true; });
     ctx.stroke();
   });
-  ctx.fillStyle = '#748680'; ctx.font = '12px sans-serif'; ctx.textAlign = 'left'; ctx.fillText('橘：日內增加　綠：夜間回落', frame.pad.left, h - 8);
 }
 
 document.querySelectorAll('.view-tab').forEach(button => button.addEventListener('click', () => {
@@ -367,7 +396,7 @@ document.querySelectorAll('.view-tab').forEach(button => button.addEventListener
 }));
 
 async function loadAll() {
-  if (isDemo()) { cache = demoRows(); renderMonth(); renderYear(); loadLog($('logDate').value || today()); return; }
+  if (isDemo() && !paidAccess) { cache = demoRows(); renderMonth(); renderYear(); loadLog($('logDate').value || today()); return; }
   if (!session) return;
   const { data, error } = await supabase.from('daily_logs').select('*').order('log_date', { ascending: true });
   if (error) { toast(error.message); return; }
