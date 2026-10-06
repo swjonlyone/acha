@@ -396,7 +396,7 @@ $('yearPicker').value = new Date().getFullYear();
 $('yearPicker').addEventListener('change', renderYear);
 
 function chartFrame(ctx, w, h, min, max, labels, yUnit = 'kg') {
-  const pad = { left: 48, right: 12, top: 22, bottom: 38 };
+  const pad = { left: 48, right: 12, top: 22, bottom: 52 };
   const plotW = w - pad.left - pad.right, plotH = h - pad.top - pad.bottom;
   ctx.font = '11px sans-serif';
   ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#748680';
@@ -407,11 +407,12 @@ function chartFrame(ctx, w, h, min, max, labels, yUnit = 'kg') {
   }
   ctx.strokeStyle = '#9aaca5'; ctx.beginPath(); ctx.moveTo(pad.left, pad.top); ctx.lineTo(pad.left, pad.top + plotH); ctx.lineTo(w - pad.right, pad.top + plotH); ctx.stroke();
   ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.font = '10px sans-serif'; ctx.fillStyle = '#999';
-  const step = labels.length > 8 ? Math.ceil(labels.length / 6) : 1;
+  const step = labels.length > 7 ? Math.ceil(labels.length / 6) : 1;
   labels.forEach((label, i) => {
     if (i % step && i !== labels.length - 1) return;
     const x = pad.left + plotW * i / Math.max(1, labels.length - 1);
-    ctx.fillText(label, x, pad.top + plotH + 9);
+    const shortLabel = /^\d{4}-\d{2}-\d{2}$/.test(label) ? label.slice(5).replace('-', '/') : label;
+    ctx.fillText(shortLabel, x, pad.top + plotH + 9);
   });
   ctx.save(); ctx.translate(12, pad.top + plotH / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = 'center'; ctx.fillText(yUnit, 0, 0); ctx.restore();
   ctx.textAlign = 'right'; ctx.fillText(labels.length > 1 ? '日期／月份' : '', w - pad.right, h - 8);
