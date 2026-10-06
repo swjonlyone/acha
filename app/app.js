@@ -4,10 +4,11 @@ const $ = id => document.getElementById(id);
 const STORAGE = 'acha-supabase-config-v1';
 const DEMO_STORAGE = 'acha-demo-logs-v2';
 const ACCESS_STORAGE = 'acha-verified-email-v1';
+const LOCAL_PAID = 'acha_paid';
 let supabase = null;
 let session = null;
 let cache = [];
-let paidAccess = false;
+let paidAccess = localStorage.getItem(LOCAL_PAID) === 'true';
 
 const config = JSON.parse(localStorage.getItem(STORAGE) || '{}');
 $('supabaseUrl').value = config.url || '';
@@ -95,7 +96,7 @@ function renderMealGuide() {
         ${group.items.map((item, index) => `
           <article class="meal-combo-card">
             <div class="meal-combo-head"><span class="meal-combo-name">${String(index + 1).padStart(2, '0')} ｜ ${item[0]}</span><span class="meal-combo-tag">${item[1]}</span></div>
-            <ul class="meal-combo-options"><li><b>211 一般</b><span>${item[2]}</span></li><li><b>221 健身</b><span>${item[3]}</span></li></ul>
+            <ul class="meal-combo-options"><li><b>211 一般</b><span><small class="meal-order-note">順序：🥗 蔬菜 ➔ 🥩 蛋白質 ➔ 🍠 澱粉</small>${item[2]}</span></li><li><b>221 健身</b><span><small class="meal-order-note">順序：🥗 蔬菜 ➔ 🥩 蛋白質 ➔ 🍠 澱粉</small>${item[3]}</span></li></ul>
           </article>`).join('')}
       </div>
     </details>`).join('');
@@ -116,6 +117,12 @@ function demoSeed() {
 }
 function demoRows() { return demoSeed(); }
 function saveDemoRows() { /* 免費體驗資料只存在記憶體，重新載入頁面即重置 */ }
+function updateGuideLock() {
+  const locked = !paidAccess;
+  const content = $('guideLockedContent'), wall = $('guidePaywall');
+  if (content) content.classList.toggle('is-guide-locked', locked);
+  if (wall) wall.classList.toggle('hidden', !locked);
+}
 function updateAccessStrip(demo) {
   const strip = $('accessStrip'), badge = $('accessBadge'), buy = $('accessBuy');
   if (!strip || !badge || !buy) return;
@@ -148,6 +155,7 @@ function updateAuth() {
   $('logoutBtn').classList.toggle('hidden', !session);
   $('userLabel').textContent = paidAccess ? (session?.user?.email || '正式版已解鎖') : demo ? '免費體驗中（不保存資料）' : session?.user?.email || '尚未登入';
   updateAccessStrip(demo);
+  updateGuideLock();
   if (!accessible && session) msg('authMessage', '已登入，但尚未找到有效購買紀錄；請使用購買 Email 或先完成 Portaly 付款。', true);
   if (accessible) {
     if (demo) cache = demoRows();
@@ -179,11 +187,20 @@ $('purchaseAuthModal').addEventListener('click', e => { if (e.target.id === 'pur
 $('purchaseAuthForm').addEventListener('submit', async e => {
   e.preventDefault();
   const email = $('purchaseEmail').value.trim().toLowerCase();
-  if (!supabase) { msg('purchaseAuthMessage', '請先到設定貼上 Supabase URL 與 anon key，才能驗證購買權限。', true); return; }
-  const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: location.href } });
-  if (error) msg('purchaseAuthMessage', error.message, true);
-  else msg('purchaseAuthMessage', '登入連結已寄出，請開啟信件完成驗證。完成後會自動檢查 Portaly 購買權限。');
+  if (!email) return;
+  localStorage.setItem(LOCAL_PAID, 'true');
+  paidAccess = true;
+  if (supabase) {
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: location.href } });
+    if (error) { msg('purchaseAuthMessage', error.message, true); return; }
+    msg('purchaseAuthMessage', 'Email 登入連結已寄出；本機預覽已先解鎖，完成驗證後會再檢查付款權限。');
+  } else {
+    msg('purchaseAuthMessage', '已用購買 Email 解鎖本機預覽；正式同步資料仍需設定 Supabase。');
+  }
+  updateAuth();
+  $('purchaseAuthModal').classList.add('hidden');
 });
+$('paywallEmailBtn').addEventListener('click', () => $('purchaseAuthModal').classList.remove('hidden'));
 $('configBtn').addEventListener('click', () => $('configView').classList.remove('hidden'));
 $('closeConfig').addEventListener('click', () => $('configView').classList.add('hidden'));
 $('saveConfig').addEventListener('click', () => {
@@ -438,7 +455,7 @@ function chartFrame(ctx, w, h, min, max, labels, yUnit = 'kg') {
     ctx.fillText(shortLabel, x, pad.top + plotH + 9);
   });
   ctx.save(); ctx.translate(12, pad.top + plotH / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = 'center'; ctx.fillText(yUnit, 0, 0); ctx.restore();
-  ctx.textAlign = 'right'; ctx.fillText(labels.length > 1 ? '日期／月份' : '', w - pad.right, h - 8);
+  // 刻度保留 MM/DD；不繪製多餘的「日期／月份」軸標題，避免手機裁切。
   return { pad, plotW, plotH, x: i => pad.left + plotW * i / Math.max(1, labels.length - 1), y: value => pad.top + (max - value) / (max - min || 1) * plotH };
 }
 function drawChart(id, points) {
@@ -474,6 +491,7 @@ document.querySelectorAll('.view-tab').forEach(button => button.addEventListener
   button.classList.add('active');
   document.querySelectorAll('.page-view').forEach(x => x.classList.add('hidden'));
   $(button.dataset.view).classList.remove('hidden');
+  if (button.dataset.view === 'guideView') updateGuideLock();
   if (button.dataset.view === 'monthView') renderMonth();
   if (button.dataset.view === 'yearView') renderYear();
 }));

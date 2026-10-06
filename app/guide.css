@@ -82,3 +82,45 @@ h1,h2,h3{line-height:1.35;letter-spacing:.5px}
   .chart-legend{margin-top:12px!important;margin-bottom:16px!important}
   .acha-quote{align-items:flex-start}
 }
+
+
+/* Final release: paid guide lock, order strip, typography, and chart crop repair */
+html,body,body *{font-family:'Zen Maru Gothic','Noto Sans TC',sans-serif!important;-webkit-font-smoothing:antialiased}
+body{line-height:1.6;color:#2D3A2E}
+input,button,select,textarea{font-family:'Zen Maru Gothic','Noto Sans TC',sans-serif!important}
+h1,h2{color:#2D3A2E;font-weight:900;font-size:22px;line-height:1.35;letter-spacing:.5px}
+h3{color:#2D3A2E;font-weight:900;line-height:1.45}
+.subtle,.source-note,.field-hint,.meal-guide-note{color:#6C756B;line-height:1.6;letter-spacing:.5px}
+.meal-order-strip{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin:0 0 14px;padding:10px 12px;border:1px solid #ead8c5;border-radius:16px;background:#fff8ed;color:#5b7053;font-size:12px;font-weight:900;box-shadow:0 4px 12px rgba(80,60,40,.04)}
+.meal-order-strip b{color:#c77958;font-size:15px}
+.guide-order-strip{margin:0 0 14px}
+.meal-order-note{display:block;margin-bottom:3px;color:#8b765c;font-size:10px;font-weight:800;line-height:1.45}
+.guide-locked-content{transition:filter .2s ease,opacity .2s ease}
+.guide-locked-content.is-guide-locked{filter:blur(6px);opacity:.45;pointer-events:none;user-select:none}
+.guide-paywall{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:18px;background:rgba(36,53,43,.28);backdrop-filter:blur(2px)}
+.guide-paywall.hidden{display:none!important}
+.paywall-card{width:min(470px,100%);padding:26px 22px 22px;border:1px solid #d8e6d7;border-radius:26px;background:linear-gradient(145deg,#fffdf8,#f3f8ef);box-shadow:0 20px 70px rgba(33,57,43,.24);text-align:center}
+.paywall-mark{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 10px;border-radius:20px;background:#e6f2e6;font-size:28px}
+.paywall-card h2{margin:0 0 10px;font-size:21px}
+.paywall-card p{margin:0 0 16px;color:#6C756B;font-size:13px;line-height:1.75;letter-spacing:.35px}
+.paywall-buy,.paywall-email{display:flex;width:100%;min-height:50px;align-items:center;justify-content:center;border-radius:16px;padding:12px 14px;font-family:'Zen Maru Gothic','Noto Sans TC',sans-serif!important;font-size:13px;font-weight:900;line-height:1.45;text-decoration:none;cursor:pointer}
+.paywall-buy{background:#4f8068;color:#fff;border:1px solid #4f8068;box-shadow:0 6px 15px rgba(79,128,104,.22)}
+.paywall-email{margin-top:9px;background:#fff;color:#5b7053;border:1px solid #a9c4ae}
+.paywall-card small{display:block;margin-top:13px;color:#8a9189;font-size:11px}
+.paywall-message{min-height:0!important;margin:9px 0 0!important;font-size:11px!important}
+.chart-card{overflow:visible!important;padding-bottom:35px!important}
+.chart-canvas-wrap{padding-bottom:35px!important;overflow:visible!important;min-height:300px}
+.chart-card canvas{height:260px!important;overflow:visible}
+.chart-legend{margin-top:12px!important;margin-bottom:16px!important;padding-bottom:0!important;line-height:1.7}
+.app-shell{padding-bottom:calc(160px + env(safe-area-inset-bottom))!important}
+.page-view{padding-bottom:160px!important;margin-bottom:env(safe-area-inset-bottom)!important}
+@media(max-width:640px){
+  h1,h2{font-size:22px}
+  .meal-order-strip{justify-content:flex-start;gap:5px;font-size:11px}
+  .meal-order-strip b{font-size:13px}
+  .meal-order-note{font-size:9px}
+  .chart-card{padding-bottom:35px!important}
+  .chart-canvas-wrap{padding-bottom:35px!important;min-height:306px}
+  .chart-legend{margin-top:12px!important;margin-bottom:16px!important}
+  .paywall-card{padding:22px 16px 18px}
+}
