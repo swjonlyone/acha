@@ -51,7 +51,7 @@ body{line-height:1.6;padding-bottom:calc(100px + env(safe-area-inset-bottom))}
 /* Product screenshots: layered phone mockup in Hero and compact proof cards */
 .hero-composite{position:relative;width:min(100%,590px);isolation:isolate}
 .hero-composite .hero-art{width:100%;z-index:1;transform:translateX(-8%)}
-@media(max-width:800px){.hero-composite{width:min(100%,390px)}.hero-composite .hero-art{transform:translateX(-20%)}.hero-phone{right:-1%;top:5%;width:35%;padding:7px 5px 9px;border-width:5px;border-radius:22px}.hero-phone img{border-radius:13px}}
+@media(max-width:800px){.hero-composite{width:min(100%,390px)}.hero-composite .hero-art{transform:translateX(-20%)}}
 
 /* Mobile spacing: keep the Hero illustration and product mockup clear of the header CTA buttons. */
 @media (max-width: 800px){
