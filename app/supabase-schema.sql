@@ -10,6 +10,8 @@ create table if not exists public.daily_logs (
   evening_weight numeric(5,2),
   waist_cm numeric(5,2),
   hip_cm numeric(5,2),
+  body_fat_pct numeric(5,2) check (body_fat_pct between 1 and 70),
+  sleep_hours numeric(4,1) check (sleep_hours between 0 and 24),
   age_years integer check (age_years between 12 and 100),
   height_cm numeric(5,2) check (height_cm between 100 and 230),
   reference_sex text check (reference_sex in ('female', 'male')),
@@ -33,6 +35,8 @@ create table if not exists public.daily_logs (
 
 alter table public.daily_logs add column if not exists plate_pattern text check (plate_pattern in ('211', '221'));
 alter table public.daily_logs add column if not exists hip_cm numeric(5,2);
+alter table public.daily_logs add column if not exists body_fat_pct numeric(5,2);
+alter table public.daily_logs add column if not exists sleep_hours numeric(4,1);
 alter table public.daily_logs add column if not exists age_years integer;
 alter table public.daily_logs add column if not exists height_cm numeric(5,2);
 alter table public.daily_logs add column if not exists reference_sex text;

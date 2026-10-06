@@ -124,3 +124,22 @@ h3{color:#2D3A2E;font-weight:900;line-height:1.45}
   .chart-legend{margin-top:12px!important;margin-bottom:16px!important}
   .paywall-card{padding:22px 16px 18px}
 }
+
+/* Final sweep: landing-page typography, closeable paywall, optional metrics, and insight charts */
+html,body,body *{font-family:'Noto Sans TC',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif!important;color:#4A403A}
+body{line-height:1.6}
+h1,h2,h3{color:#382E2B!important;font-weight:700!important;letter-spacing:.2px}
+.paywall-card{position:relative}
+.paywall-close{position:absolute;top:12px;right:16px;width:34px;height:34px;border:0;border-radius:50%;background:#f5eee7;color:#6f5448;font-size:20px;line-height:1;cursor:pointer}
+.paywall-close:hover{background:#eadbd0}
+.paywall-return{display:block;margin:12px auto 0;border:0;background:transparent;color:#7b665c;text-decoration:underline;font-family:inherit;font-size:12px;cursor:pointer}
+.paywall-return:hover{color:#4f8068}
+.insight-card{margin-top:14px}
+.insight-note{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:#f7f3ec;color:#76645b;font-size:12px;line-height:1.7}
+.legend-dot.sleep{background:#89bad3}
+.chart-canvas-wrap{padding-bottom:35px!important;overflow:visible!important}
+.chart-card{padding-bottom:35px!important;overflow:visible!important}
+.app-shell,.page-view{padding-bottom:calc(160px + env(safe-area-inset-bottom))!important}
+@media(max-width:640px){.paywall-close{top:10px;right:12px}.insight-note{font-size:11px}.chart-canvas-wrap{min-height:320px;padding-bottom:35px!important}}
+/* The hero illustration is intentionally removed; the quote avatar remains. */
+#todayView > .hero > .acha-person{display:none!important}

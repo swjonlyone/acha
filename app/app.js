@@ -111,18 +111,28 @@ function demoSeed() {
   for (let i = 0; i < 14; i++) {
     const d = new Date(base.getTime() - (13 - i) * 86400000).toISOString().slice(0, 10);
     const morning = 62.8 - i * 0.08 + (i % 4) * 0.12;
-    rows.push({ log_date: d, morning_weight: Number(morning.toFixed(1)), evening_weight: Number((morning + 0.65 + (i % 3) * 0.12).toFixed(1)), waist_cm: Number((78 - i * 0.08).toFixed(1)), hip_cm: 98, age_years: 32, height_cm: 162, reference_sex: 'female', plate_pattern: i % 4 === 0 ? '221' : '211', eating_out_count: 2, protein_status: i % 5 === 0 ? '普通' : '足夠', vegetables_status: i % 6 === 0 ? '普通' : '足夠', exercise_minutes: i % 3 === 0 ? 20 : 35, water_ml: Math.round(morning * 40 * (0.8 + (i % 4) * 0.07)), slept_well: i % 4 !== 0, bowel_movement: i % 5 !== 0, meals: { breakfast: { food: '無糖豆漿＋蛋' }, lunch: { food: '雞腿便當，飯半碗' }, dinner: { food: '豆腐蔬菜湯＋地瓜' } }, notes: '示範資料：可自行修改' });
+    rows.push({ log_date: d, morning_weight: Number(morning.toFixed(1)), evening_weight: Number((morning + 0.65 + (i % 3) * 0.12).toFixed(1)), waist_cm: Number((78 - i * 0.08).toFixed(1)), hip_cm: 98, age_years: 32, height_cm: 162, reference_sex: 'female', body_fat_pct: Number((25.8 - i * 0.06 + (i % 3) * 0.08).toFixed(1)), sleep_hours: Number((6.2 + (i % 5) * 0.45).toFixed(1)), plate_pattern: i % 4 === 0 ? '221' : '211', eating_out_count: 2, protein_status: i % 5 === 0 ? '普通' : '足夠', vegetables_status: i % 6 === 0 ? '普通' : '足夠', exercise_minutes: i % 3 === 0 ? 20 : 35, water_ml: Math.round(morning * 40 * (0.8 + (i % 4) * 0.07)), slept_well: i % 4 !== 0, bowel_movement: i % 5 !== 0, meals: { breakfast: { food: '無糖豆漿＋蛋' }, lunch: { food: '雞腿便當，飯半碗' }, dinner: { food: '豆腐蔬菜湯＋地瓜' } }, notes: '示範資料：可自行修改' });
   }
   return rows;
 }
 function demoRows() { return demoSeed(); }
 function saveDemoRows() { /* 免費體驗資料只存在記憶體，重新載入頁面即重置 */ }
-function updateGuideLock() {
+function updateGuideLock(show = false) {
   const locked = !paidAccess;
   const content = $('guideLockedContent'), wall = $('guidePaywall');
-  if (content) content.classList.toggle('is-guide-locked', locked);
-  if (wall) wall.classList.toggle('hidden', !locked);
+  if (content) content.classList.toggle('is-guide-locked', locked && show);
+  if (wall) wall.classList.toggle('hidden', !(locked && show));
 }
+function switchToTodayFromPaywall() {
+  const todayTab = document.querySelector('.view-tab[data-view=\"todayView\"]');
+  document.querySelectorAll('.view-tab').forEach(x => x.classList.remove('active'));
+  todayTab?.classList.add('active');
+  document.querySelectorAll('.page-view').forEach(x => x.classList.add('hidden'));
+  $('todayView')?.classList.remove('hidden');
+  updateGuideLock(false);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function closeGuidePaywall() { switchToTodayFromPaywall(); }
 function updateAccessStrip(demo) {
   const strip = $('accessStrip'), badge = $('accessBadge'), buy = $('accessBuy');
   if (!strip || !badge || !buy) return;
@@ -155,7 +165,7 @@ function updateAuth() {
   $('logoutBtn').classList.toggle('hidden', !session);
   $('userLabel').textContent = paidAccess ? (session?.user?.email || '正式版已解鎖') : demo ? '免費體驗中（不保存資料）' : session?.user?.email || '尚未登入';
   updateAccessStrip(demo);
-  updateGuideLock();
+  updateGuideLock(false);
   if (!accessible && session) msg('authMessage', '已登入，但尚未找到有效購買紀錄；請使用購買 Email 或先完成 Portaly 付款。', true);
   if (accessible) {
     if (demo) cache = demoRows();
@@ -201,6 +211,9 @@ $('purchaseAuthForm').addEventListener('submit', async e => {
   $('purchaseAuthModal').classList.add('hidden');
 });
 $('paywallEmailBtn').addEventListener('click', () => $('purchaseAuthModal').classList.remove('hidden'));
+$('closeGuidePaywall')?.addEventListener('click', closeGuidePaywall);
+$('returnTodayFromPaywall')?.addEventListener('click', closeGuidePaywall);
+$('guidePaywall')?.addEventListener('click', e => { if (e.target.id === 'guidePaywall') closeGuidePaywall(); });
 $('configBtn').addEventListener('click', () => $('configView').classList.remove('hidden'));
 $('closeConfig').addEventListener('click', () => $('configView').classList.add('hidden'));
 $('saveConfig').addEventListener('click', () => {
@@ -214,7 +227,7 @@ $('saveConfig').addEventListener('click', () => {
 });
 
 const ids = [
-  'morningWeight', 'eveningWeight', 'waistCm', 'hipCm', 'ageYears', 'heightCm', 'referenceSex', 'mood',
+  'morningWeight', 'eveningWeight', 'waistCm', 'hipCm', 'bodyFatPct', 'sleepHours', 'ageYears', 'heightCm', 'referenceSex', 'mood',
   'breakfastType', 'breakfastDrink', 'breakfastFood', 'breakfastNote', 'lunchType', 'lunchDrink', 'lunchFood', 'lunchNote',
   'dinnerType', 'dinnerDrink', 'dinnerFood', 'dinnerNote', 'platePattern', 'eatingOutCount', 'proteinStatus', 'vegetablesStatus',
   'exercise', 'exerciseMinutes', 'waterMl', 'drinks', 'sleptWell', 'bowelMovement', 'notes'
@@ -237,6 +250,8 @@ function formData() {
     evening_weight: val('eveningWeight') ? Number(val('eveningWeight')) : null,
     waist_cm: val('waistCm') ? Number(val('waistCm')) : null,
     hip_cm: val('hipCm') ? Number(val('hipCm')) : null,
+    body_fat_pct: val('bodyFatPct') ? Number(val('bodyFatPct')) : null,
+    sleep_hours: val('sleepHours') ? Number(val('sleepHours')) : null,
     age_years: val('ageYears') ? Number(val('ageYears')) : null,
     height_cm: val('heightCm') ? Number(val('heightCm')) : null,
     reference_sex: val('referenceSex'),
@@ -261,7 +276,7 @@ function formData() {
 }
 function fill(d) {
   const map = {
-    morningWeight: d?.morning_weight ?? '', eveningWeight: d?.evening_weight ?? '', waistCm: d?.waist_cm ?? '', hipCm: d?.hip_cm ?? '',
+    morningWeight: d?.morning_weight ?? '', eveningWeight: d?.evening_weight ?? '', waistCm: d?.waist_cm ?? '', hipCm: d?.hip_cm ?? '', bodyFatPct: d?.body_fat_pct ?? '', sleepHours: d?.sleep_hours ?? '',
     ageYears: d?.age_years ?? '', heightCm: d?.height_cm ?? '', referenceSex: d?.reference_sex ?? '', mood: d?.mood ?? '',
     platePattern: d?.plate_pattern ?? '', eatingOutCount: d?.eating_out_count ?? 0, proteinStatus: d?.protein_status ?? '',
     vegetablesStatus: d?.vegetables_status ?? '', drinks: d?.drinks ?? '', exercise: d?.exercise ?? '沒有運動',
@@ -413,8 +428,11 @@ function renderMonth() {
   $('monthHabits').innerHTML = habitHTML(s);
   $('monthCount').textContent = `6 項習慣綜合 ${s.habit}%`;
   $('monthList').innerHTML = rows.length ? rows.slice().reverse().map(dailySummaryHTML).join('') : '<p class="subtle">這個月還沒有記錄。</p>';
-  drawChart('monthChart', rows.map(x => [x.log_date, num(x.morning_weight)]).filter(x => x[1] !== null));
+  drawChart('monthChart', rows.map(x => [x.log_date, num(x.morning_weight)]).filter(x => x[1] !== null), 'kg');
   drawDualChart('monthBalanceChart', rows.map(x => [x.log_date, dayIncrease(x), overnightDrop(x)]));
+  drawSleepWeightChart('monthSleepWeightChart', rows.map(x => [x.log_date, num(x.morning_weight), num(x.sleep_hours)]).filter(x => x[1] !== null || x[2] !== null));
+  drawChart('monthWhrChart', rows.map(x => [x.log_date, waistHip(x)]).filter(x => x[1] !== null), 'WHR');
+  drawChart('monthBodyFatChart', rows.map(x => [x.log_date, num(x.body_fat_pct)]).filter(x => x[1] !== null), '%');
 }
 function renderYear() {
   const y = String($('yearPicker').value || new Date().getFullYear()), rows = cache.filter(x => x.log_date.startsWith(y)), s = stats(rows);
@@ -458,17 +476,34 @@ function chartFrame(ctx, w, h, min, max, labels, yUnit = 'kg') {
   // 刻度保留 MM/DD；不繪製多餘的「日期／月份」軸標題，避免手機裁切。
   return { pad, plotW, plotH, x: i => pad.left + plotW * i / Math.max(1, labels.length - 1), y: value => pad.top + (max - value) / (max - min || 1) * plotH };
 }
-function drawChart(id, points) {
+function drawChart(id, points, yUnit = 'kg') {
   const canvas = $(id); if (!canvas) return;
   const dpr = devicePixelRatio || 1, w = canvas.clientWidth || 600, h = 260;
   canvas.width = w * dpr; canvas.height = h * dpr;
   const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr); ctx.clearRect(0, 0, w, h);
   if (!points.length) { ctx.fillStyle = '#748680'; ctx.font = '14px sans-serif'; ctx.fillText('有記錄後會顯示趨勢圖', 52, 120); return; }
   const values = points.map(x => x[1]), min = Math.min(...values) - .5, max = Math.max(...values) + .5;
-  const frame = chartFrame(ctx, w, h, min, max, points.map(x => x[0]), 'kg');
+  const frame = chartFrame(ctx, w, h, min, max, points.map(x => x[0]), yUnit);
   ctx.strokeStyle = '#d87550'; ctx.lineWidth = 3; ctx.beginPath();
   points.forEach((p, i) => { const x = frame.x(i), y = frame.y(p[1]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke();
   ctx.fillStyle = '#193d37'; points.forEach((p, i) => { const x = frame.x(i), y = frame.y(p[1]); ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill(); });
+}
+function drawSleepWeightChart(id, points) {
+  const canvas = $(id); if (!canvas) return;
+  const dpr = devicePixelRatio || 1, w = canvas.clientWidth || 600, h = 280;
+  canvas.width = w * dpr; canvas.height = h * dpr;
+  const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr); ctx.clearRect(0, 0, w, h);
+  const valid = points.filter(x => x[1] !== null || x[2] !== null);
+  if (!valid.length) { ctx.fillStyle = '#748680'; ctx.font = '14px sans-serif'; ctx.fillText('有記錄後會顯示體重與睡眠趨勢', 52, 120); return; }
+  const weights = valid.map(x => x[1]).filter(v => v !== null), min = (weights.length ? Math.min(...weights) : 60) - .5, max = (weights.length ? Math.max(...weights) : 70) + .5;
+  const frame = chartFrame(ctx, w, h, min, max, valid.map(x => x[0]), 'kg');
+  const sleepMax = 10, sleepMin = 0;
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.font = '11px sans-serif'; ctx.fillStyle = '#83a6ba';
+  [0, 5, 10].forEach(v => ctx.fillText(String(v), w - 30, frame.pad.top + (sleepMax - v) / sleepMax * frame.plotH));
+  valid.forEach((p, i) => { if (p[2] === null) return; const x = frame.x(i), barH = (p[2] - sleepMin) / sleepMax * frame.plotH; ctx.fillStyle = 'rgba(137,186,211,.42)'; ctx.fillRect(x - 10, frame.pad.top + frame.plotH - barH, 20, barH); });
+  ctx.strokeStyle = '#d87550'; ctx.lineWidth = 3; ctx.beginPath(); let started = false;
+  valid.forEach((p, i) => { if (p[1] === null) return; const x = frame.x(i), y = frame.y(p[1]); started ? ctx.lineTo(x, y) : ctx.moveTo(x, y); started = true; }); ctx.stroke();
+  ctx.fillStyle = '#193d37'; valid.forEach((p, i) => { if (p[1] === null) return; const x = frame.x(i), y = frame.y(p[1]); ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill(); });
 }
 function drawDualChart(id, points) {
   const canvas = $(id); if (!canvas) return;
@@ -491,7 +526,8 @@ document.querySelectorAll('.view-tab').forEach(button => button.addEventListener
   button.classList.add('active');
   document.querySelectorAll('.page-view').forEach(x => x.classList.add('hidden'));
   $(button.dataset.view).classList.remove('hidden');
-  if (button.dataset.view === 'guideView') updateGuideLock();
+  if (button.dataset.view === 'guideView') updateGuideLock(true);
+  else updateGuideLock(false);
   if (button.dataset.view === 'monthView') renderMonth();
   if (button.dataset.view === 'yearView') renderYear();
 }));
