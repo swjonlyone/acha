@@ -270,12 +270,35 @@ $('logDate').value = today();
 $('logDate').addEventListener('change', () => loadLog($('logDate').value));
 ids.forEach(id => { const el = $(id); if (el) el.addEventListener('input', () => { updateProgress(); updateWaterHint(); }); });
 
+function companionStats(rows = cache) {
+  const dates = new Set(rows.map(row => row.log_date).filter(Boolean));
+  const todayDate = today();
+  let cursor = todayDate, streak = 0;
+  while (dates.has(cursor)) {
+    streak += 1;
+    const previous = new Date(`${cursor}T12:00:00`);
+    previous.setDate(previous.getDate() - 1);
+    cursor = previous.toISOString().slice(0, 10);
+  }
+  const recorded = rows.filter(row => row.log_date && row.log_date <= todayDate).length;
+  return { streak, recorded: Math.min(365, recorded) };
+}
+function updateCompanionStats() {
+  const { streak, recorded } = companionStats();
+  const streakBadge = $('streakBadge'), planCount = $('planCount');
+  if (streakBadge) streakBadge.textContent = `🔥 連續打卡：第 ${streak || 0} 天`;
+  if (planCount) planCount.textContent = `🍵 365 陪伴計畫：第 ${recorded || 0} / 365 天`;
+}
+
 function updateProgress() {
   const x = formData();
   const done = [x.morning_weight, x.evening_weight, x.waist_cm, x.meals.breakfast.food, x.meals.lunch.food, x.meals.dinner.food, x.plate_pattern, x.protein_status, x.vegetables_status, x.exercise_minutes, x.water_ml, x.drinks, x.mood, x.notes].filter(v => v !== null && v !== undefined && v !== '' && v !== 0).length + [x.slept_well, x.bowel_movement].filter(Boolean).length;
   const pct = Math.round(done / 17 * 100);
   $('progressValue').textContent = `${Math.min(100, pct)}%`;
   $('progressBar').style.width = `${Math.min(100, pct)}%`;
+  const bubble = $('celebrationBubble');
+  if (bubble) bubble.classList.toggle('hidden', pct < 100);
+  updateCompanionStats();
 }
 $('logForm').addEventListener('submit', async e => {
   e.preventDefault();
@@ -420,7 +443,7 @@ function chartFrame(ctx, w, h, min, max, labels, yUnit = 'kg') {
 }
 function drawChart(id, points) {
   const canvas = $(id); if (!canvas) return;
-  const dpr = devicePixelRatio || 1, w = canvas.clientWidth || 600, h = 230;
+  const dpr = devicePixelRatio || 1, w = canvas.clientWidth || 600, h = 260;
   canvas.width = w * dpr; canvas.height = h * dpr;
   const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr); ctx.clearRect(0, 0, w, h);
   if (!points.length) { ctx.fillStyle = '#748680'; ctx.font = '14px sans-serif'; ctx.fillText('有記錄後會顯示趨勢圖', 52, 120); return; }
@@ -433,7 +456,7 @@ function drawChart(id, points) {
 function drawDualChart(id, points) {
   const canvas = $(id); if (!canvas) return;
   const valid = points.filter(x => x[1] !== null || x[2] !== null);
-  const dpr = devicePixelRatio || 1, w = canvas.clientWidth || 600, h = 230;
+  const dpr = devicePixelRatio || 1, w = canvas.clientWidth || 600, h = 260;
   canvas.width = w * dpr; canvas.height = h * dpr;
   const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr); ctx.clearRect(0, 0, w, h);
   if (!valid.length) { ctx.fillStyle = '#748680'; ctx.font = '14px sans-serif'; ctx.fillText('同日有早晚體重後會顯示日夜比較', 52, 120); return; }
@@ -466,4 +489,4 @@ async function loadAll() {
 updateAuth();
 
 
-// Notion-style eating-out combinations: each item keeps the 211 / 221 choice together.
+// Collapsible eating-out combinations with paired 211 / 221 choices.
