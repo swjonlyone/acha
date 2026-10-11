@@ -105,6 +105,10 @@ function renderMealGuide() {
 renderMealGuide();
 
 function isDemo() { return new URLSearchParams(location.search).has('demo'); }
+function isGuideShowcase() {
+  const params = new URLSearchParams(location.search);
+  return isDemo() && (params.get('showcase') === 'guide' || params.get('view') === 'guide');
+}
 function demoSeed() {
   const base = new Date();
   const rows = [];
@@ -118,7 +122,7 @@ function demoSeed() {
 function demoRows() { return demoSeed(); }
 function saveDemoRows() { /* 免費體驗資料只存在記憶體，重新載入頁面即重置 */ }
 function updateGuideLock(show = false) {
-  const locked = !paidAccess;
+  const locked = !paidAccess && !isGuideShowcase();
   const content = $('guideLockedContent'), wall = $('guidePaywall');
   if (content) content.classList.toggle('is-guide-locked', locked && show);
   if (wall) wall.classList.toggle('hidden', !(locked && show));
@@ -140,6 +144,9 @@ function updateAccessStrip(demo) {
   if (paidAccess) {
     badge.textContent = `正式版已解鎖 ｜ ${session?.user?.email || '已驗證購買者'}`;
     buy.hidden = true;
+  } else if (isGuideShowcase()) {
+    badge.textContent = '外食建議展示模式 ｜ 僅供截圖參考';
+    buy.hidden = false;
   } else if (demo) {
     badge.textContent = '免費體驗中 ｜ 換頁將重置資料';
     buy.hidden = false;
@@ -542,5 +549,10 @@ async function loadAll() {
 }
 updateAuth();
 
+// 展示網址：自動開啟外食建議，方便作業截圖與引流貼文展示。
+if (isGuideShowcase()) {
+  const guideTab = document.querySelector('.view-tab[data-view=\"guideView\"]');
+  guideTab?.click();
+}
 
 // Collapsible eating-out combinations with paired 211 / 221 choices.
