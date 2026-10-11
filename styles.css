@@ -61,5 +61,3 @@ body{line-height:1.6;padding-bottom:calc(100px + env(safe-area-inset-bottom))}
 @media (max-width: 800px){
   .hero-art-wrap{margin-top:64px;}
 }
-
-.tool-card-formula ul{margin:12px 0 0;padding:0;list-style:none;text-align:left;font-size:13px;line-height:1.7;color:#766f68}.tool-card-formula li+li{margin-top:4px}.tool-card-formula li b{color:#6f4939}
