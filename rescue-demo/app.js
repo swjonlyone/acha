@@ -450,8 +450,16 @@ function renderYear() {
     return `<div class="month-row"><div class="log-summary"><strong>${i + 1} 月</strong><span>${z.days} 天　平均 ${format(z.avgWeight)} kg　腰臀比 ${format(z.avgWaistHip, 2)}　日內 +${format(z.avgDayIncrease)} kg　夜間回落 ${format(z.avgOvernightDrop)} kg</span></div></div>`;
   }).join('');
   $('yearList').innerHTML = months;
-  drawChart('yearChart', Array.from({ length: 12 }, (_, i) => { const r = monthRows(`${y}-${String(i + 1).padStart(2, '0')}`); return [String(i + 1), avg(r.map(x => num(x.morning_weight)).filter(v => v !== null))]; }).filter(x => x[1] !== null));
-  drawDualChart('yearBalanceChart', Array.from({ length: 12 }, (_, i) => { const r = monthRows(`${y}-${String(i + 1).padStart(2, '0')}`), z = stats(r); return [String(i + 1), z.avgDayIncrease, z.avgOvernightDrop]; }));
+  const monthlyPoints = Array.from({ length: 12 }, (_, i) => {
+    const r = monthRows(`${y}-${String(i + 1).padStart(2, '0')}`);
+    const z = stats(r);
+    return { label: String(i + 1), rows: r, stats: z };
+  });
+  drawChart('yearChart', monthlyPoints.map(x => [x.label, x.stats.avgWeight]).filter(x => x[1] !== null));
+  drawDualChart('yearBalanceChart', monthlyPoints.map(x => [x.label, x.stats.avgDayIncrease, x.stats.avgOvernightDrop]));
+  drawSleepWeightChart('yearSleepWeightChart', monthlyPoints.map(x => [x.label, x.stats.avgWeight, avg(x.rows.map(r => num(r.sleep_hours)).filter(v => v !== null))]).filter(x => x[1] !== null || x[2] !== null));
+  drawChart('yearWhrChart', monthlyPoints.map(x => [x.label, x.stats.avgWaistHip]).filter(x => x[1] !== null), 'WHR');
+  drawChart('yearBodyFatChart', monthlyPoints.map(x => [x.label, avg(x.rows.map(r => num(r.body_fat_pct)).filter(v => v !== null))]).filter(x => x[1] !== null), '%');
 }
 function selectedMonth() { return $('monthPicker').value || today().slice(0, 7); }
 function monthRows(month) { return sortRows(cache.filter(x => x.log_date.startsWith(month))); }
