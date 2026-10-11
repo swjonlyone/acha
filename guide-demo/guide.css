@@ -143,3 +143,11 @@ h1,h2,h3{color:#382E2B!important;font-weight:700!important;letter-spacing:.2px}
 @media(max-width:640px){.paywall-close{top:10px;right:12px}.insight-note{font-size:11px}.chart-canvas-wrap{min-height:320px;padding-bottom:35px!important}}
 /* The hero illustration is intentionally removed; the quote avatar remains. */
 #todayView > .hero > .acha-person{display:none!important}
+
+/* Concrete outdoor-eating rescue formulas */
+.emergency-guide{margin-top:14px}
+.emergency-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.emergency-grid article{padding:12px;border:1px solid #eadfd3;border-radius:14px;background:#fffaf5}
+.emergency-grid b{display:block;color:#5b7053;font-size:13px;margin-bottom:5px}
+.emergency-grid p{margin:0;color:#6c756b;font-size:12px;line-height:1.65}
+@media(max-width:640px){.emergency-grid{grid-template-columns:1fr}.emergency-grid article{padding:11px 12px}}
