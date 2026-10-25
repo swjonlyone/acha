@@ -172,6 +172,7 @@ function updateAuth() {
   $('logoutBtn').classList.toggle('hidden', !session);
   $('userLabel').textContent = paidAccess ? (session?.user?.email || '正式版已解鎖') : demo ? '免費體驗中（不保存資料）' : session?.user?.email || '尚未登入';
   updateAccessStrip(demo);
+  document.documentElement.classList.toggle('is-free-trial', demo);
   updateGuideLock(false);
   if (!accessible && session) msg('authMessage', '已登入，但尚未找到有效購買紀錄；請使用購買 Email 或先完成 Portaly 付款。', true);
   if (accessible) {
@@ -339,6 +340,8 @@ function updateProgress() {
   if (bubble) bubble.classList.toggle('hidden', pct < 100);
   updateCompanionStats();
 }
+const bodyDataDetails = $('bodyDataDetails');
+bodyDataDetails?.addEventListener('invalid', () => { bodyDataDetails.open = true; }, true);
 $('logForm').addEventListener('submit', async e => {
   e.preventDefault();
   const payload = formData();

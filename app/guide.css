@@ -201,3 +201,23 @@ h1,h2,h3{color:#382E2B!important;font-weight:700!important;letter-spacing:.2px}
   .hero h1,.page-title h1{font-size:42px!important}
   .section-head h2{font-size:23px!important}
 }
+
+/* Free-trial first screen: meals first, body data optional, no coach progress card */
+html.is-free-trial #companionProgress{display:none!important}
+html:not(.is-free-trial) .demo-hint{display:none!important}
+.body-data.form-card{padding:0!important}
+.body-data-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0;padding:16px 18px;min-height:52px;list-style:none;cursor:pointer;color:inherit;font-size:inherit}
+.body-data-summary::-webkit-details-marker{display:none}
+.body-data-summary::marker{content:''}
+.body-data-summary:focus{outline:none}
+.body-data-summary:focus-visible{outline:3px solid rgba(216,117,80,.55);outline-offset:-3px;border-radius:18px}
+.body-data-summary .section-head{flex:1;min-width:0;margin:0!important}
+.body-data-summary h2{margin:0}
+.body-data-chevron{flex:0 0 auto;color:#c77958;font-size:22px;line-height:1;transition:transform .2s ease}
+.body-data[open] .body-data-chevron{transform:rotate(180deg)}
+.body-data[open]>.body-data-summary{border-bottom:1px solid var(--line)}
+.body-data-panel{padding:14px 18px 16px}
+@media(max-width:640px){
+  .body-data-summary{padding:16px}
+  .body-data-panel{padding:14px 16px 16px}
+}
