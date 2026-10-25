@@ -116,6 +116,7 @@ function renderMealGuide() {
 renderMealGuide();
 
 function isDemo() { return new URLSearchParams(location.search).has('demo'); }
+function isUnlockEntry() { return new URLSearchParams(location.search).get('unlock') === '1'; }
 function isGuideShowcase() {
   const params = new URLSearchParams(location.search);
   return isDemo() && (params.get('showcase') === 'guide' || params.get('view') === 'guide');
@@ -159,10 +160,10 @@ function updateAccessStrip(demo) {
     badge.textContent = '外食建議展示模式 ｜ 僅供截圖參考';
     buy.hidden = false;
   } else if (demo) {
-    badge.textContent = '免費體驗中 ｜ 換頁將重置資料';
+    badge.textContent = '免費體驗 ｜ 先記一餐，換頁會重置';
     buy.hidden = false;
   } else {
-    badge.textContent = '尚未解鎖 ｜ 請使用購買 Email 登入';
+    badge.textContent = '還沒開通 ｜ 去 Portaly 買，買完加 LINE 領';
     buy.hidden = false;
   }
 }
@@ -183,9 +184,14 @@ async function verifyPurchaseAccess() {
   if (!error && data === true) {
     grantPaidUnlock();
     localStorage.setItem(ACCESS_STORAGE, session.user.email || '');
+    $('purchaseAuthModal')?.classList.add('hidden');
   } else {
     clearPaidUnlock();
-    msg('purchaseAuthMessage', error ? '付款權限驗證尚未完成，請確認 Supabase 權限表與 Webhook 設定。' : '找不到這個 Email 的有效購買紀錄，請使用付款時的相同 Email。', true);
+    const text = error
+      ? '還沒確認到開通。去 Portaly 看訂單，或加 LINE 跟阿茶說一聲。'
+      : '這個 Email 還沒有開通紀錄。去 Portaly 買，或加 LINE 跟阿茶領取。';
+    msg('purchaseAuthMessage', text, true);
+    if (isUnlockEntry()) $('purchaseAuthModal')?.classList.remove('hidden');
   }
   updateAuth();
   return paidAccess;
@@ -196,11 +202,12 @@ function updateAuth() {
   $('authView').classList.toggle('hidden', accessible);
   $('mainView').classList.toggle('hidden', !accessible);
   $('logoutBtn').classList.toggle('hidden', !session);
-  $('userLabel').textContent = paidAccess ? (session?.user?.email || '正式版已解鎖') : demo ? '免費體驗中（不保存資料）' : session?.user?.email || '尚未登入';
+  $('userLabel').textContent = paidAccess ? (session?.user?.email || '正式版已解鎖') : demo ? '免費體驗，先記一餐' : session?.user?.email || '還沒開通';
   updateAccessStrip(demo);
   document.documentElement.classList.toggle('is-free-trial', demo);
   updateGuideLock(false);
-  if (!accessible && session) msg('authMessage', '已登入，但尚未找到有效購買紀錄；請使用購買 Email 或先完成 Portaly 付款。', true);
+  syncUnlockEntry();
+  if (!accessible && session) msg('authMessage', '這個帳號還沒開通。去 Portaly 買，或加 LINE 跟阿茶領取。填 Email 不會直接開通。', true);
   if (accessible) {
     if (demo) cache = demoRows();
     renderMonth(); renderYear();
@@ -230,8 +237,8 @@ $('logoutBtn').addEventListener('click', async () => {
   updateAuth();
 });
 $('demoBtn').addEventListener('click', () => { const u = new URL(location.href); u.searchParams.set('demo', '1'); location.href = u.toString(); });
-// B is temporary until A is proven: unlock only after a Supabase session and has_active_acha_entitlement().
-// Hide purchase-email entry points; keep #purchaseAuthModal so the form can be re-enabled later.
+// Big purchase-email buttons stay hidden. A quiet OTP entry exists only at ?unlock=1
+// for people who already have an active entitlement. Submitting the email never writes acha_paid.
 function hidePurchaseEmailEntry() {
   ['purchaseLoginBtn', 'paywallEmailBtn'].forEach(id => {
     const el = $(id);
@@ -241,28 +248,49 @@ function hidePurchaseEmailEntry() {
     el.classList.add('hidden');
   });
 }
+function openPurchaseEmailLogin() {
+  $('purchaseAuthModal')?.classList.remove('hidden');
+  $('purchaseEmail')?.focus();
+}
+function syncUnlockEntry() {
+  const show = isUnlockEntry() && !paidAccess;
+  ['unlockEmailLink', 'paywallUnlockLink'].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.hidden = !show;
+    el.disabled = !show;
+    el.classList.toggle('hidden', !show);
+  });
+}
 hidePurchaseEmailEntry();
-$('purchaseLoginBtn').addEventListener('click', () => $('purchaseAuthModal').classList.remove('hidden'));
+syncUnlockEntry();
+$('unlockEmailLink')?.addEventListener('click', openPurchaseEmailLogin);
+$('paywallUnlockLink')?.addEventListener('click', openPurchaseEmailLogin);
+if (isUnlockEntry()) openPurchaseEmailLogin();
+$('purchaseLoginBtn').addEventListener('click', openPurchaseEmailLogin);
 $('closePurchaseAuth').addEventListener('click', () => $('purchaseAuthModal').classList.add('hidden'));
 $('purchaseAuthModal').addEventListener('click', e => { if (e.target.id === 'purchaseAuthModal') e.currentTarget.classList.add('hidden'); });
 $('purchaseAuthForm').addEventListener('submit', async e => {
   e.preventDefault();
   const email = $('purchaseEmail').value.trim().toLowerCase();
   if (!email) return;
-  if (!paidAccess) clearPaidUnlock();
+  clearPaidUnlock();
   if (!supabase) {
-    msg('purchaseAuthMessage', '請先到設定貼上 Supabase URL 與 anon key，才能寄送登入連結。只輸入 Email 不會解鎖。', true);
+    msg('purchaseAuthMessage', '登入連結還沒寄出。只填 Email 不會開通。去 Portaly 買，或加 LINE 跟阿茶領取。', true);
     return;
   }
-  const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: location.href } });
+  const redirect = new URL(location.href);
+  redirect.hash = '';
+  if (isUnlockEntry()) redirect.searchParams.set('unlock', '1');
+  const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: redirect.toString() } });
   if (error) {
-    if (!paidAccess) clearPaidUnlock();
-    msg('purchaseAuthMessage', error.message, true);
+    clearPaidUnlock();
+    msg('purchaseAuthMessage', `${error.message} 只填 Email 不會開通。去 Portaly 買，或加 LINE 跟阿茶領取。`, true);
     return;
   }
-  msg('purchaseAuthMessage', 'Email 登入連結已寄出。請點擊信中的連結完成登入，系統確認付款權限後才會解鎖。');
+  msg('purchaseAuthMessage', '登入連結已寄出。點開信裡的連結，確認有開通紀錄後才會打開。');
 });
-$('paywallEmailBtn').addEventListener('click', () => $('purchaseAuthModal').classList.remove('hidden'));
+$('paywallEmailBtn').addEventListener('click', openPurchaseEmailLogin);
 $('closeGuidePaywall')?.addEventListener('click', closeGuidePaywall);
 $('returnTodayFromPaywall')?.addEventListener('click', closeGuidePaywall);
 $('guidePaywall')?.addEventListener('click', e => { if (e.target.id === 'guidePaywall') closeGuidePaywall(); });

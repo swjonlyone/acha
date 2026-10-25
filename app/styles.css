@@ -10,7 +10,12 @@ h1,h2,h3,p,label,input,select,textarea,button,.brand,.subtle,.view-tab,.stat,.ch
 .login-btn:hover{background:#fbe8dc;transform:translateY(-1px)}
 .access-strip{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 14px;background:#fff8ee;border-bottom:1px solid #f0e4d5;font-size:12px;color:#8d6049}
 .access-strip a{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;background:#704331;color:#fff;font-weight:800}
+.access-strip a.access-line{background:#fff;color:#5b7053;border:1px solid #a9c4ae}
+.unlock-email-link,.paywall-unlock{border:0;background:transparent;padding:0;color:#8d6049;font:inherit;font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.paywall-unlock{display:inline-block;margin-top:10px}
 .access-strip.is-paid{background:#edf7f0;color:#285c4c}.access-strip.is-paid a{display:none}
+.auth-paths{display:grid;gap:8px;margin:16px 0 4px}
+.auth-path{display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none}
 .chart-canvas-wrap{padding-bottom:24px;overflow:hidden}.chart-card canvas{height:230px}
 .chart-legend{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;color:#777;font-size:11px;padding:0 4px 2px}.chart-legend span{display:inline-flex;align-items:center;gap:5px}.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%}.legend-dot.day{background:#d87550}.legend-dot.night{background:#6d9d8b}
 .guide-list{display:grid;gap:8px}.guide-list>div{display:grid;gap:3px;margin-bottom:0;padding:8px 12px;background:#f8f6f0;border-radius:12px}.guide-list>div strong{font-size:13px;color:var(--ink2)}.guide-list>div span{font-size:12px;line-height:1.55;color:#777}

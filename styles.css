@@ -83,3 +83,30 @@ body{line-height:1.6;padding-bottom:calc(100px + env(safe-area-inset-bottom))}
 .tool-card{position:relative}.tool-number{position:absolute;top:20px;right:22px;color:#b87955;font-family:Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.08em}
 .offer-price del{display:block;text-decoration:none;color:#f7dbc5;font-size:13px}.offer-price strong{display:block}
 @media(max-width:800px){.conversion-intro{padding:58px 0}.conversion-intro-grid{grid-template-columns:1fr;gap:18px}.conversion-intro h2{font-size:32px}.conversion-intro-copy{font-size:16px}.conversion-pills span{font-size:12px}.creator-proof{margin-top:12px}.hero-feature-grid article{min-height:64px}}
+
+/* Meal-first hero: demo CTA, already-bought note, and a light meal card in the phone */
+.hero-cta .hero-demo{display:inline-flex;margin-top:8px;background:#fff;border:1px solid var(--line);color:var(--dark);font-weight:700}
+.hero-cta .hero-demo:hover{background:#fff1df;border-color:var(--tea)}
+.hero-bought{margin:12px 0 0;max-width:460px;color:#8d6049;font-size:13px;line-height:1.6}
+.offer-price del{color:#8d6049}
+.hero-bought a{font-weight:800;text-decoration:underline;text-underline-offset:3px}
+.phone-meal{display:flex;flex-direction:column;gap:0;min-height:250px;padding:18px 10px 12px;border-radius:16px;background:#f7f1ea;color:#5c463c}
+.phone-kicker{margin:0 0 4px;color:#a07868;font-size:9px;font-weight:700;letter-spacing:.04em}
+.phone-meal strong{display:block;color:#704331;font-size:15px;font-weight:800;line-height:1.25}
+.phone-hint{display:inline-block;width:max-content;max-width:100%;margin:7px 0 8px;padding:3px 7px;border-radius:8px;background:#f4ece3;color:#7a6556;font-size:9px;font-weight:700}
+.phone-meal-row{display:flex;flex-direction:column;gap:1px;margin-top:6px;padding:6px 7px;border:1px solid #f0e4d6;border-radius:9px;background:#fffdfb}
+.phone-meal-row b{color:#8a5a44;font-size:9px;font-weight:800}
+.phone-meal-row span{color:#6f5c52;font-size:10px;line-height:1.35}
+.phone-meal-row.is-later{background:transparent;border-style:dashed}
+.phone-meal-row.is-later b,.phone-meal-row.is-later span{color:#a8988c}
+.phone-later{display:block;margin-top:8px;color:#a8988c;font-size:9px;font-style:normal}
+.hero-phone{width:42%;background:#3a2a24}
+@media(max-width:800px){
+  .hero-cta .hero-demo{width:100%;justify-content:center}
+  .hero-bought{font-size:12px}
+  .hero-phone{width:48%}
+  .phone-meal{min-height:0;padding:14px 8px 10px}
+  .phone-meal strong{font-size:13px}
+  .phone-kicker,.phone-hint,.phone-meal-row b,.phone-later{font-size:8px}
+  .phone-meal-row span{font-size:9px}
+}

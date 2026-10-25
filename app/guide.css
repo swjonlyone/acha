@@ -103,9 +103,9 @@ h3{color:#2D3A2E;font-weight:900;line-height:1.45}
 .paywall-mark{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 10px;border-radius:20px;background:#e6f2e6;font-size:28px}
 .paywall-card h2{margin:0 0 10px;font-size:21px}
 .paywall-card p{margin:0 0 16px;color:#6C756B;font-size:13px;line-height:1.75;letter-spacing:.35px}
-.paywall-buy,.paywall-email{display:flex;width:100%;min-height:50px;align-items:center;justify-content:center;border-radius:16px;padding:12px 14px;font-family:'Zen Maru Gothic','Noto Sans TC',sans-serif!important;font-size:13px;font-weight:900;line-height:1.45;text-decoration:none;cursor:pointer}
+.paywall-buy,.paywall-email,.paywall-line{display:flex;width:100%;min-height:50px;align-items:center;justify-content:center;border-radius:16px;padding:12px 14px;font-family:'Zen Maru Gothic','Noto Sans TC',sans-serif!important;font-size:13px;font-weight:900;line-height:1.45;text-decoration:none;cursor:pointer}
 .paywall-buy{background:#4f8068;color:#fff;border:1px solid #4f8068;box-shadow:0 6px 15px rgba(79,128,104,.22)}
-.paywall-email{margin-top:9px;background:#fff;color:#5b7053;border:1px solid #a9c4ae}
+.paywall-email,.paywall-line{margin-top:9px;background:#fff;color:#5b7053;border:1px solid #a9c4ae}
 .paywall-card small{display:block;margin-top:13px;color:#8a9189;font-size:11px}
 .paywall-message{min-height:0!important;margin:9px 0 0!important;font-size:11px!important}
 .chart-card{overflow:visible!important;padding-bottom:35px!important}
