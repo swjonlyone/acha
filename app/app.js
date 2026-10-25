@@ -8,7 +8,18 @@ const LOCAL_PAID = 'acha_paid';
 let supabase = null;
 let session = null;
 let cache = [];
-let paidAccess = localStorage.getItem(LOCAL_PAID) === 'true';
+let paidAccess = false;
+
+function clearPaidUnlock() {
+  paidAccess = false;
+  localStorage.removeItem(LOCAL_PAID);
+}
+function grantPaidUnlock() {
+  paidAccess = true;
+  localStorage.setItem(LOCAL_PAID, 'true');
+}
+// Do not trust a stored acha_paid flag. Set it only after session + entitlement succeed.
+clearPaidUnlock();
 
 const config = JSON.parse(localStorage.getItem(STORAGE) || '{}');
 $('supabaseUrl').value = config.url || '';
@@ -39,7 +50,7 @@ function connect() {
   supabase.auth.onAuthStateChange((_event, s) => {
     session = s;
     if (s) verifyPurchaseAccess();
-    else { paidAccess = false; updateAuth(); }
+    else { clearPaidUnlock(); updateAuth(); }
   });
   return true;
 }
@@ -156,12 +167,27 @@ function updateAccessStrip(demo) {
   }
 }
 async function verifyPurchaseAccess() {
-  if (!supabase || !session) { paidAccess = false; updateAuth(); return false; }
-  const { data, error } = await supabase.rpc('has_active_acha_entitlement');
-  paidAccess = !error && data === true;
-  if (paidAccess) localStorage.setItem(ACCESS_STORAGE, session.user.email || '');
+  const sessionKey = session?.user?.id || session?.user?.email || '';
+  if (!supabase || !session) { clearPaidUnlock(); updateAuth(); return false; }
+  let data = null;
+  let error = null;
+  try {
+    const result = await supabase.rpc('has_active_acha_entitlement');
+    data = result.data;
+    error = result.error;
+  } catch (err) {
+    error = err;
+  }
+  const stillSignedIn = !!session && (session.user?.id || session.user?.email || '') === sessionKey;
+  if (!stillSignedIn) { clearPaidUnlock(); updateAuth(); return false; }
+  if (!error && data === true) {
+    grantPaidUnlock();
+    localStorage.setItem(ACCESS_STORAGE, session.user.email || '');
+  } else {
+    clearPaidUnlock();
+    msg('purchaseAuthMessage', error ? '付款權限驗證尚未完成，請確認 Supabase 權限表與 Webhook 設定。' : '找不到這個 Email 的有效購買紀錄，請使用付款時的相同 Email。', true);
+  }
   updateAuth();
-  if (!paidAccess) msg('purchaseAuthMessage', error ? '付款權限驗證尚未完成，請確認 Supabase 權限表與 Webhook 設定。' : '找不到這個 Email 的有效購買紀錄，請使用付款時的相同 Email。', true);
   return paidAccess;
 }
 function updateAuth() {
@@ -197,8 +223,25 @@ async function auth(mode) {
 }
 $('authForm').addEventListener('submit', e => { e.preventDefault(); auth('login'); });
 $('signupBtn').addEventListener('click', () => auth('signup'));
-$('logoutBtn').addEventListener('click', async () => { await supabase?.auth.signOut(); session = null; updateAuth(); });
+$('logoutBtn').addEventListener('click', async () => {
+  try { await supabase?.auth.signOut(); } catch (_) { /* still drop the local unlock */ }
+  session = null;
+  clearPaidUnlock();
+  updateAuth();
+});
 $('demoBtn').addEventListener('click', () => { const u = new URL(location.href); u.searchParams.set('demo', '1'); location.href = u.toString(); });
+// B is temporary until A is proven: unlock only after a Supabase session and has_active_acha_entitlement().
+// Hide purchase-email entry points; keep #purchaseAuthModal so the form can be re-enabled later.
+function hidePurchaseEmailEntry() {
+  ['purchaseLoginBtn', 'paywallEmailBtn'].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.hidden = true;
+    el.disabled = true;
+    el.classList.add('hidden');
+  });
+}
+hidePurchaseEmailEntry();
 $('purchaseLoginBtn').addEventListener('click', () => $('purchaseAuthModal').classList.remove('hidden'));
 $('closePurchaseAuth').addEventListener('click', () => $('purchaseAuthModal').classList.add('hidden'));
 $('purchaseAuthModal').addEventListener('click', e => { if (e.target.id === 'purchaseAuthModal') e.currentTarget.classList.add('hidden'); });
@@ -206,17 +249,18 @@ $('purchaseAuthForm').addEventListener('submit', async e => {
   e.preventDefault();
   const email = $('purchaseEmail').value.trim().toLowerCase();
   if (!email) return;
-  localStorage.setItem(LOCAL_PAID, 'true');
-  paidAccess = true;
-  if (supabase) {
-    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: location.href } });
-    if (error) { msg('purchaseAuthMessage', error.message, true); return; }
-    msg('purchaseAuthMessage', 'Email 登入連結已寄出；本機預覽已先解鎖，完成驗證後會再檢查付款權限。');
-  } else {
-    msg('purchaseAuthMessage', '已用購買 Email 解鎖本機預覽；正式同步資料仍需設定 Supabase。');
+  if (!paidAccess) clearPaidUnlock();
+  if (!supabase) {
+    msg('purchaseAuthMessage', '請先到設定貼上 Supabase URL 與 anon key，才能寄送登入連結。只輸入 Email 不會解鎖。', true);
+    return;
   }
-  updateAuth();
-  $('purchaseAuthModal').classList.add('hidden');
+  const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: location.href } });
+  if (error) {
+    if (!paidAccess) clearPaidUnlock();
+    msg('purchaseAuthMessage', error.message, true);
+    return;
+  }
+  msg('purchaseAuthMessage', 'Email 登入連結已寄出。請點擊信中的連結完成登入，系統確認付款權限後才會解鎖。');
 });
 $('paywallEmailBtn').addEventListener('click', () => $('purchaseAuthModal').classList.remove('hidden'));
 $('closeGuidePaywall')?.addEventListener('click', closeGuidePaywall);
