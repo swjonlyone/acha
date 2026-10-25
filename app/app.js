@@ -167,6 +167,8 @@ async function verifyPurchaseAccess() {
 function updateAuth() {
   const demo = isDemo() && !paidAccess;
   const accessible = paidAccess || demo;
+  $('todayProgress')?.classList.toggle('hidden', demo);
+  $('demoHint')?.classList.toggle('hidden', !demo);
   $('authView').classList.toggle('hidden', accessible);
   $('mainView').classList.toggle('hidden', !accessible);
   $('logoutBtn').classList.toggle('hidden', !session);
@@ -339,6 +341,10 @@ function updateProgress() {
   if (bubble) bubble.classList.toggle('hidden', pct < 100);
   updateCompanionStats();
 }
+$('logForm').addEventListener('invalid', event => {
+  const details = event.target.closest('details');
+  if (details && !details.open) details.open = true;
+}, true);
 $('logForm').addEventListener('submit', async e => {
   e.preventDefault();
   const payload = formData();
