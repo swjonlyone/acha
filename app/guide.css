@@ -201,3 +201,30 @@ h1,h2,h3{color:#382E2B!important;font-weight:700!important;letter-spacing:.2px}
   .hero h1,.page-title h1{font-size:42px!important}
   .section-head h2{font-size:23px!important}
 }
+
+/* 今日打卡：身體數據預設收合，先看到記一餐 */
+.body-data-details:not([open]) > :not(summary){display:none}
+.body-data-details > summary.section-head{
+  margin:0;
+  list-style:none;
+  cursor:pointer;
+  color:inherit;
+  font-size:inherit;
+  align-items:center;
+}
+.body-data-details > summary.section-head::-webkit-details-marker{display:none}
+.body-data-details > summary.section-head::marker{content:""}
+.body-data-details[open] > summary.section-head{margin-bottom:14px}
+.body-data-details > summary.section-head h2{line-height:1.35}
+.body-data-state{
+  flex:0 0 auto;
+  color:#9b6048;
+  font-size:12px;
+  font-weight:750;
+  background:#fff3e6;
+  border-radius:999px;
+  padding:4px 10px;
+  white-space:nowrap;
+}
+.body-data-state::before{content:"展開"}
+.body-data-details[open] .body-data-state::before{content:"收合"}
