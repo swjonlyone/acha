@@ -159,10 +159,10 @@ function updateAccessStrip(demo) {
     badge.textContent = '外食建議展示模式 ｜ 僅供截圖參考';
     buy.hidden = false;
   } else if (demo) {
-    badge.textContent = '免費體驗中 ｜ 換頁將重置資料';
+    badge.textContent = '免費體驗 ｜ 先記一餐，換頁會重置';
     buy.hidden = false;
   } else {
-    badge.textContent = '尚未解鎖 ｜ 請使用購買 Email 登入';
+    badge.textContent = '還沒開通 ｜ 去 Portaly 買，買完加 LINE 領';
     buy.hidden = false;
   }
 }
@@ -185,7 +185,7 @@ async function verifyPurchaseAccess() {
     localStorage.setItem(ACCESS_STORAGE, session.user.email || '');
   } else {
     clearPaidUnlock();
-    msg('purchaseAuthMessage', error ? '付款權限驗證尚未完成，請確認 Supabase 權限表與 Webhook 設定。' : '找不到這個 Email 的有效購買紀錄，請使用付款時的相同 Email。', true);
+    msg('purchaseAuthMessage', error ? '付款確認還沒完成。先去 Portaly 看訂單，或加 LINE 跟阿茶說一聲。' : '這個 Email 還沒有開通紀錄。想用完整版去 Portaly 買；已經買了，加 LINE 領取。', true);
   }
   updateAuth();
   return paidAccess;
@@ -196,11 +196,11 @@ function updateAuth() {
   $('authView').classList.toggle('hidden', accessible);
   $('mainView').classList.toggle('hidden', !accessible);
   $('logoutBtn').classList.toggle('hidden', !session);
-  $('userLabel').textContent = paidAccess ? (session?.user?.email || '正式版已解鎖') : demo ? '免費體驗中（不保存資料）' : session?.user?.email || '尚未登入';
+  $('userLabel').textContent = paidAccess ? (session?.user?.email || '正式版已解鎖') : demo ? '免費體驗，先記一餐' : session?.user?.email || '還沒開通';
   updateAccessStrip(demo);
   document.documentElement.classList.toggle('is-free-trial', demo);
   updateGuideLock(false);
-  if (!accessible && session) msg('authMessage', '已登入，但尚未找到有效購買紀錄；請使用購買 Email 或先完成 Portaly 付款。', true);
+  if (!accessible && session) msg('authMessage', '這個帳號還沒開通。想用完整版，去 Portaly 買；已經買了，加 LINE 跟阿茶領取。現在填 Email 不會開通。', true);
   if (accessible) {
     if (demo) cache = demoRows();
     renderMonth(); renderYear();
