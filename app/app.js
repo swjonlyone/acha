@@ -1,4 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { resolveSupabaseConfig } from './supabase-public.js';
 
 const $ = id => document.getElementById(id);
 const STORAGE = 'acha-supabase-config-v1';
@@ -21,9 +22,12 @@ function grantPaidUnlock() {
 // Do not trust a stored acha_paid flag. Set it only after session + entitlement succeed.
 clearPaidUnlock();
 
-const config = JSON.parse(localStorage.getItem(STORAGE) || '{}');
-$('supabaseUrl').value = config.url || '';
-$('supabaseKey').value = config.key || '';
+let authSubscription = null;
+function currentSupabaseConfig() {
+  let stored = null;
+  try { stored = localStorage.getItem(STORAGE); } catch (_) { stored = null; }
+  return resolveSupabaseConfig(stored);
+}
 
 const today = () => new Date().toISOString().slice(0, 10);
 const num = value => Number.isFinite(Number(value)) ? Number(value) : null;
@@ -44,15 +48,30 @@ function toast(text) {
   setTimeout(() => el.classList.remove('show'), 1800);
 }
 function connect() {
-  const c = JSON.parse(localStorage.getItem(STORAGE) || '{}');
-  if (!c.url || !c.key) return false;
-  supabase = createClient(c.url, c.key);
-  supabase.auth.onAuthStateChange((_event, s) => {
-    session = s;
-    if (s) verifyPurchaseAccess();
-    else { clearPaidUnlock(); updateAuth(); }
-  });
-  return true;
+  const c = currentSupabaseConfig();
+  if (!c.url || !c.key) {
+    supabase = null;
+    document.documentElement.dataset.supabaseSource = 'missing';
+    return false;
+  }
+  try {
+    authSubscription?.unsubscribe();
+    authSubscription = null;
+    supabase = createClient(c.url, c.key);
+    const { data } = supabase.auth.onAuthStateChange((_event, s) => {
+      session = s;
+      if (s) verifyPurchaseAccess();
+      else { clearPaidUnlock(); updateAuth(); }
+    });
+    authSubscription = data?.subscription || null;
+    document.documentElement.dataset.supabaseSource = c.source;
+    try { document.documentElement.dataset.supabaseHost = new URL(c.url).host; } catch (_) { /* host is only a debug marker */ }
+    return true;
+  } catch (_) {
+    supabase = null;
+    document.documentElement.dataset.supabaseSource = 'error';
+    return false;
+  }
 }
 connect();
 
@@ -218,7 +237,7 @@ function updateAuth() {
 }
 
 async function auth(mode) {
-  if (!supabase) { msg('authMessage', '請先到設定貼上 Supabase URL 與 anon key。', true); return; }
+  if (!supabase) { msg('authMessage', '連線還沒準備好，請重新整理後再試。', true); return; }
   const email = $('authEmail').value.trim();
   const password = $('authPassword').value;
   if (!email || !password) return;
@@ -276,7 +295,7 @@ $('purchaseAuthForm').addEventListener('submit', async e => {
   if (!email) return;
   clearPaidUnlock();
   if (!supabase) {
-    msg('purchaseAuthMessage', '登入連結還沒寄出。只填 Email 不會開通。去 Portaly 買，或加 LINE 跟阿茶領取。', true);
+    msg('purchaseAuthMessage', '登入連結還沒寄出。請重新整理後再試一次。只填 Email 不會開通。', true);
     return;
   }
   const redirect = new URL(location.href);
@@ -294,16 +313,58 @@ $('paywallEmailBtn').addEventListener('click', openPurchaseEmailLogin);
 $('closeGuidePaywall')?.addEventListener('click', closeGuidePaywall);
 $('returnTodayFromPaywall')?.addEventListener('click', closeGuidePaywall);
 $('guidePaywall')?.addEventListener('click', e => { if (e.target.id === 'guidePaywall') closeGuidePaywall(); });
-$('configBtn').addEventListener('click', () => $('configView').classList.remove('hidden'));
+function fillConfigForm() {
+  const saved = currentSupabaseConfig();
+  const usingOverride = saved.source === 'override';
+  $('supabaseUrl').value = usingOverride ? saved.url : '';
+  $('supabaseKey').value = usingOverride ? saved.key : '';
+  const note = $('configBuiltinNote');
+  if (note) {
+    note.textContent = usingOverride
+      ? '目前用的是這台瀏覽器存過的覆寫。一般不用改；要恢復公開連線就按「改回內建連線」。'
+      : '已經接上內建公開連線，購買不用在這裡貼金鑰。只有要改連別的專案時才填，會存在這台瀏覽器。';
+  }
+}
+function setupConfigPanel() {
+  const card = $('configView')?.querySelector('.modal-card');
+  const anchor = card?.querySelector('p');
+  if (card && anchor && !$('configBuiltinNote')) {
+    const note = document.createElement('p');
+    note.id = 'configBuiltinNote';
+    note.className = 'subtle';
+    anchor.before(note);
+    const reset = document.createElement('button');
+    reset.id = 'resetConfig';
+    reset.type = 'button';
+    reset.className = 'secondary full';
+    reset.textContent = '改回內建連線';
+    reset.style.marginTop = '8px';
+    $('saveConfig')?.after(reset);
+    reset.addEventListener('click', () => {
+      try { localStorage.removeItem(STORAGE); } catch (_) { /* keep the baked client */ }
+      $('supabaseUrl').value = '';
+      $('supabaseKey').value = '';
+      const ok = connect();
+      fillConfigForm();
+      msg('configMessage', ok ? '已改回內建連線。' : '內建連線沒接上，請重新整理。', !ok);
+      if (ok) setTimeout(() => { $('configView').classList.add('hidden'); updateAuth(); }, 700);
+    });
+  }
+  fillConfigForm();
+}
+setupConfigPanel();
+$('configBtn').addEventListener('click', () => { fillConfigForm(); $('configView').classList.remove('hidden'); });
 $('closeConfig').addEventListener('click', () => $('configView').classList.add('hidden'));
 $('saveConfig').addEventListener('click', () => {
   const url = $('supabaseUrl').value.trim().replace(/\/$/, '');
   const key = $('supabaseKey').value.trim();
   if (!url || !key) { msg('configMessage', '請填寫兩個欄位。', true); return; }
-  localStorage.setItem(STORAGE, JSON.stringify({ url, key }));
-  connect();
-  msg('configMessage', '設定已儲存，請回到登入頁。');
-  setTimeout(() => { $('configView').classList.add('hidden'); updateAuth(); }, 700);
+  try { localStorage.setItem(STORAGE, JSON.stringify({ url, key })); }
+  catch (_) { msg('configMessage', '這台瀏覽器存不了覆寫，請再試一次。', true); return; }
+  const ok = connect();
+  fillConfigForm();
+  msg('configMessage', ok ? '覆寫已存好，已重新連線。' : '這組連線沒接上，請再看一次網址和金鑰。', !ok);
+  if (ok) setTimeout(() => { $('configView').classList.add('hidden'); updateAuth(); }, 700);
 });
 
 const ids = [
