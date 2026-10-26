@@ -374,6 +374,8 @@ const ids = [
   'exercise', 'exerciseMinutes', 'waterMl', 'drinks', 'sleptWell', 'bowelMovement', 'notes'
 ];
 const val = id => { const el = $(id); return el.type === 'checkbox' ? el.checked : el.value; };
+// 資料庫 check 允許 null、拒絕空字串。選填空白要存成 null。
+const blankToNull = value => typeof value === 'string' && value.trim() === '' ? null : value;
 
 function hydrationTarget(weight = val('morningWeight')) {
   const kg = num(weight);
@@ -395,13 +397,13 @@ function formData() {
     sleep_hours: val('sleepHours') ? Number(val('sleepHours')) : null,
     age_years: val('ageYears') ? Number(val('ageYears')) : null,
     height_cm: val('heightCm') ? Number(val('heightCm')) : null,
-    reference_sex: val('referenceSex'),
+    reference_sex: blankToNull(val('referenceSex')),
     meals: {
       breakfast: { type: val('breakfastType'), drink: val('breakfastDrink'), food: val('breakfastFood'), note: val('breakfastNote') },
       lunch: { type: val('lunchType'), drink: val('lunchDrink'), food: val('lunchFood'), note: val('lunchNote') },
       dinner: { type: val('dinnerType'), drink: val('dinnerDrink'), food: val('dinnerFood'), note: val('dinnerNote') }
     },
-    plate_pattern: val('platePattern'),
+    plate_pattern: blankToNull(val('platePattern')),
     eating_out_count: Number(val('eatingOutCount') || 0),
     protein_status: val('proteinStatus'),
     vegetables_status: val('vegetablesStatus'),
