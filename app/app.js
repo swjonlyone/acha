@@ -289,6 +289,22 @@ if (isUnlockEntry()) openPurchaseEmailLogin();
 $('purchaseLoginBtn').addEventListener('click', openPurchaseEmailLogin);
 $('closePurchaseAuth').addEventListener('click', () => $('purchaseAuthModal').classList.add('hidden'));
 $('purchaseAuthModal').addEventListener('click', e => { if (e.target.id === 'purchaseAuthModal') e.currentTarget.classList.add('hidden'); });
+// Built-in Supabase email is a project-wide cap (2 sends/hour). Say that in Chinese
+// when the send is rate-limited; other send failures keep the existing wording.
+function isEmailOtpRateLimit(error) {
+  const status = Number(error?.status);
+  const code = String(error?.code || error?.error_code || '').toLowerCase();
+  const message = String(error?.message || error?.msg || '').toLowerCase();
+  if (status === 429 || Number(code) === 429) return true;
+  if (code.includes('rate_limit') || code.includes('over_email_send') || code.includes('over_request_rate')) return true;
+  return /rate limit|too many requests|for security purposes|only request this/.test(message);
+}
+function purchaseOtpSendErrorText(error) {
+  if (isEmailOtpRateLimit(error)) {
+    return '為了帳號安全，登入信每小時最多重寄 2 次。若提示寄太多次，請等約 1 小時再按寄送。只填 Email 不會開通。去 Portaly 買，或加 LINE 跟阿茶領取。';
+  }
+  return `${error.message} 只填 Email 不會開通。去 Portaly 買，或加 LINE 跟阿茶領取。`;
+}
 $('purchaseAuthForm').addEventListener('submit', async e => {
   e.preventDefault();
   const email = $('purchaseEmail').value.trim().toLowerCase();
@@ -304,7 +320,7 @@ $('purchaseAuthForm').addEventListener('submit', async e => {
   const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: redirect.toString() } });
   if (error) {
     clearPaidUnlock();
-    msg('purchaseAuthMessage', `${error.message} 只填 Email 不會開通。去 Portaly 買，或加 LINE 跟阿茶領取。`, true);
+    msg('purchaseAuthMessage', purchaseOtpSendErrorText(error), true);
     return;
   }
   msg('purchaseAuthMessage', '登入連結已寄出。點開信裡的連結，確認有開通紀錄後才會打開。');
