@@ -56,3 +56,31 @@ body{line-height:1.6;padding-bottom:calc(110px + env(safe-area-inset-bottom))}.a
 #todayView .meal-details .body-data-panel{padding-top:12px}
 #todayView .meal-details .meal-block .grid-2{grid-template-columns:1fr!important}
 @media(max-width:640px){#todayView .quick-card{padding:20px 14px 8px!important}}
+
+/* 月總結／年總結：只呈現有資料的項目，最後一段用陪伴口吻 */
+.month-summary,.year-summary{padding:16px 16px 14px;margin:2px 0 0;background:linear-gradient(180deg,#fff 0%,#f8fcf9 100%)}
+.month-summary>.section-head,.year-summary>.section-head{align-items:center;margin-bottom:12px}
+.summary-switch{display:flex;background:#e7f3ec;border-radius:999px;padding:3px;gap:2px}
+.summary-switch button{border:0;background:transparent;border-radius:999px;padding:6px 14px;min-height:0;color:#748680;font-weight:800;cursor:pointer}
+.summary-switch button.is-active{background:#fff;color:#d87550;box-shadow:0 2px 8px rgba(25,61,55,.08)}
+.summary-grid{margin:0}
+.summary-line{margin:12px 0 0;padding:12px 14px;background:#e4f3eb;border-radius:16px;color:#315b50;font-size:15px;line-height:1.75}
+.summary-chart{margin-top:8px}
+.summary-chart-head{margin-bottom:2px}
+.summary-chart-head h3{margin:0;font-size:15px}
+.summary-chart canvas{display:block;width:100%;height:220px}
+.stat-grid:empty{display:none;margin:0}
+@media(max-width:640px){
+  .summary-grid{grid-template-columns:1fr 1fr}
+  .summary-line{font-size:14px}
+  .summary-chart canvas{height:188px}
+  .month-summary,.year-summary{padding:12px 12px 10px}
+  .month-summary .stat,.year-summary .stat{padding:8px 6px}
+  .month-summary .stat strong,.year-summary .stat strong{font-size:20px}
+  #monthWeightCard{padding:12px 12px 10px!important;margin:8px 0 0!important}
+  #monthWeightCard .section-head{margin-bottom:2px!important}
+  #monthWeightCard canvas{height:156px!important}
+  #monthWeightCard .chart-canvas-wrap{min-height:0!important;padding:0 0 4px!important}
+  #monthWeightCard .source-note{margin-top:2px;font-size:12px;line-height:1.4}
+}
+.summary-chart .chart-canvas-wrap{min-height:0!important;padding:0!important}
