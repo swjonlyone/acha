@@ -23,6 +23,8 @@ function grantPaidUnlock() {
 clearPaidUnlock();
 
 let authSubscription = null;
+let initialAuthSettled = false;
+let entitlementGeneration = 0;
 function currentSupabaseConfig() {
   let stored = null;
   try { stored = localStorage.getItem(STORAGE); } catch (_) { stored = null; }
@@ -60,8 +62,13 @@ function connect() {
     supabase = createClient(c.url, c.key);
     const { data } = supabase.auth.onAuthStateChange((_event, s) => {
       session = s;
-      if (s) verifyPurchaseAccess();
-      else { clearPaidUnlock(); updateAuth(); }
+      // Ignore events until getSession has settled, and don't call Supabase
+      // from inside this callback — it still holds the auth lock.
+      if (!initialAuthSettled) return;
+      setTimeout(() => {
+        if (session) verifyPurchaseAccess({ announce: true });
+        else { clearPaidUnlock(); updateAuth(); if (isUnlockEntry()) openPurchaseEmailLogin(); }
+      }, 0);
     });
     authSubscription = data?.subscription || null;
     document.documentElement.dataset.supabaseSource = c.source;
@@ -188,9 +195,23 @@ function updateAccessStrip(demo) {
     buy.hidden = false;
   }
 }
-async function verifyPurchaseAccess() {
-  const sessionKey = session?.user?.id || session?.user?.email || '';
-  if (!supabase || !session) { clearPaidUnlock(); updateAuth(); return false; }
+function dismissPurchaseModal() {
+  $('purchaseAuthModal')?.classList.add('hidden');
+  const el = $('purchaseAuthMessage');
+  if (!el) return;
+  el.textContent = '';
+  el.style.color = '';
+}
+async function verifyPurchaseAccess({ announce = false, retried = false } = {}) {
+  const gen = ++entitlementGeneration;
+  const current = session;
+  const sessionKey = current?.user?.id || current?.user?.email || '';
+  if (!supabase || !current) {
+    if (gen !== entitlementGeneration) return false;
+    clearPaidUnlock();
+    updateAuth();
+    return false;
+  }
   let data = null;
   let error = null;
   try {
@@ -200,22 +221,46 @@ async function verifyPurchaseAccess() {
   } catch (err) {
     error = err;
   }
+  if (gen !== entitlementGeneration) return paidAccess;
   const stillSignedIn = !!session && (session.user?.id || session.user?.email || '') === sessionKey;
   if (!stillSignedIn) { clearPaidUnlock(); updateAuth(); return false; }
+  if (error && !retried) {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    if (gen !== entitlementGeneration) return paidAccess;
+    return verifyPurchaseAccess({ announce, retried: true });
+  }
   if (!error && data === true) {
     grantPaidUnlock();
-    localStorage.setItem(ACCESS_STORAGE, session.user.email || '');
-    $('purchaseAuthModal')?.classList.add('hidden');
+    try { localStorage.setItem(ACCESS_STORAGE, session.user.email || ''); } catch (_) { /* keep the unlocked session */ }
+    dismissPurchaseModal();
   } else {
     clearPaidUnlock();
-    const text = error
-      ? '還沒確認到開通。去 Portaly 看訂單，或加 LINE 跟阿茶說一聲。'
-      : '這個 Email 還沒有開通紀錄。去 Portaly 買，或加 LINE 跟阿茶領取。';
-    msg('purchaseAuthMessage', text, true);
-    if (isUnlockEntry()) $('purchaseAuthModal')?.classList.remove('hidden');
+    if (announce && isUnlockEntry()) {
+      const text = error
+        ? '還沒確認到開通。去 Portaly 看訂單，或加 LINE 跟阿茶說一聲。'
+        : '這個 Email 還沒有開通紀錄。去 Portaly 買，或加 LINE 跟阿茶領取。';
+      msg('purchaseAuthMessage', text, true);
+      $('purchaseAuthModal')?.classList.remove('hidden');
+    }
   }
   updateAuth();
   return paidAccess;
+}
+async function bootstrapAuth() {
+  try {
+    if (supabase) {
+      const { data } = await supabase.auth.getSession();
+      const restored = data?.session ?? null;
+      if (restored) session = restored;
+      else if (!session) session = null;
+    }
+  } catch (_) { /* onAuthStateChange may already have the session */ }
+  if (session) await verifyPurchaseAccess({ announce: true });
+  else clearPaidUnlock();
+  initialAuthSettled = true;
+  if (paidAccess) dismissPurchaseModal();
+  else if (isUnlockEntry() && !session) openPurchaseEmailLogin();
+  updateAuth();
 }
 function updateAuth() {
   const demo = isDemo() && !paidAccess;
@@ -228,6 +273,7 @@ function updateAuth() {
   document.documentElement.classList.toggle('is-free-trial', demo);
   updateGuideLock(false);
   syncUnlockEntry();
+  if (paidAccess) dismissPurchaseModal();
   if (!accessible && session) msg('authMessage', '這個帳號還沒開通。去 Portaly 買，或加 LINE 跟阿茶領取。填 Email 不會直接開通。', true);
   if (accessible) {
     if (demo) cache = demoRows();
@@ -287,7 +333,6 @@ hidePurchaseEmailEntry();
 syncUnlockEntry();
 $('unlockEmailLink')?.addEventListener('click', openPurchaseEmailLogin);
 $('paywallUnlockLink')?.addEventListener('click', openPurchaseEmailLogin);
-if (isUnlockEntry()) openPurchaseEmailLogin();
 $('purchaseLoginBtn').addEventListener('click', openPurchaseEmailLogin);
 $('closePurchaseAuth').addEventListener('click', () => $('purchaseAuthModal').classList.add('hidden'));
 $('purchaseAuthModal').addEventListener('click', e => { if (e.target.id === 'purchaseAuthModal') e.currentTarget.classList.add('hidden'); });
@@ -667,6 +712,8 @@ function waterGoalKnown(rows) { return rows.some(row => waterPct(row) !== null);
 function waterGoalDays(rows) { return rows.filter(row => waterPct(row) >= 100).length; }
 function exerciseKnown(rows) { return rows.some(row => num(row?.exercise_minutes) !== null); }
 function exerciseDayCount(rows) { return rows.filter(row => num(row?.exercise_minutes) > 0).length; }
+function flagKnown(rows, key) { return rows.some(row => typeof row?.[key] === 'boolean'); }
+function flagDays(rows, key) { return rows.filter(row => row?.[key] === true).length; }
 function pairedMorning(row) {
   return num(row?.morning_weight) !== null && num(row?.evening_weight) !== null ? num(row.morning_weight) : null;
 }
@@ -729,25 +776,36 @@ function yearCompare(rows, prev) {
   }
   return diffPhrase('記錄天數', rows.length - prev.length, '天', '去年');
 }
-function monthSummaryItems(rows) {
+function summaryBits(rows) {
+  const bits = [`記了 ${rows.length} 天`];
+  const out = eatingOutTotal(rows);
+  if (out !== null) bits.push(`外食 ${out} 餐`);
+  if (waterGoalKnown(rows)) bits.push(`喝水達標 ${waterGoalDays(rows)} 天`);
+  if (flagKnown(rows, 'bowel_movement')) bits.push(`排便達標 ${flagDays(rows, 'bowel_movement')} 天`);
+  if (flagKnown(rows, 'slept_well')) bits.push(`早睡達標 ${flagDays(rows, 'slept_well')} 天`);
+  if (exerciseKnown(rows)) bits.push(`運動 ${exerciseDayCount(rows)} 天`);
+  if (hasDrinkRecords(rows)) bits.push(`含糖飲料 ${sugaryCupCount(rows)} 杯`);
+  return bits;
+}
+function summaryItems(rows, { steady = false } = {}) {
   if (!rows.length) return [];
   const items = [['記錄天數', `${rows.length} 天`]];
   const out = eatingOutTotal(rows);
   if (out !== null) items.push(['外食餐數', `${out} 餐`]);
   if (waterGoalKnown(rows)) items.push(['喝水達標', `${waterGoalDays(rows)} 天`]);
+  if (flagKnown(rows, 'bowel_movement')) items.push(['排便達標', `${flagDays(rows, 'bowel_movement')} 天`]);
+  if (flagKnown(rows, 'slept_well')) items.push(['早睡達標', `${flagDays(rows, 'slept_well')} 天`]);
   if (exerciseKnown(rows)) items.push(['運動天數', `${exerciseDayCount(rows)} 天`]);
   if (hasDrinkRecords(rows)) items.push(['含糖飲料', `${sugaryCupCount(rows)} 杯`]);
+  if (steady) {
+    const month = steadiestMonth(rows);
+    if (month) items.push(['記錄最穩', month.label]);
+  }
   return items;
 }
 function monthSummarySentence(rows, prev) {
   if (!rows.length) return '這個月還沒開始記，先記一餐就好。';
-  const bits = [`記了 ${rows.length} 天`];
-  const out = eatingOutTotal(rows);
-  if (out !== null) bits.push(`外食 ${out} 餐`);
-  if (waterGoalKnown(rows)) bits.push(`喝水達標 ${waterGoalDays(rows)} 天`);
-  if (exerciseKnown(rows)) bits.push(`運動 ${exerciseDayCount(rows)} 天`);
-  if (hasDrinkRecords(rows)) bits.push(`含糖飲料 ${sugaryCupCount(rows)} 杯`);
-  return `這個月${bits.join('，')}，辛苦了。${monthCompare(rows, prev)}`;
+  return `這個月${summaryBits(rows).join('，')}，辛苦了。${monthCompare(rows, prev)}`;
 }
 function steadiestMonth(rows) {
   const groups = new Map();
@@ -782,24 +840,10 @@ function yearWeightSeries(year) {
   }
   return points;
 }
-function yearSummaryItems(rows) {
-  if (!rows.length) return [];
-  const items = [['記錄天數', `${rows.length} 天`]];
-  const out = eatingOutTotal(rows);
-  if (out !== null) items.push(['外食餐數', `${out} 餐`]);
-  if (waterGoalKnown(rows)) items.push(['喝水達標', `${waterGoalDays(rows)} 天`]);
-  const steady = steadiestMonth(rows);
-  if (steady) items.push(['記錄最穩', steady.label]);
-  return items;
-}
 function yearSummarySentence(rows, prev) {
   if (!rows.length) return '今年還沒開始記，先記一餐就好。';
-  const bits = [`記了 ${rows.length} 天`];
-  const out = eatingOutTotal(rows);
-  if (out !== null) bits.push(`外食 ${out} 餐`);
-  if (waterGoalKnown(rows)) bits.push(`喝水達標 ${waterGoalDays(rows)} 天`);
   const steady = steadiestMonth(rows);
-  return `今年${bits.join('，')}，辛苦了。${steady ? `${steady.label}記得最穩。` : ''}${yearCompare(rows, prev)}`;
+  return `今年${summaryBits(rows).join('，')}，辛苦了。${steady ? `${steady.label}記得最穩。` : ''}${yearCompare(rows, prev)}`;
 }
 function weekdayHeads() {
   return `<div class="cal-week" aria-hidden="true">${['日', '一', '二', '三', '四', '五', '六'].map(day => `<span>${day}</span>`).join('')}</div>`;
@@ -824,10 +868,14 @@ function yearCalendarHTML(year, rows) {
   }).join('');
   return `<div class="year-calendar"><div class="section-head summary-chart-head"><h3>一年的紀錄</h3><span>有記的日子會亮起來</span></div><div class="cal-board">${board}</div></div>`;
 }
-function summaryCardHTML({ title, active, items, sentence, chart, calendar = '' }) {
+function summaryChartHTML(kind) {
+  if (kind === 'month') return '<div class="summary-chart"><div class="section-head summary-chart-head"><h3>體重曲線</h3><span>只算早晚都有填的日子</span></div><div class="chart-canvas-wrap"><canvas id="monthChart"></canvas></div><p class="source-note">飲食、飲水、排便與測量時間都會讓數字晃動，僅供觀察。</p></div>';
+  if (kind === 'year') return '<div class="summary-chart"><div class="section-head summary-chart-head"><h3>體重曲線</h3><span>每月只算早晚都有填的日子</span></div><div class="chart-canvas-wrap"><canvas id="yearSummaryChart"></canvas></div></div>';
+  return '';
+}
+function summaryCardHTML({ title, active, items, sentence, chart = '', calendar = '' }) {
   const grid = items.length ? `<div class="stat-grid summary-grid">${statGrid(items)}</div>` : '';
-  const figure = chart ? '<div class="summary-chart"><div class="section-head summary-chart-head"><h3>12 個月體重走勢</h3><span>每月只算早晚都有填的日子</span></div><div class="chart-canvas-wrap"><canvas id="yearSummaryChart"></canvas></div></div>' : '';
-  return `<div class="section-head"><h2>${title}</h2>${summarySwitch(active)}</div>${grid}${figure}${calendar}<p class="summary-line">${sentence}</p>`;
+  return `<div class="section-head"><h2>${title}</h2>${summarySwitch(active)}</div>${grid}${summaryChartHTML(chart)}${calendar}<p class="summary-line">${sentence}</p>`;
 }
 function prevDate(date) {
   const cursor = new Date(moneyDate(date).getTime() - 86400000);
@@ -845,9 +893,12 @@ function streakEnding(date) {
   return count;
 }
 function encouragement(count) {
-  if (count < 7) return '';
-  if (count === 7) return '一連記了 7 天，這樣就很好，辛苦了。';
-  return `已經連續記了 ${count} 天，這樣就很好，辛苦了。`;
+  if (count >= 30) return '整整 30 天，謝謝你一直陪自己。';
+  if (count >= 25) return '25 天，快一整個月了，很穩。';
+  if (count >= 20) return '20 天了，外食也能好好照顧自己。';
+  if (count >= 15) return '半個月都有記，習慣慢慢長出來了。';
+  if (count >= 7) return '一連記了 7 天，這樣就很好，辛苦了。';
+  return '';
 }
 function renderTodayCalendar() {
   const root = $('todayCalendar');
@@ -889,17 +940,15 @@ function dailySummaryHTML(row) {
 }
 function renderMonth() {
   const month = selectedMonth(), rows = monthRows(month), prev = monthRows(shiftMonth(month, -1)), s = stats(rows);
+  const paired = rows.map(row => [row.log_date, pairedMorning(row)]).filter(point => point[1] !== null);
   const summary = $('monthSummary');
   if (summary) {
     summary.classList.toggle('is-empty', !rows.length);
-    summary.innerHTML = summaryCardHTML({ title: '月總結', active: 'monthView', items: monthSummaryItems(rows), sentence: monthSummarySentence(rows, prev), chart: false });
+    summary.innerHTML = summaryCardHTML({ title: '月總結', active: 'monthView', items: summaryItems(rows), sentence: monthSummarySentence(rows, prev), chart: paired.length ? 'month' : '' });
   }
   $('monthStats').innerHTML = observationCards(s);
   $('monthHabits').innerHTML = habitHTML(s);
-  $('monthCount').textContent = `6 項習慣綜合 ${s.habit}%`;
   $('monthList').innerHTML = rows.length ? rows.slice().reverse().map(dailySummaryHTML).join('') : '<p class="subtle">這個月還沒有記錄。</p>';
-  const paired = rows.map(row => [row.log_date, pairedMorning(row)]).filter(point => point[1] !== null);
-  $('monthWeightCard')?.classList.toggle('hidden', !paired.length);
   if (paired.length) drawChart('monthChart', paired, 'kg');
   renderWeightChanges(rows);
   renderTodayCalendar();
@@ -917,7 +966,7 @@ function renderYear() {
   const summary = $('yearSummary');
   if (summary) {
     summary.classList.toggle('is-empty', !rows.length);
-    summary.innerHTML = summaryCardHTML({ title: '年總結', active: 'yearView', items: yearSummaryItems(rows), sentence: yearSummarySentence(rows, prev), chart: weightPoints.length > 0, calendar: yearCalendarHTML(y, rows) });
+    summary.innerHTML = summaryCardHTML({ title: '年總結', active: 'yearView', items: summaryItems(rows, { steady: true }), sentence: yearSummarySentence(rows, prev), chart: weightPoints.length ? 'year' : '', calendar: yearCalendarHTML(y, rows) });
   }
   $('yearStats').innerHTML = observationCards(s);
   $('yearHabits').innerHTML = habitHTML(s);
@@ -1056,7 +1105,7 @@ async function loadAll() {
   cache = data || [];
   renderMonth(); renderYear(); loadLog($('logDate').value || today());
 }
-updateAuth();
+bootstrapAuth();
 
 // 展示網址：自動開啟外食建議，方便作業截圖與引流貼文展示。
 if (isGuideShowcase()) {

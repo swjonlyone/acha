@@ -77,11 +77,9 @@ body{line-height:1.6;padding-bottom:calc(110px + env(safe-area-inset-bottom))}.a
   .month-summary,.year-summary{padding:12px 12px 10px}
   .month-summary .stat,.year-summary .stat{padding:8px 6px}
   .month-summary .stat strong,.year-summary .stat strong{font-size:20px}
-  #monthWeightCard{padding:12px 12px 10px!important;margin:8px 0 0!important}
-  #monthWeightCard .section-head{margin-bottom:2px!important}
-  #monthWeightCard canvas{height:156px!important}
-  #monthWeightCard .chart-canvas-wrap{min-height:0!important;padding:0 0 4px!important}
-  #monthWeightCard .source-note{margin-top:2px;font-size:12px;line-height:1.4}
+  #monthSummary .summary-chart canvas{height:156px!important}
+  #monthSummary .summary-chart .chart-canvas-wrap{min-height:0!important;padding:0 0 4px!important}
+  #monthSummary .summary-chart .source-note{margin-top:2px;font-size:12px;line-height:1.4}
 }
 .summary-chart .chart-canvas-wrap{min-height:0!important;padding:0!important}
 
