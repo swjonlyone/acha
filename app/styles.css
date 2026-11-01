@@ -84,3 +84,27 @@ body{line-height:1.6;padding-bottom:calc(110px + env(safe-area-inset-bottom))}.a
   #monthWeightCard .source-note{margin-top:2px;font-size:12px;line-height:1.4}
 }
 .summary-chart .chart-canvas-wrap{min-height:0!important;padding:0!important}
+
+/* 年曆填色、體重變化與連續紀錄 */
+.today-calendar,.weight-change-card{padding:14px 16px 12px;margin:0 0 12px}
+.today-calendar .section-head,.weight-change-card .section-head{margin-bottom:8px}
+.cal-week,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-week{margin-bottom:4px;color:#8aa099;font-size:11px;text-align:center}
+.cal-grid i{display:block}
+.cal-grid b{display:grid;place-items:center;aspect-ratio:1;margin:0;border-radius:7px;background:#f3f6f4;color:#9aaba4;font-size:11px;font-weight:700}
+.cal-grid b.is-logged{background:#7dbe9b;color:#fff}
+.cal-grid b.is-selected{box-shadow:inset 0 0 0 2px #d87550}
+.year-calendar{margin-top:14px}
+.cal-board{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 10px}
+.cal-month strong{display:block;margin-bottom:4px;font-size:13px}
+.year-calendar .cal-grid b,.year-calendar .cal-grid i{border-radius:4px;font-size:12px}
+.weight-change-line{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line);color:#315b50;font-size:14px}
+.weight-change-line:first-of-type{border-top:0}
+.weight-change-line strong{color:#193d37}
+@media(max-width:640px){
+  .cal-board{grid-template-columns:repeat(3,1fr);gap:8px 6px}
+  .year-calendar .cal-week{font-size:8px}
+  .year-calendar .cal-grid{gap:2px}
+  .year-calendar .cal-grid b{font-size:8px;border-radius:3px}
+  .weight-change-line{font-size:13px}
+}

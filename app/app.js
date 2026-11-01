@@ -548,6 +548,7 @@ function updateProgress() {
   const bubble = $('celebrationBubble');
   if (bubble) bubble.classList.toggle('hidden', pct < 100);
   updateCompanionStats();
+  renderTodayCalendar();
 }
 const bodyDataDetails = $('bodyDataDetails');
 bodyDataDetails?.addEventListener('invalid', () => { bodyDataDetails.open = true; }, true);
@@ -578,11 +579,21 @@ function dayIncrease(row) {
   const morning = num(row?.morning_weight), evening = num(row?.evening_weight);
   return morning !== null && evening !== null ? evening - morning : null;
 }
-function overnightDrop(row) {
-  if (!row) return null;
+function sleepChange(row) {
+  if (!row?.log_date) return null;
   const prev = rowByDate(new Date(moneyDate(row.log_date).getTime() - 86400000).toISOString().slice(0, 10));
-  const previousEvening = num(prev?.evening_weight), currentMorning = num(row.morning_weight);
-  return previousEvening !== null && currentMorning !== null ? previousEvening - currentMorning : null;
+  const lastNight = num(prev?.evening_weight), morning = num(row.morning_weight);
+  return lastNight !== null && morning !== null ? morning - lastNight : null;
+}
+function signedKg(value) {
+  return `${value > 0 ? '+' : ''}${format(value)} kg`;
+}
+function weightChangeBits(row) {
+  const bits = [];
+  const day = dayIncrease(row), sleep = sleepChange(row);
+  if (day !== null) bits.push(`白天變化 ${signedKg(day)}`);
+  if (sleep !== null) bits.push(`睡一覺變化 ${signedKg(sleep)}`);
+  return bits;
 }
 function waistHip(row) {
   const waist = num(row?.waist_cm), hip = num(row?.hip_cm);
@@ -613,7 +624,7 @@ function stats(rows) {
     avgWaistHip: avg(rows.map(waistHip).filter(v => v !== null)),
     avgWaterPct: avg(rows.map(waterPct).filter(v => v !== null)),
     avgDayIncrease: avg(rows.map(dayIncrease).filter(v => v !== null)),
-    avgOvernightDrop: avg(rows.map(overnightDrop).filter(v => v !== null)),
+    avgSleepChange: avg(rows.map(sleepChange).filter(v => v !== null)),
     out: rows.reduce((n, x) => n + Number(x.eating_out_count || 0), 0),
     exercise: rows.filter(x => num(x.exercise_minutes) > 0).length,
     checks,
@@ -672,8 +683,8 @@ function observationCards(s) {
     s.avgWeight !== null ? ['平均早上體重', `${format(s.avgWeight)} kg`] : null,
     s.avgWaistHip !== null ? ['平均腰臀比', format(s.avgWaistHip, 2)] : null,
     s.avgWaterPct !== null ? ['平均飲水達成', percent(s.avgWaterPct)] : null,
-    s.avgDayIncrease !== null ? ['日內增加量', `${s.avgDayIncrease >= 0 ? '+' : ''}${format(s.avgDayIncrease)} kg`] : null,
-    s.avgOvernightDrop !== null ? ['夜間回落量', `${format(s.avgOvernightDrop)} kg`] : null
+    s.avgDayIncrease !== null ? ['白天變化', signedKg(s.avgDayIncrease)] : null,
+    s.avgSleepChange !== null ? ['睡一覺變化', signedKg(s.avgSleepChange)] : null
   ]);
 }
 function summarySwitch(active) {
@@ -790,10 +801,75 @@ function yearSummarySentence(rows, prev) {
   const steady = steadiestMonth(rows);
   return `今年${bits.join('，')}，辛苦了。${steady ? `${steady.label}記得最穩。` : ''}${yearCompare(rows, prev)}`;
 }
-function summaryCardHTML({ title, active, items, sentence, chart }) {
+function weekdayHeads() {
+  return `<div class="cal-week" aria-hidden="true">${['日', '一', '二', '三', '四', '五', '六'].map(day => `<span>${day}</span>`).join('')}</div>`;
+}
+function monthCalendarCells(year, month, logged, selected) {
+  const first = new Date(year, month - 1, 1);
+  const days = new Date(year, month, 0).getDate();
+  const cells = Array.from({ length: first.getDay() }, () => '<i></i>');
+  for (let day = 1; day <= days; day += 1) {
+    const key = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const classes = [logged.has(key) ? 'is-logged' : '', key === selected ? 'is-selected' : ''].filter(Boolean).join(' ');
+    const label = logged.has(key) ? ` aria-label="${month}月${day}日已記錄"` : '';
+    cells.push(`<b class="${classes}"${label}>${day}</b>`);
+  }
+  return cells.join('');
+}
+function yearCalendarHTML(year, rows) {
+  const logged = new Set(rows.map(row => row.log_date).filter(Boolean));
+  const board = Array.from({ length: 12 }, (_, index) => {
+    const month = index + 1;
+    return `<div class="cal-month"><strong>${month} 月</strong>${weekdayHeads()}<div class="cal-grid">${monthCalendarCells(Number(year), month, logged, '')}</div></div>`;
+  }).join('');
+  return `<div class="year-calendar"><div class="section-head summary-chart-head"><h3>一年的紀錄</h3><span>有記的日子會亮起來</span></div><div class="cal-board">${board}</div></div>`;
+}
+function summaryCardHTML({ title, active, items, sentence, chart, calendar = '' }) {
   const grid = items.length ? `<div class="stat-grid summary-grid">${statGrid(items)}</div>` : '';
   const figure = chart ? '<div class="summary-chart"><div class="section-head summary-chart-head"><h3>12 個月體重走勢</h3><span>每月只算早晚都有填的日子</span></div><div class="chart-canvas-wrap"><canvas id="yearSummaryChart"></canvas></div></div>' : '';
-  return `<div class="section-head"><h2>${title}</h2>${summarySwitch(active)}</div>${grid}${figure}<p class="summary-line">${sentence}</p>`;
+  return `<div class="section-head"><h2>${title}</h2>${summarySwitch(active)}</div>${grid}${figure}${calendar}<p class="summary-line">${sentence}</p>`;
+}
+function prevDate(date) {
+  const cursor = new Date(moneyDate(date).getTime() - 86400000);
+  const month = String(cursor.getMonth() + 1).padStart(2, '0');
+  const day = String(cursor.getDate()).padStart(2, '0');
+  return `${cursor.getFullYear()}-${month}-${day}`;
+}
+function streakEnding(date) {
+  const dates = new Set(cache.map(row => row.log_date).filter(Boolean));
+  let cursor = date, count = 0;
+  while (cursor && dates.has(cursor)) {
+    count += 1;
+    cursor = prevDate(cursor);
+  }
+  return count;
+}
+function encouragement(count) {
+  if (count < 7) return '';
+  if (count === 7) return '一連記了 7 天，這樣就很好，辛苦了。';
+  return `已經連續記了 ${count} 天，這樣就很好，辛苦了。`;
+}
+function renderTodayCalendar() {
+  const root = $('todayCalendar');
+  if (!root) return;
+  const selected = $('logDate')?.value || today();
+  const [year, month] = selected.split('-').map(Number);
+  if (!year || !month) return;
+  const prefix = `${year}-${String(month).padStart(2, '0')}`;
+  const logged = new Set(cache.filter(row => row.log_date && row.log_date.startsWith(prefix)).map(row => row.log_date));
+  const note = encouragement(streakEnding(selected));
+  root.innerHTML = `<div class="section-head"><h2>${month} 月紀錄</h2><span>記完的日子會亮起來</span></div>${weekdayHeads()}<div class="cal-grid today-cal-grid">${monthCalendarCells(year, month, logged, selected)}</div>${note ? `<p class="summary-line">${note}</p>` : ''}`;
+}
+function renderWeightChanges(rows) {
+  const card = $('weightChangeCard');
+  if (!card) return;
+  const lines = [...rows].reverse().map(row => {
+    const bits = weightChangeBits(row);
+    if (!bits.length) return '';
+    return `<div class="weight-change-line"><strong>${row.log_date.slice(5).replace('-', '/')}</strong><span>${bits.join('　')}</span></div>`;
+  }).filter(Boolean);
+  card.classList.toggle('hidden', !lines.length);
+  card.innerHTML = lines.length ? `<div class="section-head"><h2>體重變化</h2><span>有填才顯示</span></div>${lines.join('')}` : '';
 }
 function dailySummarySentence(row) {
   const parts = [], meals = num(row.eating_out_count), water = waterPct(row), ex = num(row.exercise_minutes);
@@ -805,9 +881,9 @@ function dailySummarySentence(row) {
   return parts.length ? `今天${parts.join('、')}，辛苦了。` : '今天還沒記，先記一餐就好。';
 }
 function dailySummaryHTML(row) {
-  const m = num(row.morning_weight), e = num(row.evening_weight), day = dayIncrease(row), night = overnightDrop(row), water = waterPct(row), whr = waistHip(row), ex = num(row.exercise_minutes);
+  const m = num(row.morning_weight), e = num(row.evening_weight), water = waterPct(row), whr = waistHip(row), ex = num(row.exercise_minutes);
   const weights = [m !== null ? `早 ${format(m)} kg` : '', e !== null ? `晚 ${format(e)} kg` : ''].filter(Boolean).join('　');
-  const trend = [day !== null ? `日內差 ${day >= 0 ? '+' : ''}${format(day)} kg` : '', night !== null ? `夜間回落 ${format(night)} kg` : '', water !== null ? `飲水 ${percent(water)}` : '', whr !== null ? `腰臀比 ${format(whr, 2)}` : ''].filter(Boolean).join('　');
+  const trend = [...weightChangeBits(row), water !== null ? `飲水 ${percent(water)}` : '', whr !== null ? `腰臀比 ${format(whr, 2)}` : ''].filter(Boolean).join('　');
   const details = [row.plate_pattern ? `餐盤 ${row.plate_pattern}` : '', num(row.eating_out_count) > 0 ? `外食 ${num(row.eating_out_count)} 餐` : '', row.slept_well ? '早睡 ✓' : '', row.bowel_movement ? '排便 ✓' : '', ex > 0 ? `運動 ${ex} 分鐘` : ''].filter(Boolean).join('　');
   return `<div class="log-row"><div class="log-summary"><strong>${row.log_date}</strong>${weights ? `<span>${weights}</span>` : ''}</div><p class="daily-summary-sentence">${dailySummarySentence(row)}</p>${trend ? `<p class="daily-metrics">${trend}</p>` : ''}${details ? `<details><summary>查看每日摘要</summary><p class="subtle">${details}</p></details>` : ''}</div>`;
 }
@@ -825,7 +901,9 @@ function renderMonth() {
   const paired = rows.map(row => [row.log_date, pairedMorning(row)]).filter(point => point[1] !== null);
   $('monthWeightCard')?.classList.toggle('hidden', !paired.length);
   if (paired.length) drawChart('monthChart', paired, 'kg');
-  drawDualChart('monthBalanceChart', rows.map(x => [x.log_date, dayIncrease(x), overnightDrop(x)]));
+  renderWeightChanges(rows);
+  renderTodayCalendar();
+  drawDualChart('monthBalanceChart', rows.map(x => [x.log_date, dayIncrease(x), sleepChange(x)]));
   drawSleepWeightChart('monthSleepWeightChart', rows.map(x => [x.log_date, num(x.morning_weight), num(x.sleep_hours)]).filter(x => x[1] !== null || x[2] !== null));
   drawChart('monthWhrChart', rows.map(x => [x.log_date, waistHip(x)]).filter(x => x[1] !== null), 'WHR');
   drawChart('monthBodyFatChart', rows.map(x => [x.log_date, num(x.body_fat_pct)]).filter(x => x[1] !== null), '%');
@@ -839,7 +917,7 @@ function renderYear() {
   const summary = $('yearSummary');
   if (summary) {
     summary.classList.toggle('is-empty', !rows.length);
-    summary.innerHTML = summaryCardHTML({ title: '年總結', active: 'yearView', items: yearSummaryItems(rows), sentence: yearSummarySentence(rows, prev), chart: weightPoints.length > 0 });
+    summary.innerHTML = summaryCardHTML({ title: '年總結', active: 'yearView', items: yearSummaryItems(rows), sentence: yearSummarySentence(rows, prev), chart: weightPoints.length > 0, calendar: yearCalendarHTML(y, rows) });
   }
   $('yearStats').innerHTML = observationCards(s);
   $('yearHabits').innerHTML = habitHTML(s);
@@ -850,8 +928,8 @@ function renderYear() {
     const bits = [`${z.days} 天`];
     if (z.avgWeight !== null) bits.push(`平均 ${format(z.avgWeight)} kg`);
     if (z.avgWaistHip !== null) bits.push(`腰臀比 ${format(z.avgWaistHip, 2)}`);
-    if (z.avgDayIncrease !== null) bits.push(`日內 ${z.avgDayIncrease >= 0 ? '+' : ''}${format(z.avgDayIncrease)} kg`);
-    if (z.avgOvernightDrop !== null) bits.push(`夜間回落 ${format(z.avgOvernightDrop)} kg`);
+    if (z.avgDayIncrease !== null) bits.push(`白天 ${signedKg(z.avgDayIncrease)}`);
+    if (z.avgSleepChange !== null) bits.push(`睡一覺 ${signedKg(z.avgSleepChange)}`);
     return `<div class="month-row"><div class="log-summary"><strong>${i + 1} 月</strong><span>${bits.join('　')}</span></div></div>`;
   }).filter(Boolean).join('');
   $('yearList').innerHTML = months || '<p class="subtle">今年還沒有記錄。</p>';
@@ -861,7 +939,7 @@ function renderYear() {
     return { label: String(i + 1), rows: r, stats: z };
   });
   if (weightPoints.length) drawChart('yearSummaryChart', weightPoints, 'kg');
-  drawDualChart('yearBalanceChart', monthlyPoints.map(x => [x.label, x.stats.avgDayIncrease, x.stats.avgOvernightDrop]));
+  drawDualChart('yearBalanceChart', monthlyPoints.map(x => [x.label, x.stats.avgDayIncrease, x.stats.avgSleepChange]));
   drawSleepWeightChart('yearSleepWeightChart', monthlyPoints.map(x => [x.label, x.stats.avgWeight, avg(x.rows.map(r => num(r.sleep_hours)).filter(v => v !== null))]).filter(x => x[1] !== null || x[2] !== null));
   drawChart('yearWhrChart', monthlyPoints.map(x => [x.label, x.stats.avgWaistHip]).filter(x => x[1] !== null), 'WHR');
   drawChart('yearBodyFatChart', monthlyPoints.map(x => [x.label, avg(x.rows.map(r => num(r.body_fat_pct)).filter(v => v !== null))]).filter(x => x[1] !== null), '%');
@@ -943,7 +1021,7 @@ function drawDualChart(id, points) {
   const dpr = devicePixelRatio || 1, w = canvas.clientWidth || 600, h = canvas.clientHeight || 260;
   canvas.width = w * dpr; canvas.height = h * dpr;
   const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr); ctx.clearRect(0, 0, w, h);
-  if (!valid.length) { ctx.fillStyle = '#748680'; ctx.font = '14px sans-serif'; ctx.fillText('同日有早晚體重後會顯示日夜比較', 52, 120); return; }
+  if (!valid.length) { ctx.fillStyle = '#748680'; ctx.font = '14px sans-serif'; ctx.fillText('有白天或睡一覺的變化時會畫在這裡', 52, 120); return; }
   const values = valid.flatMap(x => [x[1], x[2]]).filter(v => v !== null), min = Math.min(...values, 0) - .2, max = Math.max(...values, .5) + .2;
   const frame = chartFrame(ctx, w, h, min, max, valid.map(x => x[0]), 'kg');
   [['#d87550', 1], ['#6d9d8b', 2]].forEach(([color, index]) => {
