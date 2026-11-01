@@ -106,3 +106,77 @@ body{line-height:1.6;padding-bottom:calc(110px + env(safe-area-inset-bottom))}.a
   .year-calendar .cal-grid b{font-size:8px;border-radius:3px}
   .weight-change-line{font-size:13px}
 }
+
+/* 月／年總結分四類，顏色在檢視頁與 IG 範例圖共用 */
+:root{
+  --cat-log:#c4785a;
+  --cat-log-ink:#8d4e36;
+  --cat-log-chip:#fde6da;
+  --cat-food:#c4963a;
+  --cat-food-ink:#7a5a1e;
+  --cat-food-chip:#f8ecd0;
+  --cat-habit:#5f9a74;
+  --cat-habit-ink:#2f6b4a;
+  --cat-habit-chip:#e5f4eb;
+  --cat-body:#3f6f66;
+  --cat-body-ink:#2c564e;
+  --cat-body-chip:#e5f0ed;
+}
+.summary-stack{display:flex;flex-direction:column;gap:12px;margin:0 0 12px}
+.summary-switch-card,.summary-cat,.daily-list-card{padding:14px 14px 12px}
+.summary-switch-card .section-head{align-items:center;margin-bottom:0}
+.summary-cat{border-left:4px solid transparent}
+.summary-cat-title{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:15px;font-weight:800;letter-spacing:.04em}
+.summary-cat-title i{width:9px;height:9px;border-radius:99px;background:currentColor;flex:none}
+.summary-cat .summary-grid{grid-template-columns:1fr 1fr;margin:0}
+.summary-cat .stat{border-color:transparent;padding:12px 8px}
+.summary-cat .stat span{color:#6b615a;font-size:12px}
+.summary-cat .stat strong{font-size:22px}
+.summary-cat-note{margin:8px 0 0;padding:8px 10px;border-radius:12px;font-size:13px;line-height:1.65}
+.summary-cat .summary-chart{margin-top:12px}
+.summary-cat .chart-canvas-wrap{min-height:0!important;padding:0 0 4px!important}
+.summary-cat .summary-chart canvas{display:block;width:100%;height:180px!important}
+.summary-cat .year-calendar{margin-top:12px}
+.summary-stack>.summary-line{margin:0;background:#f8f1e8;color:#5c4a3f}
+.cat-log{border-left-color:var(--cat-log);background:linear-gradient(180deg,#fff,#fff8f4)}
+.cat-log .summary-cat-title{color:var(--cat-log-ink)!important}
+.cat-log .stat{background:var(--cat-log-chip)}
+.cat-log .stat strong{color:var(--cat-log-ink)}
+.cat-log .summary-cat-note{background:#fff1ea;color:#7a4632}
+.cat-log .cal-grid b.is-logged{background:#e39a7e;color:#fff}
+.cat-food{border-left-color:var(--cat-food);background:linear-gradient(180deg,#fff,#fffaf2)}
+.cat-food .summary-cat-title{color:var(--cat-food-ink)!important}
+.cat-food .stat{background:var(--cat-food-chip)}
+.cat-food .stat strong{color:var(--cat-food-ink)}
+.cat-habit{border-left-color:var(--cat-habit);background:linear-gradient(180deg,#fff,#f4faf6)}
+.cat-habit .summary-cat-title{color:var(--cat-habit-ink)!important}
+.cat-habit .stat{background:var(--cat-habit-chip)}
+.cat-habit .stat strong{color:var(--cat-habit-ink)}
+.cat-body{border-left-color:var(--cat-body);background:linear-gradient(180deg,#fff,#f3f7f6)}
+.cat-body .summary-cat-title{color:var(--cat-body-ink)!important}
+.cat-body .stat{background:var(--cat-body-chip)}
+.cat-body .stat strong{color:var(--cat-body-ink)}
+.legend-dot.day{background:var(--cat-body)!important}
+.legend-dot.night{background:#9dc8b4!important}
+.ig-stage{display:flex;justify-content:center;padding:16px 12px 32px;background:#f6efe6}
+.ig-card{width:min(420px,100%);background:#fffdfb;border-radius:28px;padding:18px 14px 16px;box-shadow:0 16px 40px rgba(90,60,40,.12)}
+.ig-head{margin-bottom:6px}
+.ig-brand{margin:0 0 4px;font-weight:800;color:#3a4537;font-size:14px}
+.ig-head h2{margin:0;font-size:26px}
+.ig-head span,.ig-foot{color:#8d7366;font-size:13px}
+.ig-foot{margin:8px 0 0;text-align:center}
+.ig-card .summary-stack{gap:2px;margin:0}
+.ig-card .summary-cat{box-shadow:none;border-radius:0;background:transparent;padding:10px 0 6px 10px}
+.ig-card .summary-line{background:#f8f1e8;color:#5c4a3f}
+html.is-ig .topbar,html.is-ig #accessStrip,html.is-ig main{display:none!important}
+html.is-ig,html.is-ig body,html.is-ig .app-shell{background:#f6efe6}
+html.is-ig .app-shell{padding-bottom:24px}
+@media(max-width:640px){
+  .summary-switch-card,.summary-cat,.daily-list-card{padding:12px}
+  .summary-cat .stat{padding:10px 6px}
+  .summary-cat .stat strong{font-size:20px}
+  .summary-cat .summary-chart canvas,.ig-card .summary-chart canvas{height:168px!important}
+}
+@media(min-width:720px){
+  .summary-cat .summary-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
