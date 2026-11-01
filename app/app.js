@@ -30,7 +30,7 @@ function currentSupabaseConfig() {
 }
 
 const today = () => new Date().toISOString().slice(0, 10);
-const num = value => Number.isFinite(Number(value)) ? Number(value) : null;
+const num = value => (value === null || value === undefined || (typeof value === 'string' && value.trim() === '')) ? null : (Number.isFinite(Number(value)) ? Number(value) : null);
 const moneyDate = d => new Date(`${d}T00:00:00`);
 const format = (value, digits = 1) => value === null || value === undefined || !Number.isFinite(Number(value)) ? '—' : Number(value).toFixed(digits);
 const percent = value => value === null || !Number.isFinite(Number(value)) ? '—' : `${Math.round(Number(value))}%`;
@@ -76,45 +76,47 @@ function connect() {
 connect();
 
 
+const o = (foods, drink = '', veg = true) => ({ foods, drink, veg });
 const mealGuideData = [
   { icon: '☕', title: '早餐', items: [
-    ['早安御飯糰組', '趕時間、想吃經典早餐', '御飯糰 ＋ 茶葉蛋 ＋ 無糖茶', '御飯糰 ＋ 茶葉蛋 2 顆 ＋ 無糖茶'],
-    ['地瓜豆漿組', '想吃溫熱、預算友善', '現蒸地瓜 ＋ 無糖豆漿 ＋ 茶葉蛋', '現蒸地瓜 ＋ 高蛋白牛奶 ＋ 茶葉蛋'],
-    ['雞胸沙拉組', '上午較忙、想先顧蛋白質', '舒肥雞胸 ＋ 生菜沙拉 ＋ 小飯糰', '舒肥雞胸 ＋ 生菜沙拉 ＋ 飯糰'],
-    ['燕麥優格輕食組', '喜歡清涼口感、控糖族', '希臘式優格 ＋ 無糖黑咖啡 ＋ 雞肉三明治', '希臘式優格 ＋ 蛋白丁 ＋ 雞肉三明治'],
-    ['握沙拉捲餅組', '單手好拿、通勤族', '雞肉起司握沙拉 ＋ 無糖豆漿', '雞肉起司握沙拉 ＋ 茶葉蛋 ＋ 無糖豆漿'],
-    ['經典美式咖啡組', '提神醒腦、低碳水', '美式咖啡 ＋ 鮪魚御飯糰 ＋ 茶葉蛋 1 顆', '美式咖啡 ＋ 鮪魚御飯糰 ＋ 茶葉蛋 2 顆'],
-    ['水果高纖高蛋白組', '腸胃順暢、輕盈補給', '無糖綠茶 ＋ 茶葉蛋 2 顆 ＋ 香蕉 1 根', '無糖高纖豆漿 ＋ 茶葉蛋 2 顆 ＋ 香蕉 1 根']
+    ['早安御飯糰組', '趕時間、想吃經典早餐', o('茶葉蛋 ＋ 御飯糰', '無糖茶', false), o('茶葉蛋 2 顆 ＋ 御飯糰', '無糖茶', false)],
+    ['地瓜豆漿組', '想吃溫熱、預算友善', o('茶葉蛋 ＋ 現蒸地瓜', '無糖豆漿', false), o('茶葉蛋 ＋ 現蒸地瓜', '高蛋白牛奶', false)],
+    ['雞胸沙拉組', '上午較忙、想先顧蛋白質', o('生菜沙拉 ＋ 舒肥雞胸 ＋ 小飯糰'), o('生菜沙拉 ＋ 舒肥雞胸 ＋ 飯糰')],
+    ['燕麥優格輕食組', '喜歡清涼口感、控糖族', o('希臘式優格 ＋ 雞肉三明治', '無糖黑咖啡', false), o('希臘式優格 ＋ 蛋白丁 ＋ 雞肉三明治', '', false)],
+    ['握沙拉捲餅組', '單手好拿、通勤族', o('雞肉起司握沙拉', '無糖豆漿'), o('雞肉起司握沙拉 ＋ 茶葉蛋', '無糖豆漿')],
+    ['經典美式咖啡組', '提神醒腦、低碳水', o('茶葉蛋 1 顆 ＋ 鮪魚御飯糰', '美式咖啡', false), o('茶葉蛋 2 顆 ＋ 鮪魚御飯糰', '美式咖啡', false)],
+    ['水果高纖高蛋白組', '腸胃順暢、輕盈補給', o('茶葉蛋 2 顆 ＋ 香蕉 1 根', '無糖綠茶', false), o('茶葉蛋 2 顆 ＋ 香蕉 1 根', '無糖高纖豆漿', false)]
   ]},
   { icon: '🍱', title: '午餐', items: [
-    ['超商烤雞餐盒組', '忙碌上班族、懶人首選', '紐奧良烤雞胸肉 ＋ 鮭魚御飯糰 ＋ 關東煮蘿蔔', '紐奧良烤雞胸肉 ＋ 鮭魚御飯糰 ＋ 蛋白丁 ＋ 無糖茶'],
-    ['溫暖雞湯餐盒組', '天冷想喝湯、養生族', '媽媽煮藝香菇雞湯 ＋ 雞肉三明治 ＋ 盒裝芭樂', '媽媽煮藝香菇雞湯 ＋ 雞肉三明治 ＋ 茶葉蛋 ＋ 盒裝芭樂'],
-    ['高蛋白便當組', '高活動量、爆汗日', '健身 G 達人烤雞飯盒（飯吃 2/3） ＋ 無糖綠茶', '健身 G 達人烤雞飯盒（全吃） ＋ 無糖黑豆漿'],
-    ['台式自助餐組', '菜色豐富、想吃原型食物', '綠色青菜 2 格 ＋ 滷雞腿／蒸魚 ＋ 白飯半碗', '綠色青菜 2 格 ＋ 滷雞腿 ＋ 滷蛋 1 顆 ＋ 白飯 2/3 碗'],
-    ['便當店救援組', '外帶便當、聚餐避雷', '台式滷排骨便當（去炸皮、飯半碗） ＋ 無糖烏龍茶', '台式滷雞腿便當（飯 2/3 碗） ＋ 加購滷蛋 ＋ 無糖烏龍茶'],
-    ['涼麵沙拉輕食組', '夏天食欲不振', '鮮蝦高纖沙拉 ＋ 雞肉飯糰', '鮮蝦高纖沙拉 ＋ 雞肉飯糰 ＋ 茶葉蛋 1 顆 ＋ 無糖豆漿'],
-    ['湯麵水餃外食組', '想吃小吃攤、麵食族', '陽春麵（少油蔥） ＋ 燙青菜 ＋ 滷蛋／豆干', '嘴邊肉湯／肝連湯 ＋ 燙青菜 ＋ 水餃 8 顆 ＋ 滷蛋']
+    ['超商烤雞餐盒組', '忙碌上班族、懶人首選', o('關東煮蘿蔔 ＋ 紐奧良烤雞胸肉 ＋ 鮭魚御飯糰'), o('紐奧良烤雞胸肉 ＋ 蛋白丁 ＋ 鮭魚御飯糰', '無糖茶', false)],
+    ['溫暖雞湯餐盒組', '天冷想喝湯、養生族', o('媽媽煮藝香菇雞湯 ＋ 雞肉三明治 ＋ 盒裝芭樂', '', false), o('媽媽煮藝香菇雞湯 ＋ 茶葉蛋 ＋ 雞肉三明治 ＋ 盒裝芭樂', '', false)],
+    ['高蛋白便當組', '高活動量、爆汗日', o('健身 G 達人烤雞飯盒（飯吃 2/3）', '無糖綠茶', false), o('健身 G 達人烤雞飯盒（全吃）', '無糖黑豆漿', false)],
+    ['台式自助餐組', '菜色豐富、想吃原型食物', o('綠色青菜 2 格 ＋ 滷雞腿／蒸魚 ＋ 白飯半碗'), o('綠色青菜 2 格 ＋ 滷雞腿 ＋ 滷蛋 1 顆 ＋ 白飯 2/3 碗')],
+    ['便當店救援組', '外帶便當、聚餐避雷', o('台式滷排骨便當（去炸皮、飯半碗）', '無糖烏龍茶', false), o('台式滷雞腿便當（飯 2/3 碗） ＋ 加購滷蛋', '無糖烏龍茶', false)],
+    ['涼麵沙拉輕食組', '夏天食欲不振', o('鮮蝦高纖沙拉 ＋ 雞肉飯糰'), o('鮮蝦高纖沙拉 ＋ 茶葉蛋 1 顆 ＋ 雞肉飯糰', '無糖豆漿')],
+    ['湯麵水餃外食組', '想吃小吃攤、麵食族', o('燙青菜 ＋ 滷蛋／豆干 ＋ 陽春麵（少油蔥）'), o('燙青菜 ＋ 嘴邊肉湯／肝連湯 ＋ 滷蛋 ＋ 水餃 8 顆')]
   ]},
   { icon: '🥗', title: '晚餐', items: [
-    ['雞腿蔬菜便當組', '下班想吃飽、晚餐首選', '烤雞腿 ＋ 青菜 2 格 ＋ 飯半碗', '烤雞腿 ＋ 青菜 2 格 ＋ 滷蛋 ＋ 飯 2/3 碗'],
-    ['豆腐魚湯組', '想清爽、晚上不想太撐', '魚片豆腐湯 ＋ 燙青菜 ＋ 小地瓜', '魚片豆腐湯 ＋ 滷豆腐 ＋ 燙青菜 ＋ 小地瓜'],
-    ['火鍋聰明選組', '聚餐火鍋、想安心吃', '蔬菜盤 ＋ 肉片 1 份 ＋ 冬粉半份 ＋ 無糖茶', '蔬菜盤 ＋ 肉片 1.5 份 ＋ 豆腐／蛋 ＋ 冬粉半份'],
-    ['日式定食組', '喜歡魚類、想吃完整一餐', '烤魚定食（飯半碗） ＋ 沙拉 ＋ 味噌湯', '烤魚定食（飯 2/3 碗） ＋ 沙拉 ＋ 茶碗蒸'],
-    ['滷味自選組', '想吃多樣配料、外帶方便', '青菜 2 份 ＋ 豆干／滷蛋 ＋ 玉米或冬粉', '青菜 2 份 ＋ 雞胸肉 ＋ 豆干／滷蛋 ＋ 玉米'],
-    ['超商沙拉晚餐組', '加班晚歸、快速解決', '生菜沙拉 ＋ 舒肥雞胸 ＋ 烤地瓜', '生菜沙拉 ＋ 舒肥雞胸 ＋ 茶葉蛋 ＋ 烤地瓜'],
-    ['粥品小菜組', '胃口較弱、想吃溫熱', '海鮮粥半碗 ＋ 滷蛋 ＋ 燙青菜', '海鮮粥 2/3 碗 ＋ 滷蛋 ＋ 豆腐 ＋ 燙青菜']
+    ['雞腿蔬菜便當組', '下班想吃飽、晚餐首選', o('青菜 2 格 ＋ 烤雞腿 ＋ 飯半碗'), o('青菜 2 格 ＋ 烤雞腿 ＋ 滷蛋 ＋ 飯 2/3 碗')],
+    ['豆腐魚湯組', '想清爽、晚上不想太撐', o('燙青菜 ＋ 魚片豆腐湯 ＋ 小地瓜'), o('燙青菜 ＋ 魚片豆腐湯 ＋ 滷豆腐 ＋ 小地瓜')],
+    ['火鍋聰明選組', '聚餐火鍋、想安心吃', o('蔬菜盤 ＋ 肉片 1 份 ＋ 冬粉半份', '無糖茶'), o('蔬菜盤 ＋ 肉片 1.5 份 ＋ 豆腐／蛋 ＋ 冬粉半份')],
+    ['日式定食組', '喜歡魚類、想吃完整一餐', o('沙拉 ＋ 烤魚定食（飯半碗）', '味噌湯'), o('沙拉 ＋ 烤魚定食（飯 2/3 碗） ＋ 茶碗蒸')],
+    ['滷味自選組', '想吃多樣配料、外帶方便', o('青菜 2 份 ＋ 豆干／滷蛋 ＋ 玉米或冬粉'), o('青菜 2 份 ＋ 雞胸肉 ＋ 豆干／滷蛋 ＋ 玉米')],
+    ['超商沙拉晚餐組', '加班晚歸、快速解決', o('生菜沙拉 ＋ 舒肥雞胸 ＋ 烤地瓜'), o('生菜沙拉 ＋ 舒肥雞胸 ＋ 茶葉蛋 ＋ 烤地瓜')],
+    ['粥品小菜組', '胃口較弱、想吃溫熱', o('燙青菜 ＋ 滷蛋 ＋ 海鮮粥半碗'), o('燙青菜 ＋ 滷蛋 ＋ 豆腐 ＋ 海鮮粥 2/3 碗')]
   ]},
   { icon: '🧁', title: '下午茶', items: [
-    ['優格水果組', '嘴饞、想要清爽甜味', '無糖優格 ＋ 小份水果', '希臘式優格 ＋ 水果 ＋ 蛋白丁'],
-    ['茶葉蛋豆漿組', '下午容易餓、需要補蛋白質', '茶葉蛋 1 顆 ＋ 無糖豆漿', '茶葉蛋 2 顆 ＋ 高蛋白牛奶'],
-    ['咖啡小點組', '想喝咖啡、需要一點能量', '無糖咖啡 ＋ 小地瓜', '無糖咖啡 ＋ 小地瓜 ＋ 茶葉蛋']
+    ['優格水果組', '嘴饞、想要清爽甜味', o('無糖優格 ＋ 小份水果', '', false), o('希臘式優格 ＋ 蛋白丁 ＋ 水果', '', false)],
+    ['茶葉蛋豆漿組', '下午容易餓、需要補蛋白質', o('茶葉蛋 1 顆', '無糖豆漿', false), o('茶葉蛋 2 顆', '高蛋白牛奶', false)],
+    ['咖啡小點組', '想喝咖啡、需要一點能量', o('小地瓜', '無糖咖啡', false), o('茶葉蛋 ＋ 小地瓜', '無糖咖啡', false)]
   ]},
   { icon: '🌙', title: '宵夜', items: [
-    ['溫豆漿輕食組', '晚睡、需要溫熱飲品', '無糖豆漿 ＋ 茶葉蛋 1 顆', '高蛋白牛奶 ＋ 茶葉蛋 1 顆'],
-    ['小地瓜蛋白組', '運動後、想補一點碳水', '小地瓜 ＋ 無糖優格', '小地瓜 ＋ 高蛋白牛奶 ＋ 茶葉蛋'],
-    ['清湯豆腐組', '嘴饞但不想太有負擔', '豆腐蔬菜清湯 ＋ 無糖茶', '豆腐蔬菜清湯 ＋ 滷蛋 ＋ 無糖茶']
+    ['溫豆漿輕食組', '晚睡、需要溫熱飲品', o('茶葉蛋 1 顆', '無糖豆漿', false), o('茶葉蛋 1 顆', '高蛋白牛奶', false)],
+    ['小地瓜蛋白組', '運動後、想補一點碳水', o('無糖優格 ＋ 小地瓜', '', false), o('茶葉蛋 ＋ 小地瓜', '高蛋白牛奶', false)],
+    ['清湯豆腐組', '嘴饞但不想太有負擔', o('豆腐蔬菜清湯', '無糖茶'), o('豆腐蔬菜清湯 ＋ 滷蛋', '無糖茶')]
   ]}
 ];
+const comboOptionHTML = opt => `${opt.foods}${opt.drink ? `<br><small class="meal-drink-note">飲品：${opt.drink}</small>` : ''}${opt.veg ? '' : '<br><small class="meal-veg-note">🌱 這組沒有蔬菜，方便的話可以加一份燙青菜或沙拉就很好囉</small>'}`;
 
 function renderMealGuide() {
   const root = $('mealGuideAccordion');
@@ -126,7 +128,7 @@ function renderMealGuide() {
         ${group.items.map((item, index) => `
           <article class="meal-combo-card">
             <div class="meal-combo-head"><span class="meal-combo-name">${String(index + 1).padStart(2, '0')} ｜ ${item[0]}</span><span class="meal-combo-tag">${item[1]}</span></div>
-            <ul class="meal-combo-options"><li><b>211 一般</b><span><small class="meal-order-note">順序：🥗 蔬菜 ➔ 🥩 蛋白質 ➔ 🍠 澱粉</small>${item[2]}</span></li><li><b>221 健身</b><span><small class="meal-order-note">順序：🥗 蔬菜 ➔ 🥩 蛋白質 ➔ 🍠 澱粉</small>${item[3]}</span></li></ul>
+            <ul class="meal-combo-options"><li><b>211 一般</b><span><small class="meal-order-note">順序：🥗 蔬菜 ➔ 🥩 蛋白質 ➔ 🍠 澱粉</small>${comboOptionHTML(item[2])}</span></li><li><b>221 健身</b><span><small class="meal-order-note">順序：🥗 蔬菜 ➔ 🥩 蛋白質 ➔ 🍠 澱粉</small>${comboOptionHTML(item[3])}</span></li></ul>
           </article>`).join('')}
       </div>
     </details>`).join('');
@@ -578,10 +580,21 @@ function metricCards(s) {
     ['夜間回落量', s.avgOvernightDrop === null ? '待補資料' : `${format(s.avgOvernightDrop)} kg`]
   ].map(([label, value]) => `<div class="stat"><strong>${value}</strong><span>${label}</span></div>`).join('');
 }
+function dailySummarySentence(row) {
+  const parts = [], meals = num(row.eating_out_count), water = waterPct(row), ex = num(row.exercise_minutes);
+  if (num(row.morning_weight) !== null || num(row.evening_weight) !== null) parts.push('量了體重');
+  if (meals !== null && meals > 0) parts.push(`記了 ${meals} 餐外食`);
+  if (water !== null) parts.push(`喝水 ${percent(water)}`);
+  if (ex !== null && ex > 0) parts.push(`動了 ${ex} 分鐘`);
+  if (row.slept_well) parts.push('有早睡');
+  return parts.length ? `今天${parts.join('、')}，辛苦了。` : '今天還沒記，先記一餐就好。';
+}
 function dailySummaryHTML(row) {
-  const day = dayIncrease(row), night = overnightDrop(row), water = waterPct(row), whr = waistHip(row), metabolic = bmr(row);
-  const trend = [day === null ? '日內增加 待補' : `日內增加 ${day >= 0 ? '+' : ''}${format(day)} kg`, night === null ? '夜間回落 待補' : `夜間回落 ${format(night)} kg`, `飲水 ${water === null ? '待補' : percent(water)}`, `腰臀比 ${whr === null ? '待補' : format(whr, 2)}`].join('　');
-  return `<div class="log-row"><div class="log-summary"><strong>${row.log_date}</strong><span>早 ${format(row.morning_weight)} kg　晚 ${format(row.evening_weight)} kg</span></div><p class="daily-metrics">${trend}</p><details><summary>查看每日摘要</summary><p class="subtle">${row.plate_pattern ? `餐盤 ${row.plate_pattern}` : '餐盤待補'}　外食 ${row.eating_out_count || 0} 餐<br>早睡：${row.slept_well ? '完成' : '未勾選'}　排便：${row.bowel_movement ? '完成' : '未勾選'}　運動：${row.exercise_minutes || 0} 分鐘<br>基礎代謝估算：${metabolic ? `${Math.round(metabolic)} kcal` : '資料不足'}<br>以上指標為自我追蹤估算，僅供參考。</p></details></div>`;
+  const m = num(row.morning_weight), e = num(row.evening_weight), day = dayIncrease(row), night = overnightDrop(row), water = waterPct(row), whr = waistHip(row), ex = num(row.exercise_minutes);
+  const weights = [m !== null ? `早 ${format(m)} kg` : '', e !== null ? `晚 ${format(e)} kg` : ''].filter(Boolean).join('　');
+  const trend = [day !== null ? `日內差 ${day >= 0 ? '+' : ''}${format(day)} kg` : '', night !== null ? `夜間回落 ${format(night)} kg` : '', water !== null ? `飲水 ${percent(water)}` : '', whr !== null ? `腰臀比 ${format(whr, 2)}` : ''].filter(Boolean).join('　');
+  const details = [row.plate_pattern ? `餐盤 ${row.plate_pattern}` : '', num(row.eating_out_count) > 0 ? `外食 ${num(row.eating_out_count)} 餐` : '', row.slept_well ? '早睡 ✓' : '', row.bowel_movement ? '排便 ✓' : '', ex > 0 ? `運動 ${ex} 分鐘` : ''].filter(Boolean).join('　');
+  return `<div class="log-row"><div class="log-summary"><strong>${row.log_date}</strong>${weights ? `<span>${weights}</span>` : ''}</div><p class="daily-summary-sentence">${dailySummarySentence(row)}</p>${trend ? `<p class="daily-metrics">${trend}</p>` : ''}${details ? `<details><summary>查看每日摘要</summary><p class="subtle">${details}</p></details>` : ''}</div>`;
 }
 function renderMonth() {
   const rows = monthRows(selectedMonth()), s = stats(rows);
