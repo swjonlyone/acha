@@ -385,15 +385,60 @@ $('saveConfig').addEventListener('click', () => {
   if (ok) setTimeout(() => { $('configView').classList.add('hidden'); updateAuth(); }, 700);
 });
 
+const MEAL_PREFIXES = ['breakfast', 'lunch', 'dinner'];
+const MEAL_FIELDS = ['Type', 'TypeOther', 'Drink', 'DrinkOther', 'DrinkSweetness', 'Food', 'Note'];
+const SUGARY_DRINKS = new Set(['含糖飲料', '拿鐵（含抹茶拿鐵）', '奶茶', '果汁']);
 const ids = [
   'morningWeight', 'eveningWeight', 'waistCm', 'hipCm', 'bodyFatPct', 'sleepHours', 'ageYears', 'heightCm', 'referenceSex', 'mood',
-  'breakfastType', 'breakfastDrink', 'breakfastFood', 'breakfastNote', 'lunchType', 'lunchDrink', 'lunchFood', 'lunchNote',
-  'dinnerType', 'dinnerDrink', 'dinnerFood', 'dinnerNote', 'platePattern', 'eatingOutCount', 'proteinStatus', 'vegetablesStatus',
+  'breakfastType', 'breakfastTypeOther', 'breakfastDrink', 'breakfastDrinkOther', 'breakfastDrinkSweetness', 'breakfastFood', 'breakfastNote',
+  'lunchType', 'lunchTypeOther', 'lunchDrink', 'lunchDrinkOther', 'lunchDrinkSweetness', 'lunchFood', 'lunchNote',
+  'dinnerType', 'dinnerTypeOther', 'dinnerDrink', 'dinnerDrinkOther', 'dinnerDrinkSweetness', 'dinnerFood', 'dinnerNote',
+  'platePattern', 'eatingOutCount', 'proteinStatus', 'vegetablesStatus',
   'exercise', 'exerciseMinutes', 'waterMl', 'drinks', 'sleptWell', 'bowelMovement', 'notes'
 ];
 const val = id => { const el = $(id); return el.type === 'checkbox' ? el.checked : el.value; };
 // 資料庫 check 允許 null、拒絕空字串。選填空白要存成 null。
 const blankToNull = value => typeof value === 'string' && value.trim() === '' ? null : value;
+function ensureOption(el, value) {
+  const text = value == null ? '' : String(value);
+  if (text && ![...el.options].some(option => option.value === text)) {
+    const option = document.createElement('option');
+    option.value = text;
+    option.textContent = text;
+    option.dataset.legacy = '1';
+    el.appendChild(option);
+  }
+  el.value = text;
+}
+function syncMealFields(prefix) {
+  const type = $(`${prefix}Type`)?.value || '';
+  const drink = $(`${prefix}Drink`)?.value || '';
+  $(`${prefix}TypeOtherWrap`)?.classList.toggle('hidden', type !== '其他');
+  $(`${prefix}DrinkOtherWrap`)?.classList.toggle('hidden', drink !== '其他');
+  $(`${prefix}DrinkSweetnessWrap`)?.classList.toggle('hidden', !SUGARY_DRINKS.has(drink));
+}
+function syncAllMealFields() { MEAL_PREFIXES.forEach(syncMealFields); }
+function mealRecord(prefix) {
+  const type = val(`${prefix}Type`);
+  const drink = val(`${prefix}Drink`);
+  return {
+    type: blankToNull(type),
+    typeOther: type === '其他' ? blankToNull(val(`${prefix}TypeOther`)) : null,
+    drink: blankToNull(drink),
+    drinkOther: drink === '其他' ? blankToNull(val(`${prefix}DrinkOther`)) : null,
+    drinkSweetness: SUGARY_DRINKS.has(drink) ? blankToNull(val(`${prefix}DrinkSweetness`)) : null,
+    food: blankToNull(val(`${prefix}Food`)),
+    note: blankToNull(val(`${prefix}Note`))
+  };
+}
+function resetMealFields() {
+  MEAL_PREFIXES.forEach(prefix => MEAL_FIELDS.forEach(suffix => {
+    const el = $(`${prefix}${suffix}`);
+    if (!el) return;
+    if (el.tagName === 'SELECT') el.querySelectorAll('option[data-legacy]').forEach(option => option.remove());
+    el.value = '';
+  }));
+}
 
 function hydrationTarget(weight = val('morningWeight')) {
   const kg = num(weight);
@@ -417,22 +462,22 @@ function formData() {
     height_cm: val('heightCm') ? Number(val('heightCm')) : null,
     reference_sex: blankToNull(val('referenceSex')),
     meals: {
-      breakfast: { type: val('breakfastType'), drink: val('breakfastDrink'), food: val('breakfastFood'), note: val('breakfastNote') },
-      lunch: { type: val('lunchType'), drink: val('lunchDrink'), food: val('lunchFood'), note: val('lunchNote') },
-      dinner: { type: val('dinnerType'), drink: val('dinnerDrink'), food: val('dinnerFood'), note: val('dinnerNote') }
+      breakfast: mealRecord('breakfast'),
+      lunch: mealRecord('lunch'),
+      dinner: mealRecord('dinner')
     },
     plate_pattern: blankToNull(val('platePattern')),
     eating_out_count: Number(val('eatingOutCount') || 0),
     protein_status: val('proteinStatus'),
     vegetables_status: val('vegetablesStatus'),
-    drinks: val('drinks'),
+    drinks: blankToNull(val('drinks')),
     exercise: val('exercise'),
     exercise_minutes: Number(val('exerciseMinutes') || 0),
     water_ml: Number(val('waterMl') || 0),
     slept_well: val('sleptWell'),
     bowel_movement: val('bowelMovement'),
     mood: val('mood') ? Number(val('mood')) : null,
-    notes: val('notes')
+    notes: blankToNull(val('notes'))
   };
 }
 function fill(d) {
@@ -445,10 +490,14 @@ function fill(d) {
   };
   Object.entries(map).forEach(([id, value]) => { if ($(id)) $(id).value = value; });
   ['sleptWell', 'bowelMovement'].forEach(id => { $(id).checked = !!d?.[id === 'sleptWell' ? 'slept_well' : 'bowel_movement']; });
+  resetMealFields();
   Object.entries(d?.meals || {}).forEach(([meal, m]) => Object.entries(m || {}).forEach(([key, value]) => {
     const el = $(`${meal}${key[0].toUpperCase()}${key.slice(1)}`);
-    if (el) el.value = value || '';
+    if (!el) return;
+    if (el.tagName === 'SELECT') ensureOption(el, value || '');
+    else el.value = value || '';
   }));
+  syncAllMealFields();
   updateWaterHint();
   updateProgress();
 }
@@ -461,7 +510,14 @@ async function loadLog(date) {
 }
 $('logDate').value = today();
 $('logDate').addEventListener('change', () => loadLog($('logDate').value));
-ids.forEach(id => { const el = $(id); if (el) el.addEventListener('input', () => { updateProgress(); updateWaterHint(); }); });
+ids.forEach(id => {
+  const el = $(id);
+  if (!el) return;
+  const refresh = () => { updateProgress(); updateWaterHint(); syncAllMealFields(); };
+  el.addEventListener('input', refresh);
+  if (el.tagName === 'SELECT') el.addEventListener('change', refresh);
+});
+syncAllMealFields();
 
 function companionStats(rows = cache) {
   const dates = new Set(rows.map(row => row.log_date).filter(Boolean));
@@ -495,6 +551,8 @@ function updateProgress() {
 }
 const bodyDataDetails = $('bodyDataDetails');
 bodyDataDetails?.addEventListener('invalid', () => { bodyDataDetails.open = true; }, true);
+const mealDetails = $('mealDetails');
+mealDetails?.addEventListener('invalid', () => { mealDetails.open = true; }, true);
 $('logForm').addEventListener('submit', async e => {
   e.preventDefault();
   const payload = formData();
