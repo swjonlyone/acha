@@ -714,9 +714,6 @@ function exerciseKnown(rows) { return rows.some(row => num(row?.exercise_minutes
 function exerciseDayCount(rows) { return rows.filter(row => num(row?.exercise_minutes) > 0).length; }
 function flagKnown(rows, key) { return rows.some(row => typeof row?.[key] === 'boolean'); }
 function flagDays(rows, key) { return rows.filter(row => row?.[key] === true).length; }
-function pairedMorning(row) {
-  return num(row?.morning_weight) !== null && num(row?.evening_weight) !== null ? num(row.morning_weight) : null;
-}
 function shiftMonth(month, delta) {
   const [year, mon] = String(month).split('-').map(Number);
   const date = new Date(year, (mon || 1) - 1 + delta, 1);
@@ -834,7 +831,7 @@ function steadiestMonth(rows) {
 function yearWeightSeries(year) {
   const points = [];
   for (let month = 1; month <= 12; month += 1) {
-    const values = monthRows(`${year}-${String(month).padStart(2, '0')}`).map(pairedMorning).filter(value => value !== null);
+    const values = monthRows(`${year}-${String(month).padStart(2, '0')}`).map(row => num(row.morning_weight)).filter(value => value !== null);
     if (!values.length) continue;
     points.push([`${month}月`, avg(values)]);
   }
@@ -869,8 +866,8 @@ function yearCalendarHTML(year, rows) {
   return `<div class="year-calendar"><div class="section-head summary-chart-head"><h3>一年的紀錄</h3><span>有記的日子會亮起來</span></div><div class="cal-board">${board}</div></div>`;
 }
 function summaryChartHTML(kind) {
-  if (kind === 'month') return '<div class="summary-chart"><div class="section-head summary-chart-head"><h3>體重曲線</h3><span>只算早晚都有填的日子</span></div><div class="chart-canvas-wrap"><canvas id="monthChart"></canvas></div><p class="source-note">飲食、飲水、排便與測量時間都會讓數字晃動，僅供觀察。</p></div>';
-  if (kind === 'year') return '<div class="summary-chart"><div class="section-head summary-chart-head"><h3>體重曲線</h3><span>每月只算早晚都有填的日子</span></div><div class="chart-canvas-wrap"><canvas id="yearSummaryChart"></canvas></div></div>';
+  if (kind === 'month') return '<div class="summary-chart"><div class="section-head summary-chart-head"><h3>體重曲線</h3><span>有早上體重就畫</span></div><div class="chart-canvas-wrap"><canvas id="monthChart"></canvas></div><p class="source-note">飲食、飲水、排便與測量時間都會讓數字晃動，僅供觀察。</p></div>';
+  if (kind === 'year') return '<div class="summary-chart"><div class="section-head summary-chart-head"><h3>體重曲線</h3><span>各月早上體重平均</span></div><div class="chart-canvas-wrap"><canvas id="yearSummaryChart"></canvas></div></div>';
   return '';
 }
 function summaryCardHTML({ title, active, items, sentence, chart = '', calendar = '' }) {
@@ -940,16 +937,16 @@ function dailySummaryHTML(row) {
 }
 function renderMonth() {
   const month = selectedMonth(), rows = monthRows(month), prev = monthRows(shiftMonth(month, -1)), s = stats(rows);
-  const paired = rows.map(row => [row.log_date, pairedMorning(row)]).filter(point => point[1] !== null);
+  const morningPoints = rows.map(row => [row.log_date, num(row.morning_weight)]).filter(point => point[1] !== null);
   const summary = $('monthSummary');
   if (summary) {
     summary.classList.toggle('is-empty', !rows.length);
-    summary.innerHTML = summaryCardHTML({ title: '月總結', active: 'monthView', items: summaryItems(rows), sentence: monthSummarySentence(rows, prev), chart: paired.length ? 'month' : '' });
+    summary.innerHTML = summaryCardHTML({ title: '月總結', active: 'monthView', items: summaryItems(rows), sentence: monthSummarySentence(rows, prev), chart: morningPoints.length ? 'month' : '' });
   }
   $('monthStats').innerHTML = observationCards(s);
   $('monthHabits').innerHTML = habitHTML(s);
   $('monthList').innerHTML = rows.length ? rows.slice().reverse().map(dailySummaryHTML).join('') : '<p class="subtle">這個月還沒有記錄。</p>';
-  if (paired.length) drawChart('monthChart', paired, 'kg');
+  if (morningPoints.length) drawChart('monthChart', morningPoints, 'kg');
   renderWeightChanges(rows);
   renderTodayCalendar();
   drawDualChart('monthBalanceChart', rows.map(x => [x.log_date, dayIncrease(x), sleepChange(x)]));
