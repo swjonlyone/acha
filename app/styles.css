@@ -182,3 +182,15 @@ html.is-ig .app-shell{padding-bottom:24px}
 @media(min-width:720px){
   .summary-cat .summary-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
+
+/* 外食建議底部：說明卡留白，打卡提示分開，避免貼在一起或被圓角裁到 */
+.score-guide,.guide-tip{margin:14px 0;padding:16px 14px 14px;overflow:visible}
+.score-guide .section-head,.guide-tip .section-head{margin-bottom:12px;align-items:flex-start}
+.score-guide .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
+.score-guide .score-grid>div{min-height:0;height:auto;overflow:visible;padding:12px;box-sizing:border-box}
+.score-guide .source-note{margin:12px 0 0}
+.guide-tip .guide-action{margin:0;color:#315b50;font-size:15px;line-height:1.75}
+@media(max-width:640px){
+  .score-guide,.guide-tip{margin:12px 0;padding:14px 12px 12px}
+  .score-guide .score-grid{grid-template-columns:1fr 1fr}
+}
