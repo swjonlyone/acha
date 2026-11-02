@@ -961,19 +961,25 @@ function foodItems(rows) {
   if (hasDrinkRecords(rows)) items.push(['含糖飲料杯數', `${sugaryCupCount(rows)} 杯`]);
   return items;
 }
-function habitItems(rows) {
-  const items = [];
-  if (waterGoalKnown(rows)) items.push(['喝水達標', `${waterGoalDays(rows)} 天`]);
-  if (flagKnown(rows, 'bowel_movement')) items.push(['排便達標', `${flagDays(rows, 'bowel_movement')} 天`]);
-  if (flagKnown(rows, 'slept_well')) items.push(['早睡達標', `${flagDays(rows, 'slept_well')} 天`]);
-  if (exerciseKnown(rows)) items.push(['運動天數', `${exerciseDayCount(rows)} 天`]);
-  return items;
+function habitMeter(label, days, recorded) {
+  if (!recorded) return '';
+  const width = Math.max(0, Math.min(100, Math.round(days / recorded * 100)));
+  return `<div class="stat habit-stat"><strong>${days} 天</strong><span>${label}</span><div class="habit-meter" aria-hidden="true"><b style="width:${width}%"></b></div></div>`;
 }
 function habitInner(rows) {
-  const items = habitItems(rows);
-  if (!items.length) return '';
-  const note = waterGoalKnown(rows) ? '<p class="source-note">喝水達標以早上體重 × 40 ml 當作參考，僅供自己看。</p>' : '';
-  return chipGrid(items) + note;
+  const waterRecorded = rows.filter(row => waterPct(row) !== null).length;
+  const bowelRecorded = rows.filter(row => typeof row?.bowel_movement === 'boolean').length;
+  const sleepRecorded = rows.filter(row => typeof row?.slept_well === 'boolean').length;
+  const exerciseRecorded = rows.filter(row => num(row?.exercise_minutes) !== null).length;
+  const meters = [
+    waterRecorded ? habitMeter('喝水達標', waterGoalDays(rows), waterRecorded) : '',
+    bowelRecorded ? habitMeter('排便達標', flagDays(rows, 'bowel_movement'), bowelRecorded) : '',
+    sleepRecorded ? habitMeter('早睡達標', flagDays(rows, 'slept_well'), sleepRecorded) : '',
+    exerciseRecorded ? habitMeter('運動天數', exerciseDayCount(rows), exerciseRecorded) : ''
+  ].filter(Boolean);
+  if (!meters.length) return '';
+  const note = waterRecorded ? '<p class="source-note">喝水達標以早上體重 × 40 ml 當作參考，僅供自己看。</p>' : '';
+  return `<div class="stat-grid summary-grid">${meters.join('')}</div>${note}`;
 }
 function bodyAverageItems(s) {
   return [
