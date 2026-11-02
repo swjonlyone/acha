@@ -45,3 +45,138 @@ html,body,body *{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
 body{line-height:1.6;padding-bottom:calc(110px + env(safe-area-inset-bottom))}.app-shell{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
 .chart-card{padding-bottom:28px!important}.chart-canvas-wrap{padding-bottom:28px!important;overflow:visible}.chart-legend{display:flex!important;justify-content:center;align-items:center;gap:18px;flex-wrap:wrap;margin-top:12px!important;padding:0 4px 2px!important;line-height:1.6}.chart-legend span{display:inline-flex;align-items:center;gap:5px}
 @media(max-width:640px){.chart-card{padding-bottom:28px!important}.chart-canvas-wrap{padding-bottom:28px!important}.chart-legend{margin-top:12px!important;gap:12px;font-size:11px}}
+
+/* 每日記錄：先填今天，三餐細節收合在最後 */
+#todayView .quick-card{margin:0 0 8px!important;padding:22px 16px 8px!important;background:#fffdfb!important;border:1px solid #f0e4d6!important;border-radius:24px!important;box-shadow:0 10px 28px rgba(120,80,40,.05)!important}
+#todayView .quick-card>.section-head{margin-bottom:16px!important;align-items:baseline}
+#todayView .quick-card>.section-head h2{font-size:20px;font-weight:700}
+#todayView .quick-card>.section-head span{color:#b09a8c;font-weight:500}
+#todayView .quick-also{margin-top:4px;padding-top:4px;border-top:1px solid #efe4d8}
+#todayView .quick-also-label{margin:12px 0 10px;color:#8a7468;font-size:14px;font-weight:600}
+#todayView .meal-details .body-data-panel{padding-top:12px}
+#todayView .meal-details .meal-block .grid-2{grid-template-columns:1fr!important}
+@media(max-width:640px){#todayView .quick-card{padding:20px 14px 8px!important}}
+
+/* 月總結／年總結：只呈現有資料的項目，最後一段用陪伴口吻 */
+.month-summary,.year-summary{padding:16px 16px 14px;margin:2px 0 0;background:linear-gradient(180deg,#fff 0%,#f8fcf9 100%)}
+.month-summary>.section-head,.year-summary>.section-head{align-items:center;margin-bottom:12px}
+.summary-switch{display:flex;background:#e7f3ec;border-radius:999px;padding:3px;gap:2px}
+.summary-switch button{border:0;background:transparent;border-radius:999px;padding:6px 14px;min-height:0;color:#748680;font-weight:800;cursor:pointer}
+.summary-switch button.is-active{background:#fff;color:#d87550;box-shadow:0 2px 8px rgba(25,61,55,.08)}
+.summary-grid{margin:0}
+.summary-line{margin:12px 0 0;padding:12px 14px;background:#e4f3eb;border-radius:16px;color:#315b50;font-size:15px;line-height:1.75}
+.summary-chart{margin-top:8px}
+.summary-chart-head{margin-bottom:2px}
+.summary-chart-head h3{margin:0;font-size:15px}
+.summary-chart canvas{display:block;width:100%;height:220px}
+.stat-grid:empty{display:none;margin:0}
+@media(max-width:640px){
+  .summary-grid{grid-template-columns:1fr 1fr}
+  .summary-line{font-size:14px}
+  .summary-chart canvas{height:188px}
+  .month-summary,.year-summary{padding:12px 12px 10px}
+  .month-summary .stat,.year-summary .stat{padding:8px 6px}
+  .month-summary .stat strong,.year-summary .stat strong{font-size:20px}
+  #monthSummary .summary-chart canvas{height:156px!important}
+  #monthSummary .summary-chart .chart-canvas-wrap{min-height:0!important;padding:0 0 4px!important}
+  #monthSummary .summary-chart .source-note{margin-top:2px;font-size:12px;line-height:1.4}
+}
+.summary-chart .chart-canvas-wrap{min-height:0!important;padding:0!important}
+
+/* 年曆填色、體重變化與連續紀錄 */
+.today-calendar,.weight-change-card{padding:14px 16px 12px;margin:0 0 12px}
+.today-calendar .section-head,.weight-change-card .section-head{margin-bottom:8px}
+.cal-week,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-week{margin-bottom:4px;color:#8aa099;font-size:11px;text-align:center}
+.cal-grid i{display:block}
+.cal-grid b{display:grid;place-items:center;aspect-ratio:1;margin:0;border-radius:7px;background:#f3f6f4;color:#9aaba4;font-size:11px;font-weight:700}
+.cal-grid b.is-logged{background:#7dbe9b;color:#fff}
+.cal-grid b.is-selected{box-shadow:inset 0 0 0 2px #d87550}
+.year-calendar{margin-top:14px}
+.cal-board{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 10px}
+.cal-month strong{display:block;margin-bottom:4px;font-size:13px}
+.year-calendar .cal-grid b,.year-calendar .cal-grid i{border-radius:4px;font-size:12px}
+.weight-change-line{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line);color:#315b50;font-size:14px}
+.weight-change-line:first-of-type{border-top:0}
+.weight-change-line strong{color:#193d37}
+@media(max-width:640px){
+  .cal-board{grid-template-columns:repeat(3,1fr);gap:8px 6px}
+  .year-calendar .cal-week{font-size:8px}
+  .year-calendar .cal-grid{gap:2px}
+  .year-calendar .cal-grid b{font-size:8px;border-radius:3px}
+  .weight-change-line{font-size:13px}
+}
+
+/* 月／年總結分四類，顏色在檢視頁與 IG 範例圖共用 */
+:root{
+  --cat-log:#c4785a;
+  --cat-log-ink:#8d4e36;
+  --cat-log-chip:#fde6da;
+  --cat-food:#c4963a;
+  --cat-food-ink:#7a5a1e;
+  --cat-food-chip:#f8ecd0;
+  --cat-habit:#5f9a74;
+  --cat-habit-ink:#2f6b4a;
+  --cat-habit-chip:#e5f4eb;
+  --cat-body:#3f6f66;
+  --cat-body-ink:#2c564e;
+  --cat-body-chip:#e5f0ed;
+}
+.summary-stack{display:flex;flex-direction:column;gap:12px;margin:0 0 12px}
+.summary-switch-card,.summary-cat,.daily-list-card{padding:14px 14px 12px}
+.summary-switch-card .section-head{align-items:center;margin-bottom:0}
+.summary-cat{border-left:4px solid transparent}
+.summary-cat-title{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:15px;font-weight:800;letter-spacing:.04em}
+.summary-cat-title i{width:9px;height:9px;border-radius:99px;background:currentColor;flex:none}
+.summary-cat .summary-grid{grid-template-columns:1fr 1fr;margin:0}
+.summary-cat .stat{border-color:transparent;padding:12px 8px}
+.summary-cat .stat span{color:#6b615a;font-size:12px}
+.summary-cat .stat strong{font-size:22px}
+.summary-cat-note{margin:8px 0 0;padding:8px 10px;border-radius:12px;font-size:13px;line-height:1.65}
+.summary-cat .summary-chart{margin-top:12px}
+.summary-cat .chart-canvas-wrap{min-height:0!important;padding:0 0 4px!important}
+.summary-cat .summary-chart canvas{display:block;width:100%;height:180px!important}
+.summary-cat .year-calendar{margin-top:12px}
+.summary-stack>.summary-line{margin:0;background:#f8f1e8;color:#5c4a3f}
+.cat-log{border-left-color:var(--cat-log);background:linear-gradient(180deg,#fff,#fff8f4)}
+.cat-log .summary-cat-title{color:var(--cat-log-ink)!important}
+.cat-log .stat{background:var(--cat-log-chip)}
+.cat-log .stat strong{color:var(--cat-log-ink)}
+.cat-log .summary-cat-note{background:#fff1ea;color:#7a4632}
+.cat-log .cal-grid b.is-logged{background:#e39a7e;color:#fff}
+.cat-food{border-left-color:var(--cat-food);background:linear-gradient(180deg,#fff,#fffaf2)}
+.cat-food .summary-cat-title{color:var(--cat-food-ink)!important}
+.cat-food .stat{background:var(--cat-food-chip)}
+.cat-food .stat strong{color:var(--cat-food-ink)}
+.cat-habit{border-left-color:var(--cat-habit);background:linear-gradient(180deg,#fff,#f4faf6)}
+.cat-habit .summary-cat-title{color:var(--cat-habit-ink)!important}
+.cat-habit .stat{background:var(--cat-habit-chip)}
+.cat-habit .stat strong{color:var(--cat-habit-ink)}
+.cat-body{border-left-color:var(--cat-body);background:linear-gradient(180deg,#fff,#f3f7f6)}
+.cat-body .summary-cat-title{color:var(--cat-body-ink)!important}
+.cat-body .stat{background:var(--cat-body-chip)}
+.cat-body .stat strong{color:var(--cat-body-ink)}
+.legend-dot.day{background:var(--cat-body)!important}
+.legend-dot.night{background:#9dc8b4!important}
+.ig-stage{display:flex;justify-content:center;padding:16px 12px 32px;background:#f6efe6}
+.ig-card{width:min(420px,100%);background:#fffdfb;border-radius:28px;padding:18px 14px 16px;box-shadow:0 16px 40px rgba(90,60,40,.12)}
+.ig-head{margin-bottom:6px}
+.ig-brand{margin:0 0 4px;font-weight:800;color:#3a4537;font-size:14px}
+.ig-head h2{margin:0;font-size:26px}
+.ig-head span,.ig-foot{color:#8d7366;font-size:13px}
+.ig-foot{margin:8px 0 0;text-align:center}
+.ig-card .summary-stack{gap:2px;margin:0}
+.ig-card .summary-cat{box-shadow:none;border-radius:0;background:transparent;padding:10px 0 6px 10px}
+.ig-card .summary-line{background:#f8f1e8;color:#5c4a3f}
+html.is-ig .topbar,html.is-ig #accessStrip,html.is-ig main{display:none!important}
+html.is-ig,html.is-ig body,html.is-ig .app-shell{background:#f6efe6}
+html.is-ig .app-shell{padding-bottom:24px}
+@media(max-width:640px){
+  .summary-switch-card,.summary-cat,.daily-list-card{padding:12px}
+  .summary-cat .stat{padding:10px 6px}
+  .summary-cat .stat strong{font-size:20px}
+  .summary-cat .summary-chart canvas,.ig-card .summary-chart canvas{height:168px!important}
+}
+@media(min-width:720px){
+  .summary-cat .summary-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
