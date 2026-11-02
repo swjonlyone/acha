@@ -5,7 +5,7 @@
 - `index.html`：手機優先介面
 - `app.js`：Email 登入、每日記錄、月／年檢視、Supabase CRUD
 - `supabase-schema.sql`：資料表、索引與 RLS
-- `research-health-metrics.md`：飲水、腰臀比、基礎代謝與日夜體重指標來源
+- `research-health-metrics.md`：飲水、腰臀比與白天／睡一覺體重變化的來源說明
 - `assets/acha-avatar.png`：沿用落地頁的吉普力風阿茶人物素材
 - `supabase-entitlements.sql`：付款權限表與 RLS
 - `supabase/functions/portaly-webhook/index.ts`：接收 Portaly Payment callback 的 Edge Function 範例
@@ -30,15 +30,15 @@
 - 每日 upsert：同一使用者同一天會更新，不會重複新增
 - 每月檢視：平均體重、外食餐數、運動天數、習慣完成率、日期列表
 - 年度檢視：每月體重、記錄天數、外食餐數、運動天數
-- 健康指標：飲水參考目標（早上體重 × 40 ml）、腰臀比、基礎代謝率公式估算、日內增加量、夜間回落量
-- 趨勢圖：橫軸顯示日期／月份，縱軸以 kg 顯示；日夜比較圖以橘線（日內增加）與綠線（夜間回落）區分
+- 健康指標：飲水參考目標（早上體重 × 40 ml）、腰臀比、白天變化、睡一覺變化
+- 趨勢圖：橫軸顯示日期／月份，縱軸以 kg 顯示；白天變化與睡一覺變化畫在同一張圖上
 - 外食建議順序固定為「蔬菜 → 蛋白質 → 澱粉」，降低閱讀混亂
 - 每月每日摘要：早晚體重、日夜體重波動、飲水達成、早睡、排便、運動與餐盤比例
 - RLS：每位使用者只能查閱自己的 daily_logs
 
 ## 健康指標聲明
 
-所有數值與公式均為自我追蹤或估算用途，顯示「僅供參考」。日內增加量與夜間回落量是體重波動觀察，不等於脂肪變化或實際代謝率；基礎代謝是公式估算，不等於實測。飲水、腰臀比與公式來源及限制請見 `research-health-metrics.md`。
+數值只供自己觀察，畫面上標「僅供參考」。白天變化與睡一覺變化是體重晃動，不是診斷。飲水與腰臀比的來源說明見 `research-health-metrics.md`。
 
 如果 Supabase 已經建立舊版 `daily_logs`，請重新在 SQL Editor 執行更新後的 `supabase-schema.sql`，其中的 `alter table ... add column if not exists` 會補上臀圍、身高、年齡與參考性別欄位。
 
