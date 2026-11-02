@@ -127,10 +127,13 @@ body{line-height:1.6;padding-bottom:calc(100px + env(safe-area-inset-bottom))}
 .summary-preview figcaption{margin-top:10px;color:#8d7366;font-size:13px;text-align:center}
 .hero-composite .hero-art{height:auto}
 @media(max-width:800px){
-  .hero-art-wrap{min-height:0;width:100%;max-width:100%;padding-bottom:128px}
-  .hero-composite{width:100%;max-width:100%}
-  .hero-composite .hero-art{transform:none;width:100%;max-width:100%;height:auto}
-  .hero-phone{width:56%;right:0;left:auto;top:auto;bottom:-108px;transform:rotate(4deg)}
+  .hero-art-wrap{min-height:0;width:100%;max-width:100%;margin-top:28px;padding-bottom:8px;transform:translateX(12px)}
+  .art-glow{display:none}
+  .hero-composite{display:flex;align-items:flex-end;justify-content:flex-start;width:100%;max-width:100%}
+  .hero-composite .hero-art{position:relative;flex:0 0 54%;width:54%;max-width:none;height:268px;object-fit:cover;object-position:80% 12%;transform:none;mix-blend-mode:normal;border-radius:28px}
+  .hero-phone{position:relative;z-index:3;width:52%;max-width:none;margin:0 0 6px -10%;right:auto;left:auto;top:auto;bottom:auto;overflow:visible;transform:rotate(4deg)}
+  .sticker-one{left:0;top:10%}
+  .sticker-two{right:0;bottom:2%;z-index:5}
   .phone-quick-head strong{font-size:11px}
   .phone-quick-head span,.phone-field b{font-size:7px}
   .phone-field{padding:4px 5px;margin-top:4px}
