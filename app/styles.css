@@ -173,6 +173,10 @@ body{line-height:1.6;padding-bottom:calc(110px + env(safe-area-inset-bottom))}.a
 html.is-ig .topbar,html.is-ig #accessStrip,html.is-ig main{display:none!important}
 html.is-ig,html.is-ig body,html.is-ig .app-shell{background:#f6efe6}
 html.is-ig .app-shell{padding-bottom:24px}
+.save-cloud-hint{margin:12px 0 0;padding:10px 12px;border-radius:14px;background:#fff3e6;color:#9b6048;font-size:13px;line-height:1.65;text-align:left}
+.save-cloud-hint[hidden]{display:none !important}
+.save-cloud-hint .nowrap,.login-keep-note .nowrap{white-space:nowrap}
+.login-keep-note{margin:10px 0 14px;color:#315b50;font-size:13px;line-height:1.7}
 @media(max-width:640px){
   .summary-switch-card,.summary-cat,.daily-list-card{padding:12px}
   .summary-cat .stat{padding:10px 6px}
