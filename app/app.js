@@ -10,6 +10,10 @@ let supabase = null;
 let session = null;
 let cache = [];
 let paidAccess = false;
+let loadAllGen = 0;
+let logReadGen = 0;
+let logsLoadedFor = '';
+let loadAllTimer = 0;
 
 function clearPaidUnlock() {
   paidAccess = false;
@@ -31,7 +35,14 @@ function currentSupabaseConfig() {
   return resolveSupabaseConfig(stored);
 }
 
-const today = () => new Date().toISOString().slice(0, 10);
+// 裝置本地日期。toISOString 是 UTC，台灣早上 8 點前會變成前一天。
+function localDateString(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+const today = () => localDateString();
 const num = value => (value === null || value === undefined || (typeof value === 'string' && value.trim() === '')) ? null : (Number.isFinite(Number(value)) ? Number(value) : null);
 const moneyDate = d => new Date(`${d}T00:00:00`);
 const format = (value, digits = 1) => value === null || value === undefined || !Number.isFinite(Number(value)) ? '—' : Number(value).toFixed(digits);
@@ -150,12 +161,14 @@ function isGuideShowcase() {
   return isDemo() && (params.get('showcase') === 'guide' || params.get('view') === 'guide');
 }
 function demoSeed() {
-  const base = new Date();
   const rows = [];
   for (let i = 0; i < 14; i++) {
-    const d = new Date(base.getTime() - (13 - i) * 86400000).toISOString().slice(0, 10);
+    const d = new Date();
+    d.setHours(12, 0, 0, 0);
+    d.setDate(d.getDate() - (13 - i));
+    const date = localDateString(d);
     const morning = 62.8 - i * 0.08 + (i % 4) * 0.12;
-    rows.push({ log_date: d, morning_weight: Number(morning.toFixed(1)), evening_weight: Number((morning + 0.65 + (i % 3) * 0.12).toFixed(1)), waist_cm: Number((78 - i * 0.08).toFixed(1)), hip_cm: 98, age_years: 32, height_cm: 162, reference_sex: 'female', body_fat_pct: Number((25.8 - i * 0.06 + (i % 3) * 0.08).toFixed(1)), sleep_hours: Number((6.2 + (i % 5) * 0.45).toFixed(1)), plate_pattern: i % 4 === 0 ? '221' : '211', eating_out_count: 2, protein_status: i % 5 === 0 ? '普通' : '足夠', vegetables_status: i % 6 === 0 ? '普通' : '足夠', exercise_minutes: i % 3 === 0 ? 20 : 35, water_ml: Math.round(morning * 40 * (0.8 + (i % 4) * 0.07)), slept_well: i % 4 !== 0, bowel_movement: i % 5 !== 0, meals: { breakfast: { food: '無糖豆漿＋蛋' }, lunch: { food: '雞腿便當，飯半碗' }, dinner: { food: '豆腐蔬菜湯＋地瓜' } }, notes: '示範資料：可自行修改' });
+    rows.push({ log_date: date, morning_weight: Number(morning.toFixed(1)), evening_weight: Number((morning + 0.65 + (i % 3) * 0.12).toFixed(1)), waist_cm: Number((78 - i * 0.08).toFixed(1)), hip_cm: 98, age_years: 32, height_cm: 162, reference_sex: 'female', body_fat_pct: Number((25.8 - i * 0.06 + (i % 3) * 0.08).toFixed(1)), sleep_hours: Number((6.2 + (i % 5) * 0.45).toFixed(1)), plate_pattern: i % 4 === 0 ? '221' : '211', eating_out_count: 2, protein_status: i % 5 === 0 ? '普通' : '足夠', vegetables_status: i % 6 === 0 ? '普通' : '足夠', exercise_minutes: i % 3 === 0 ? 20 : 35, water_ml: Math.round(morning * 40 * (0.8 + (i % 4) * 0.07)), slept_well: i % 4 !== 0, bowel_movement: i % 5 !== 0, meals: { breakfast: { food: '無糖豆漿＋蛋' }, lunch: { food: '雞腿便當，飯半碗' }, dinner: { food: '豆腐蔬菜湯＋地瓜' } }, notes: '示範資料：可自行修改' });
   }
   return rows;
 }
@@ -241,6 +254,11 @@ function switchToTodayFromPaywall() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function closeGuidePaywall() { switchToTodayFromPaywall(); }
+function syncSaveCloudHint() {
+  const hint = $('saveCloudHint');
+  if (!hint) return;
+  hint.hidden = !!paidAccess;
+}
 function updateAccessStrip(demo) {
   const strip = $('accessStrip'), badge = $('accessBadge'), buy = $('accessBuy');
   if (!strip || !badge || !buy) return;
@@ -337,15 +355,13 @@ function updateAuth() {
   document.documentElement.classList.toggle('is-free-trial', demo);
   updateGuideLock(false);
   syncUnlockEntry();
+  syncSaveCloudHint();
   if (paidAccess) dismissPurchaseModal();
   if (!accessible && session) msg('authMessage', '這個帳號還沒開通。去 Portaly 買，或加 LINE 跟阿茶領取。填 Email 不會直接開通。', true);
   if (accessible) {
-    if (demo) cache = demoRows();
-    preferSampleMonth();
-    renderMonth(); renderYear();
     $('logDate').value = $('logDate').value || today();
-    loadLog($('logDate').value);
-  }
+    scheduleLoadAll();
+  } else dropLogReads();
   updateWaterHint();
 }
 
@@ -366,6 +382,7 @@ $('logoutBtn').addEventListener('click', async () => {
   try { await supabase?.auth.signOut(); } catch (_) { /* still drop the local unlock */ }
   session = null;
   clearPaidUnlock();
+  dropLogReads();
   updateAuth();
 });
 $('demoBtn').addEventListener('click', () => { const u = new URL(location.href); u.searchParams.set('demo', '1'); location.href = u.toString(); });
@@ -612,9 +629,23 @@ function fill(d) {
   updateProgress();
 }
 async function loadLog(date) {
-  if (isDemo() && !paidAccess) { fill(cache.find(x => x.log_date === date) || {}); return; }
+  const gen = ++logReadGen;
+  if (isDemo() && !paidAccess) {
+    fill(cache.find(row => row.log_date === date) || {});
+    return;
+  }
   if (!session || !supabase) return;
+  const userId = session.user?.id || '';
+  if (logsLoadedFor && logsLoadedFor === userId) {
+    if (gen !== logReadGen) return;
+    if (($('logDate').value || '') !== date) return;
+    fill(cache.find(row => row.log_date === date) || {});
+    return;
+  }
   const { data, error } = await supabase.from('daily_logs').select('*').eq('log_date', date).maybeSingle();
+  if (gen !== logReadGen) return;
+  if (!session || (session.user?.id || '') !== userId) return;
+  if (($('logDate').value || '') !== date) return;
   if (error) { msg('saveMessage', error.message, true); return; }
   fill(data || {});
 }
@@ -635,9 +666,7 @@ function companionStats(rows = cache) {
   let cursor = todayDate, streak = 0;
   while (dates.has(cursor)) {
     streak += 1;
-    const previous = new Date(`${cursor}T12:00:00`);
-    previous.setDate(previous.getDate() - 1);
-    cursor = previous.toISOString().slice(0, 10);
+    cursor = prevDate(cursor);
   }
   const recorded = rows.filter(row => row.log_date && row.log_date <= todayDate).length;
   return { streak, recorded: Math.min(365, recorded) };
@@ -672,15 +701,21 @@ $('logForm').addEventListener('submit', async e => {
     cache.push({ ...payload, id: `demo-${payload.log_date}` });
     cache = sortRows(cache);
     saveDemoRows();
-    msg('saveMessage', '示範資料已儲存到這支瀏覽器。');
-    toast('示範資料已更新');
+    msg('saveMessage', '先記在這一頁了。重新整理會消失喔。');
+    toast('先記在這一頁了');
     renderMonth(); renderYear();
     return;
   }
   if (!session) { msg('saveMessage', '請先登入。', true); return; }
   const { error } = await supabase.from('daily_logs').upsert({ ...payload, user_id: session.user.id }, { onConflict: 'user_id,log_date' });
   if (error) msg('saveMessage', error.message, true);
-  else { msg('saveMessage', '已儲存今天的記錄。'); toast('今天的記錄已儲存'); loadAll(); }
+  else {
+    msg('saveMessage', '已儲存今天的記錄。');
+    toast('今天的記錄已儲存');
+    clearTimeout(loadAllTimer);
+    loadAllTimer = 0;
+    loadAll();
+  }
 });
 
 function sortRows(rows) { return [...rows].sort((a, b) => a.log_date.localeCompare(b.log_date)); }
@@ -691,7 +726,7 @@ function dayIncrease(row) {
 }
 function sleepChange(row) {
   if (!row?.log_date) return null;
-  const prev = rowByDate(new Date(moneyDate(row.log_date).getTime() - 86400000).toISOString().slice(0, 10));
+  const prev = rowByDate(prevDate(row.log_date));
   const lastNight = num(prev?.evening_weight), morning = num(row.morning_weight);
   return lastNight !== null && morning !== null ? morning - lastNight : null;
 }
@@ -1075,10 +1110,9 @@ function renderIgExample() {
   requestAnimationFrame(() => { if (token === igPaintToken) paintCharts(charts); });
 }
 function prevDate(date) {
-  const cursor = new Date(moneyDate(date).getTime() - 86400000);
-  const month = String(cursor.getMonth() + 1).padStart(2, '0');
-  const day = String(cursor.getDate()).padStart(2, '0');
-  return `${cursor.getFullYear()}-${month}-${day}`;
+  const cursor = new Date(`${date}T12:00:00`);
+  cursor.setDate(cursor.getDate() - 1);
+  return localDateString(cursor);
 }
 function streakEnding(date) {
   const dates = new Set(cache.map(row => row.log_date).filter(Boolean));
@@ -1288,13 +1322,52 @@ document.querySelectorAll('.view-tab').forEach(button => button.addEventListener
   if (button.dataset.view === 'yearView') renderYear();
 }));
 
+function dropLogReads() {
+  loadAllGen += 1;
+  logReadGen += 1;
+  logsLoadedFor = '';
+  clearTimeout(loadAllTimer);
+  loadAllTimer = 0;
+  cache = [];
+}
+function scheduleLoadAll() {
+  clearTimeout(loadAllTimer);
+  if (isDemo() && !paidAccess) {
+    loadAllTimer = 0;
+    loadAll();
+    return;
+  }
+  loadAllTimer = setTimeout(() => {
+    loadAllTimer = 0;
+    loadAll();
+  }, 0);
+}
+function applyLoadedLogs(rows) {
+  cache = sortRows(rows || []);
+  preferSampleMonth();
+  renderMonth();
+  renderYear();
+  const date = $('logDate').value || today();
+  fill(cache.find(row => row.log_date === date) || {});
+}
+// 後到的整包讀取才算數。重複觸發或較慢的舊回應不能蓋掉較新的結果。
 async function loadAll() {
-  if (isDemo() && !paidAccess) { cache = demoRows(); preferSampleMonth(); renderMonth(); renderYear(); loadLog($('logDate').value || today()); return; }
-  if (!session) return;
+  if (isDemo() && !paidAccess) {
+    logsLoadedFor = '';
+    applyLoadedLogs(demoRows());
+    return;
+  }
+  if (!session || !supabase) return;
+  const gen = ++loadAllGen;
+  const userId = session.user?.id || '';
+  logReadGen += 1;
   const { data, error } = await supabase.from('daily_logs').select('*').order('log_date', { ascending: true });
+  if (gen !== loadAllGen) return;
+  if (!session || (session.user?.id || '') !== userId) return;
   if (error) { toast(error.message); return; }
-  cache = data || [];
-  renderMonth(); renderYear(); loadLog($('logDate').value || today());
+  logsLoadedFor = userId;
+  logReadGen += 1;
+  applyLoadedLogs(data || []);
 }
 bootstrapAuth();
 
