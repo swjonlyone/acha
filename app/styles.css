@@ -198,3 +198,44 @@ html.is-ig .app-shell{padding-bottom:24px}
   .score-guide,.guide-tip{margin:12px 0;padding:14px 12px 12px}
   .score-guide .score-grid{grid-template-columns:1fr 1fr}
 }
+
+/* 一般網址的購買 Email 登入：看得到，但不搶 Portaly 主按鈕 */
+.access-strip .unlock-email-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:36px;
+  padding:7px 12px;
+  border:1px solid #d9b39e;
+  border-radius:999px;
+  background:#fff;
+  color:#8d513c;
+  font-size:13px;
+  font-weight:800;
+  line-height:1.35;
+  text-decoration:none;
+  cursor:pointer;
+}
+.access-strip.is-paid .unlock-email-link{display:none}
+.auth-email-login{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  margin-top:8px;
+  padding:14px 16px;
+  border:1px solid #d9b39e;
+  border-radius:14px;
+  background:#fff7f1;
+  color:#8d513c;
+  font-size:15px;
+  font-weight:800;
+  line-height:1.4;
+  text-align:center;
+  cursor:pointer;
+}
+.auth-email-login:hover{background:#fbe8dc}
+@media(max-width:640px){
+  .access-strip .unlock-email-link{flex:1 1 100%;min-height:40px}
+  .auth-email-login{font-size:15px}
+}
