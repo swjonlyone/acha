@@ -156,6 +156,7 @@ renderMealGuide();
 
 function isDemo() { return new URLSearchParams(location.search).has('demo'); }
 function isUnlockEntry() { return new URLSearchParams(location.search).get('unlock') === '1'; }
+function isDebugEntry() { return new URLSearchParams(location.search).get('debug') === '1'; }
 function isGuideShowcase() {
   const params = new URLSearchParams(location.search);
   return isDemo() && (params.get('showcase') === 'guide' || params.get('view') === 'guide');
@@ -386,8 +387,9 @@ $('logoutBtn').addEventListener('click', async () => {
   updateAuth();
 });
 $('demoBtn').addEventListener('click', () => { const u = new URL(location.href); u.searchParams.set('demo', '1'); location.href = u.toString(); });
-// Big purchase-email buttons stay hidden. A quiet OTP entry exists only at ?unlock=1
-// for people who already have an active entitlement. Submitting the email never writes acha_paid.
+// 頂端大顆「已購買？Email 登入」與付費牆那顆維持關閉。
+// 一般網址與 ?unlock=1 都用同一組購買 Email 視窗寄驗證連結。
+// 只填 Email 不會寫入 acha_paid；要登入後有有效權益才會打開。
 function hidePurchaseEmailEntry() {
   ['purchaseLoginBtn', 'paywallEmailBtn'].forEach(id => {
     const el = $(id);
@@ -401,19 +403,29 @@ function openPurchaseEmailLogin() {
   $('purchaseAuthModal')?.classList.remove('hidden');
   $('purchaseEmail')?.focus();
 }
+function setEntryVisible(id, show) {
+  const el = $(id);
+  if (!el) return;
+  el.hidden = !show;
+  el.disabled = !show;
+  el.classList.toggle('hidden', !show);
+}
 function syncUnlockEntry() {
-  const show = isUnlockEntry() && !paidAccess;
-  ['unlockEmailLink', 'paywallUnlockLink'].forEach(id => {
-    const el = $(id);
-    if (!el) return;
-    el.hidden = !show;
-    el.disabled = !show;
-    el.classList.toggle('hidden', !show);
-  });
+  const showLogin = !paidAccess;
+  setEntryVisible('unlockEmailLink', showLogin);
+  setEntryVisible('authUnlockEmailBtn', showLogin);
+  setEntryVisible('paywallUnlockLink', isUnlockEntry() && !paidAccess);
+}
+function syncDebugGear() {
+  const show = isDebugEntry();
+  setEntryVisible('configBtn', show);
+  if (!show) $('configView')?.classList.add('hidden');
 }
 hidePurchaseEmailEntry();
 syncUnlockEntry();
+syncDebugGear();
 $('unlockEmailLink')?.addEventListener('click', openPurchaseEmailLogin);
+$('authUnlockEmailBtn')?.addEventListener('click', openPurchaseEmailLogin);
 $('paywallUnlockLink')?.addEventListener('click', openPurchaseEmailLogin);
 $('purchaseLoginBtn').addEventListener('click', openPurchaseEmailLogin);
 $('closePurchaseAuth').addEventListener('click', () => $('purchaseAuthModal').classList.add('hidden'));
@@ -440,7 +452,7 @@ $('purchaseAuthForm').addEventListener('submit', async e => {
   if (!email) return;
   clearPaidUnlock();
   if (!supabase) {
-    msg('purchaseAuthMessage', '登入連結還沒寄出。請重新整理後再試一次。只填 Email 不會開通。', true);
+    msg('purchaseAuthMessage', '驗證連結還沒寄出。請重新整理後再試一次。只填 Email 不會開通。', true);
     return;
   }
   const redirect = new URL(location.href);
@@ -452,7 +464,7 @@ $('purchaseAuthForm').addEventListener('submit', async e => {
     msg('purchaseAuthMessage', purchaseOtpSendErrorText(error), true);
     return;
   }
-  msg('purchaseAuthMessage', '登入連結已寄出。點開信裡的連結，確認有開通紀錄後才會打開。');
+  msg('purchaseAuthMessage', '驗證連結已寄出。點開信裡的連結，確認有開通紀錄後才會打開。');
 });
 $('paywallEmailBtn').addEventListener('click', openPurchaseEmailLogin);
 $('closeGuidePaywall')?.addEventListener('click', closeGuidePaywall);
@@ -498,7 +510,11 @@ function setupConfigPanel() {
   fillConfigForm();
 }
 setupConfigPanel();
-$('configBtn').addEventListener('click', () => { fillConfigForm(); $('configView').classList.remove('hidden'); });
+$('configBtn').addEventListener('click', () => {
+  if (!isDebugEntry()) return;
+  fillConfigForm();
+  $('configView').classList.remove('hidden');
+});
 $('closeConfig').addEventListener('click', () => $('configView').classList.add('hidden'));
 $('saveConfig').addEventListener('click', () => {
   const url = $('supabaseUrl').value.trim().replace(/\/$/, '');

@@ -141,3 +141,14 @@ body{line-height:1.6;padding-bottom:calc(100px + env(safe-area-inset-bottom))}
   .phone-field-row{gap:4px}
   .summary-preview-grid{grid-template-columns:1fr;gap:18px}
 }
+
+/* 已開通登入：文字入口，放在 Portaly 主按鈕下面，不跟主按鈕搶 */
+.hero-email-login,.offer-email-login{margin:10px 0 0;color:#8d6049;font-size:13px;font-weight:500;line-height:1.55}
+.hero-cta .hero-email-login{max-width:17em;margin-top:4px}
+.offer-email-login{text-align:center}
+.hero-email-login a,.offer-email-login a{color:#8d6049;font-weight:800;text-decoration:underline;text-underline-offset:3px}
+.hero-email-login span,.offer-email-login span{display:block;margin-top:2px;color:#927f70;font-size:12px;font-weight:500}
+@media(max-width:800px){
+  .hero-email-login,.offer-email-login{font-size:13px}
+  .hero-email-login span,.offer-email-login span{font-size:12px}
+}
