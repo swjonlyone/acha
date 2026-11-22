@@ -276,8 +276,10 @@ function saveDemoRows() { /* 免費體驗資料只存在記憶體，重新載入
 function updateGuideLock(show = false) {
   const locked = !paidAccess && !isGuideShowcase();
   const content = $('guideLockedContent'), wall = $('guidePaywall');
-  if (content) content.classList.toggle('is-guide-locked', locked && show);
-  if (wall) wall.classList.toggle('hidden', !(locked && show));
+  const open = locked && show;
+  if (content) content.classList.toggle('is-guide-locked', open);
+  if (wall) wall.classList.toggle('hidden', !open);
+  document.documentElement.classList.toggle('is-guide-paywall', open);
 }
 function switchToTodayFromPaywall() {
   const todayTab = document.querySelector('.view-tab[data-view=\"todayView\"]');
@@ -295,39 +297,33 @@ function syncSaveCloudHint() {
   hint.hidden = !!paidAccess;
 }
 function syncDemoHint(demo) {
-  const hint = document.querySelector('.demo-hint');
-  if (!hint) return;
-  if (!demo) {
-    hint.hidden = true;
-    return;
-  }
-  hint.hidden = false;
-  if (sampleKind()) {
-    hint.innerHTML = '這是示範資料，不是你的紀錄。換頁會重置。<a href="?demo=1&amp;locale=zh-TW">回到空白體驗，自己記一餐</a>';
-  } else {
-    hint.innerHTML = '免費體驗，換頁會重置。<a href="?demo=1&amp;sample=month&amp;locale=zh-TW">看示範月摘要</a>';
-  }
+  const link = $('sampleMonthLink');
+  if (!link) return;
+  link.hidden = !(demo && !sampleKind());
 }
 function updateAccessStrip(demo) {
   const strip = $('accessStrip'), badge = $('accessBadge'), buy = $('accessBuy');
   if (!strip || !badge || !buy) return;
+  const authVisible = $('authView') && !$('authView').classList.contains('hidden');
   strip.classList.toggle('is-paid', paidAccess);
-  if (paidAccess) {
-    badge.textContent = `正式版已解鎖 ｜ ${session?.user?.email || '已驗證購買者'}`;
-    buy.hidden = true;
-  } else if (isGuideShowcase()) {
+  if (paidAccess || authVisible || (!demo && !isGuideShowcase())) {
+    strip.hidden = true;
+    return;
+  }
+  strip.hidden = false;
+  buy.hidden = false;
+  buy.classList.add('buy-btn');
+  if (isGuideShowcase()) {
     badge.textContent = '外食建議展示模式 ｜ 僅供截圖參考';
-    buy.hidden = false;
-  } else if (demo) {
-    badge.textContent = '免費體驗，換頁會重置';
-    buy.hidden = false;
+    buy.textContent = 'NT$ 99 買完整版';
   } else {
-    badge.textContent = '還沒開通 ｜ 去 Portaly 買，買完加 LINE 領';
-    buy.hidden = false;
+    badge.textContent = '免費體驗中・換頁會重置';
+    buy.textContent = 'NT$ 99 買完整版';
   }
 }
 function dismissPurchaseModal() {
   $('purchaseAuthModal')?.classList.add('hidden');
+  syncUnlockBackdrop();
   const el = $('purchaseAuthMessage');
   if (!el) return;
   el.textContent = '';
@@ -399,12 +395,13 @@ function updateAuth() {
   $('authView').classList.toggle('hidden', accessible);
   $('mainView').classList.toggle('hidden', !accessible);
   $('logoutBtn').classList.toggle('hidden', !session);
-  $('userLabel').textContent = paidAccess ? (session?.user?.email || '正式版已解鎖') : demo ? '免費體驗，先記一餐' : session?.user?.email || '還沒開通';
+  $('userLabel').textContent = paidAccess ? (session?.user?.email || '正式版已解鎖') : demo ? '免費體驗，先記一餐' : (session?.user?.email || '外食也行・先記一餐就好');
   updateAccessStrip(demo);
   document.documentElement.classList.toggle('is-free-trial', demo);
   syncDemoHint(demo);
   updateGuideLock(false);
   syncUnlockEntry();
+  syncUnlockBackdrop();
   syncSaveCloudHint();
   if (paidAccess) dismissPurchaseModal();
   if (!accessible && session) msg('authMessage', '這個帳號還沒開通。去 Portaly 買，或加 LINE 跟阿茶領取。填 Email 不會直接開通。', true);
@@ -448,8 +445,14 @@ function hidePurchaseEmailEntry() {
     el.classList.add('hidden');
   });
 }
+function syncUnlockBackdrop() {
+  const modal = $('purchaseAuthModal');
+  const open = !!(modal && !modal.classList.contains('hidden') && isUnlockEntry() && !paidAccess);
+  document.documentElement.classList.toggle('is-unlock-entry', open);
+}
 function openPurchaseEmailLogin() {
   $('purchaseAuthModal')?.classList.remove('hidden');
+  syncUnlockBackdrop();
   $('purchaseEmail')?.focus();
 }
 function setEntryVisible(id, show) {
@@ -477,8 +480,8 @@ $('unlockEmailLink')?.addEventListener('click', openPurchaseEmailLogin);
 $('authUnlockEmailBtn')?.addEventListener('click', openPurchaseEmailLogin);
 $('paywallUnlockLink')?.addEventListener('click', openPurchaseEmailLogin);
 $('purchaseLoginBtn').addEventListener('click', openPurchaseEmailLogin);
-$('closePurchaseAuth').addEventListener('click', () => $('purchaseAuthModal').classList.add('hidden'));
-$('purchaseAuthModal').addEventListener('click', e => { if (e.target.id === 'purchaseAuthModal') e.currentTarget.classList.add('hidden'); });
+$('closePurchaseAuth').addEventListener('click', () => { $('purchaseAuthModal').classList.add('hidden'); syncUnlockBackdrop(); });
+$('purchaseAuthModal').addEventListener('click', e => { if (e.target.id === 'purchaseAuthModal') { e.currentTarget.classList.add('hidden'); syncUnlockBackdrop(); } });
 // Built-in Supabase email is a project-wide cap (2 sends/hour). Say that in Chinese
 // when the send is rate-limited; other send failures keep the existing wording.
 function isEmailOtpRateLimit(error) {
@@ -513,9 +516,9 @@ $('purchaseAuthForm').addEventListener('submit', async e => {
     msg('purchaseAuthMessage', purchaseOtpSendErrorText(error), true);
     return;
   }
-  msg('purchaseAuthMessage', '驗證連結已寄出。點開信裡的連結，確認有開通紀錄後才會打開。');
+  msg('purchaseAuthMessage', '驗證連結已寄出。點開信裡的連結，確認有開通紀錄後才會打開。清除瀏覽資料會被登出，重新登入就好，紀錄都在雲端。');
 });
-$('paywallEmailBtn').addEventListener('click', openPurchaseEmailLogin);
+$('paywallEmailBtn')?.addEventListener('click', openPurchaseEmailLogin);
 $('closeGuidePaywall')?.addEventListener('click', closeGuidePaywall);
 $('returnTodayFromPaywall')?.addEventListener('click', closeGuidePaywall);
 $('guidePaywall')?.addEventListener('click', e => { if (e.target.id === 'guidePaywall') closeGuidePaywall(); });
@@ -1182,7 +1185,7 @@ function summaryViewHTML({ scope, rows, prev, stats: s, sentence, charts, detail
     catBlock('habit', '生活習慣', habitInner(rows)),
     catBlock('body', '體重與身體', bodyInner(s, charts, details))
   ].join('');
-  const head = chrome ? `<div class="card summary-switch-card"><div class="section-head"><h2>${chrome.title}</h2>${summarySwitch(chrome.active)}</div></div>` : '';
+  const head = chrome ? `<div class="card summary-switch-card"><div class="section-head"><h2>${chrome.title}</h2></div></div>` : '';
   const sample = sampleKind() && !paidAccess ? '<p class="summary-line sample-note">這是示範資料，不是你的紀錄。<a href="?demo=1&locale=zh-TW">回到空白體驗，自己記一餐</a></p>' : '';
   return `${sample}${head}${cats}${sentence ? `<p class="summary-line">${sentence}</p>` : ''}`;
 }
