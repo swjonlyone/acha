@@ -132,6 +132,8 @@ h1,h2,h3{color:#382E2B!important;font-weight:700!important;letter-spacing:.2px}
 .paywall-card{position:relative}
 .paywall-close{position:absolute;top:12px;right:16px;width:34px;height:34px;border:0;border-radius:50%;background:#f5eee7;color:#6f5448;font-size:20px;line-height:1;cursor:pointer}
 .paywall-close:hover{background:#eadbd0}
+.paywall-card .paywall-unlock{display:flex;width:100%;min-height:50px;margin-top:9px;align-items:center;justify-content:center;border:1px solid #d9b39e;border-radius:16px;background:#fff7f1;color:#8d513c;font-size:13px;font-weight:800;line-height:1.45;text-decoration:none}
+.paywall-card .paywall-unlock.hidden{display:none!important}
 .paywall-return{display:block;margin:12px auto 0;border:0;background:transparent;color:#7b665c;text-decoration:underline;font-family:inherit;font-size:12px;cursor:pointer}
 .paywall-return:hover{color:#4f8068}
 .insight-card{margin-top:14px}
@@ -403,3 +405,6 @@ html:not(.is-free-trial) .demo-hint{display:none!important}
   #todayView .demo-hint{font-size:14px!important}
   #todayView .acha-quote p{font-size:15px!important}
 }
+html.is-free-trial #todayView .hero h1{font-size:24px!important;line-height:1.25!important;margin:0!important}
+html.is-free-trial #todayView .date-label{gap:2px!important;margin:0!important;font-size:12px!important}
+html.is-free-trial #todayView .date-label input{min-height:40px!important;padding:6px 8px!important}
