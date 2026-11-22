@@ -152,3 +152,19 @@ body{line-height:1.6;padding-bottom:calc(100px + env(safe-area-inset-bottom))}
   .hero-email-login,.offer-email-login{font-size:13px}
   .hero-email-login span,.offer-email-login span{font-size:12px}
 }
+
+/* 手機首屏：文案和「先免費記一餐」在插圖前面，LINE 不搶主按鈕，底部購買列不蓋住 */
+@media(max-width:800px){
+  .site-header{height:auto;align-items:stretch;padding:10px 0 8px}
+  .nav-wrap{align-items:flex-start;flex-wrap:wrap;gap:8px}
+  .nav-cta-pair{position:static;top:auto;right:auto;width:100%;margin-left:0;flex-direction:row;align-items:stretch;gap:8px}
+  .nav-cta-pair .button{flex:1 1 0;width:auto;min-height:44px;font-size:13px;line-height:1.25;padding:8px 10px}
+  .hero{padding-top:12px;padding-bottom:20px}
+  .hero-grid{gap:16px}
+  .hero-copy{order:0}
+  .hero-art-wrap{order:1;min-height:0;margin-top:8px}
+  .hero h1{margin:8px 0}
+  .hero-lede{margin-bottom:10px}
+  .hero-cta .button,.hero-cta .hero-demo{min-height:48px;font-size:16px}
+  body{padding-bottom:88px}
+}

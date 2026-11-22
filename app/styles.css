@@ -239,3 +239,33 @@ html.is-ig .app-shell{padding-bottom:24px}
   .access-strip .unlock-email-link{flex:1 1 100%;min-height:40px}
   .auth-email-login{font-size:15px}
 }
+
+/* 今天記下什麼：用句子，不用完成度百分比 */
+.today-count-card{padding:14px 16px}
+.today-count-card[hidden]{display:none!important}
+.today-count-line{margin:0;color:#315b50;font-size:15px;font-weight:700;line-height:1.6}
+.today-count-line+.today-count-line{margin-top:4px}
+.sample-note a,.demo-hint a{color:#8d6049;font-weight:800;text-decoration:underline;text-underline-offset:3px}
+.sample-note{margin:0 0 12px}
+
+/* 免費體驗：先看到「今天先記這些」，日曆和招呼放在表單後面 */
+html.is-free-trial #todayView{display:flex;flex-direction:column}
+html.is-free-trial #todayView>.hero{order:1;margin:0 0 8px}
+html.is-free-trial #todayView>.meal-order-strip{order:4;margin:8px 0 0}
+html.is-free-trial #todayView>#logForm{order:3}
+html.is-free-trial #todayView>.acha-quote{order:5}
+html.is-free-trial #todayView>#todayCalendar{order:6}
+html.is-free-trial #todayView>#companionProgress{order:6}
+html.is-free-trial #todayView .hero{display:grid;grid-template-columns:1fr 148px;align-items:end;gap:6px 10px}
+html.is-free-trial #todayView .hero .demo-hint{grid-column:1 / -1}
+html.is-free-trial #todayView .hero .eyebrow,html.is-free-trial #todayView .hero .subtle{display:none}
+html.is-free-trial #todayView .hero h1{font-size:24px;margin:0;line-height:1.25}
+html.is-free-trial #todayView .demo-hint{margin:0;font-size:13px;line-height:1.4}
+html.is-free-trial #todayView .date-label{margin:0}
+html.is-free-trial #todayView .date-label input{min-height:40px;padding:6px 8px}
+html.is-free-trial .access-strip{padding:6px 8px;gap:6px}
+html.is-free-trial .access-strip a,html.is-free-trial .access-strip .unlock-email-link{flex:0 1 auto;min-height:34px;padding:4px 8px;font-size:12px;white-space:nowrap}
+html.is-free-trial #todayView{padding-top:8px}
+html.is-free-trial #todayView .quick-card{padding-top:12px!important}
+html.is-free-trial #todayView .quick-card label{margin-bottom:8px}
+html.is-free-trial #todayView .field-hint{margin:0 0 8px;font-size:12px}
