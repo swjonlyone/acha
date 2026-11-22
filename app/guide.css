@@ -408,3 +408,68 @@ html:not(.is-free-trial) .demo-hint{display:none!important}
 html.is-free-trial #todayView .hero h1{font-size:24px!important;line-height:1.25!important;margin:0!important}
 html.is-free-trial #todayView .date-label{gap:2px!important;margin:0!important;font-size:12px!important}
 html.is-free-trial #todayView .date-label input{min-height:40px!important;padding:6px 8px!important}
+
+/* 11/22：外食建議內距、2/1/1 三欄、卡片內文 13px；必填星號跟標籤同一行 */
+label>.label-text{
+  display:inline-flex!important;
+  flex-direction:row!important;
+  align-items:baseline!important;
+  white-space:nowrap!important;
+  width:max-content;
+  max-width:100%;
+}
+label>.label-text .required-mark{display:inline!important;margin-left:2px;white-space:nowrap!important}
+#guideView.page-view{padding-left:16px!important;padding-right:16px!important}
+#guideView .page-title,#monthView .page-title,#yearView .page-title{align-items:flex-start}
+.guide-highlight{padding:16px!important;margin:0 0 14px!important;box-sizing:border-box}
+.guide-ratio{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:8px!important;
+}
+.guide-ratio>div{min-width:0;padding:12px 6px!important;text-align:center}
+.guide-ratio>div span,.guide-ratio>div small{display:block}
+.meal-guide-note,
+.meal-combo-options li,
+.meal-combo-options li span,
+.meal-order-note,
+.meal-drink-note,
+.meal-veg-note,
+.meal-combo-options b{
+  font-size:13px!important;
+  line-height:1.6!important;
+}
+.paywall-buy.buy-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:56px;
+  min-height:56px;
+  border:0;
+  border-radius:999px;
+  background:var(--buy)!important;
+  color:#fff!important;
+  font-size:17px!important;
+  font-weight:800!important;
+  box-shadow:0 8px 18px rgba(230,139,53,.28);
+  text-decoration:none;
+}
+.paywall-demo{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:48px;
+  min-height:48px;
+  margin-top:10px;
+  border:1.5px solid #cfe3d8!important;
+  border-radius:999px;
+  background:#fff;
+  color:#193d37;
+  font-size:15px;
+  font-weight:700;
+  text-decoration:none;
+}
+.paywall-card .login-text{margin-top:14px}
+.paywall-card .login-text-link{background:transparent;border:0;min-height:0;padding:0}

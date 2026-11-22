@@ -1,4 +1,3 @@
-const LINE_URL = 'https://lin.ee/rOydflm';
 const PORTAL_URL = 'https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw';
 const scenarios = {
   convenience: { label: '超商', items: [
@@ -53,10 +52,35 @@ function showStepTwo(key){
 function showResult(index){
   const [icon,item,hint,affirm,tips1,tips2]=scenarios[activeScenario].items[index];
   resultEl.hidden=false; resultEl.style.display='';
-  resultEl.innerHTML=`<div class="result-inner"><div class="result-visual" aria-hidden="true">${icon}</div><div><span class="eyebrow">阿茶回覆囉・${safe(scenarios[activeScenario].label)} · ${safe(item)}</span><div class="result-section result-affirm"><span>先肯定</span><p>${safe(affirm)}</p></div><div class="result-section result-tweak"><span>今天就做的小微調</span><ol><li>${safe(tips1)}</li><li>${safe(tips2)}</li></ol></div><div class="result-section result-warm"><span>暖心收尾</span><p>你今天有好好照顧自己，阿茶都看見了。慢慢來，就很棒了！</p></div><div class="result-reminder"><strong>🌿 阿茶小提醒</strong><p>開通或工作台不會記、卡住了，加 LINE 跟阿茶說就好。</p><a class="result-line-link" href="${LINE_URL}" target="_blank" rel="noopener noreferrer">工作台問題？加 LINE →</a></div><div class="result-purchase-note"><span>想把紀錄留下來？</span><a href="${PORTAL_URL}" target="_blank" rel="noopener noreferrer">NT$ 99 一次買斷 →</a></div><button class="quiz-retry" type="button" id="quiz-retry">再測一餐</button></div></div>`;
+  resultEl.innerHTML=`<div class="result-inner"><div class="result-visual" aria-hidden="true">${icon}</div><div><span class="eyebrow">阿茶回覆囉・${safe(scenarios[activeScenario].label)} · ${safe(item)}</span><div class="result-section result-affirm"><span>先肯定</span><p>${safe(affirm)}</p></div><div class="result-section result-tweak"><span>今天就做的小微調</span><ol><li>${safe(tips1)}</li><li>${safe(tips2)}</li></ol></div><div class="result-section result-warm"><span>暖心收尾</span><p>你今天有好好照顧自己，阿茶都看見了。慢慢來，就很棒了！</p></div><div class="result-purchase-note"><span>想把紀錄留下來？</span><a href="${PORTAL_URL}" target="_blank" rel="noopener noreferrer">NT$ 99 一次買斷 →</a></div><button class="quiz-retry" type="button" id="quiz-retry">再測一餐</button></div></div>`;
   document.querySelector('#quiz-retry').addEventListener('click',resetQuiz);
   resultEl.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});
 }
 function resetQuiz(){ activeScenario=null; resultEl.hidden=true; resultEl.style.display='none'; resultEl.innerHTML=''; stepTwo.hidden=true; stepTwo.style.display='none'; stepOne.hidden=false; stepOne.style.display=''; stepLabel.textContent='步驟 1／2'; stepHint.textContent='選一個今天最常遇到的情境'; document.querySelector('.quiz-scenarios .quiz-card')?.focus(); document.querySelector('#quiz')?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'}); }
 document.querySelectorAll('.quiz-scenarios .quiz-card').forEach(card=>card.addEventListener('click',()=>showStepTwo(card.dataset.scenario)));
 document.querySelector('#quiz-back').addEventListener('click',resetQuiz);
+
+function setupStickyBuy(){
+  const bar=document.querySelector('.sticky-buy');
+  const targets=[
+    document.querySelector('.hero-cta .buy-btn'),
+    document.querySelector('.offer-buy'),
+    document.querySelector('.final-cta')
+  ].filter(Boolean);
+  if(!bar||!targets.length) return;
+  const hide=()=>{ bar.classList.add('is-hidden'); bar.hidden=true; };
+  const show=()=>{ bar.classList.remove('is-hidden'); bar.hidden=false; };
+  if(!('IntersectionObserver' in window)){ show(); return; }
+  const seen=new Set();
+  const update=()=>{ if(seen.size) hide(); else show(); };
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting) seen.add(entry.target);
+      else seen.delete(entry.target);
+    });
+    update();
+  },{threshold:0});
+  targets.forEach(target=>observer.observe(target));
+  update();
+}
+setupStickyBuy();
