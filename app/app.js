@@ -51,8 +51,16 @@ const percent = value => value === null || !Number.isFinite(Number(value)) ? '�
 function msg(id, text, error = false) {
   const el = $(id);
   if (!el) return;
+  el.classList.remove('demo-saved-card');
   el.textContent = text;
   el.style.color = error ? '#bd4d3f' : 'var(--accent)';
+}
+function showDemoSavedCard() {
+  const el = $('saveMessage');
+  if (!el) return;
+  el.style.color = '';
+  el.classList.add('demo-saved-card');
+  el.innerHTML = '記好了 ✓ 今天這一筆先放這裡。想每天留下來，可以<a href="../#plan">買完整版</a>。';
 }
 function toast(text) {
   const el = $('toast');
@@ -94,51 +102,86 @@ function connect() {
 connect();
 
 
-const o = (foods, drink = '', veg = true) => ({ foods, drink, veg });
+const o = (veg, protein, starch, drink = '', fruit = '', hint = '') => ({ veg, protein, starch, drink, fruit, hint, hasVeg: Boolean(veg) });
 const mealGuideData = [
   { icon: '☕', title: '早餐', items: [
-    ['早安御飯糰組', '趕時間、想吃經典早餐', o('茶葉蛋 ＋ 御飯糰', '無糖茶', false), o('茶葉蛋 2 顆 ＋ 御飯糰', '無糖茶', false)],
-    ['地瓜豆漿組', '想吃溫熱、預算友善', o('茶葉蛋 ＋ 現蒸地瓜', '無糖豆漿', false), o('茶葉蛋 ＋ 現蒸地瓜', '高蛋白牛奶', false)],
-    ['雞胸沙拉組', '上午較忙、想先顧蛋白質', o('生菜沙拉 ＋ 舒肥雞胸 ＋ 小飯糰'), o('生菜沙拉 ＋ 舒肥雞胸 ＋ 飯糰')],
-    ['燕麥優格輕食組', '喜歡清涼口感、控糖族', o('希臘式優格 ＋ 雞肉三明治', '無糖黑咖啡', false), o('希臘式優格 ＋ 蛋白丁 ＋ 雞肉三明治', '', false)],
-    ['握沙拉捲餅組', '單手好拿、通勤族', o('雞肉起司握沙拉', '無糖豆漿'), o('雞肉起司握沙拉 ＋ 茶葉蛋', '無糖豆漿')],
-    ['經典美式咖啡組', '提神醒腦、低碳水', o('茶葉蛋 1 顆 ＋ 鮪魚御飯糰', '美式咖啡', false), o('茶葉蛋 2 顆 ＋ 鮪魚御飯糰', '美式咖啡', false)],
-    ['水果高纖高蛋白組', '腸胃順暢、輕盈補給', o('茶葉蛋 2 顆 ＋ 香蕉 1 根', '無糖綠茶', false), o('茶葉蛋 2 顆 ＋ 香蕉 1 根', '無糖高纖豆漿', false)]
+    ['早安御飯糰組', '趕時間、想吃經典早餐', o('', '茶葉蛋', '御飯糰', '無糖茶'), o('', '茶葉蛋 2 顆', '御飯糰', '無糖茶')],
+    ['地瓜豆漿組', '想吃溫熱、預算友善', o('', '茶葉蛋', '現蒸地瓜', '無糖豆漿'), o('', '茶葉蛋', '現蒸地瓜', '高蛋白牛奶')],
+    ['雞胸沙拉組', '上午較忙、想先顧蛋白質', o('生菜沙拉', '舒肥雞胸', '小飯糰'), o('生菜沙拉', '舒肥雞胸', '飯糰')],
+    ['優格三明治輕食組', '想吃清爽、手邊有三明治', o('', '希臘式優格', '雞肉三明治', '無糖黑咖啡'), o('', '希臘式優格 ＋ 蛋白丁', '雞肉三明治')],
+    ['握沙拉捲餅組', '單手好拿、通勤族', o('生菜', '雞肉起司', '捲餅皮', '無糖豆漿'), o('生菜', '雞肉起司 ＋ 茶葉蛋', '捲餅皮', '無糖豆漿')],
+    ['經典美式咖啡組', '想喝美式、配個飯糰', o('', '茶葉蛋 1 顆 ＋ 鮪魚', '御飯糰', '美式咖啡'), o('', '茶葉蛋 2 顆 ＋ 鮪魚', '御飯糰', '美式咖啡')],
+    ['水果高纖高蛋白組', '茶葉蛋配一根香蕉', o('', '茶葉蛋 2 顆', '', '無糖綠茶', '香蕉 1 根'), o('', '茶葉蛋 2 顆', '', '無糖高纖豆漿', '香蕉 1 根')]
   ]},
   { icon: '🍱', title: '午餐', items: [
-    ['超商烤雞餐盒組', '忙碌上班族、懶人首選', o('關東煮蘿蔔 ＋ 紐奧良烤雞胸肉 ＋ 鮭魚御飯糰'), o('紐奧良烤雞胸肉 ＋ 蛋白丁 ＋ 鮭魚御飯糰', '無糖茶', false)],
-    ['溫暖雞湯餐盒組', '天冷想喝湯、養生族', o('媽媽煮藝香菇雞湯 ＋ 雞肉三明治 ＋ 盒裝芭樂', '', false), o('媽媽煮藝香菇雞湯 ＋ 茶葉蛋 ＋ 雞肉三明治 ＋ 盒裝芭樂', '', false)],
-    ['高蛋白便當組', '高活動量、爆汗日', o('健身 G 達人烤雞飯盒（飯吃 2/3）', '無糖綠茶', false), o('健身 G 達人烤雞飯盒（全吃）', '無糖黑豆漿', false)],
-    ['台式自助餐組', '菜色豐富、想吃原型食物', o('綠色青菜 2 格 ＋ 滷雞腿／蒸魚 ＋ 白飯半碗'), o('綠色青菜 2 格 ＋ 滷雞腿 ＋ 滷蛋 1 顆 ＋ 白飯 2/3 碗')],
-    ['便當店救援組', '外帶便當、聚餐避雷', o('台式滷排骨便當（去炸皮、飯半碗）', '無糖烏龍茶', false), o('台式滷雞腿便當（飯 2/3 碗） ＋ 加購滷蛋', '無糖烏龍茶', false)],
-    ['涼麵沙拉輕食組', '夏天食欲不振', o('鮮蝦高纖沙拉 ＋ 雞肉飯糰'), o('鮮蝦高纖沙拉 ＋ 茶葉蛋 1 顆 ＋ 雞肉飯糰', '無糖豆漿')],
-    ['湯麵水餃外食組', '想吃小吃攤、麵食族', o('燙青菜 ＋ 滷蛋／豆干 ＋ 陽春麵（少油蔥）'), o('燙青菜 ＋ 嘴邊肉湯／肝連湯 ＋ 滷蛋 ＋ 水餃 8 顆')]
+    ['超商烤雞餐盒組', '忙碌上班族、懶人首選', o('關東煮蘿蔔', '紐奧良烤雞胸肉 ＋ 鮭魚', '御飯糰'), o('關東煮蘿蔔', '紐奧良烤雞胸肉 ＋ 蛋白丁 ＋ 鮭魚', '御飯糰', '無糖茶')],
+    ['溫暖雞湯餐盒組', '天冷想喝湯', o('香菇', '媽媽煮藝雞湯', '雞肉三明治', '', '盒裝芭樂'), o('香菇', '媽媽煮藝雞湯 ＋ 茶葉蛋', '雞肉三明治', '', '盒裝芭樂')],
+    ['高蛋白便當組', '高活動量、爆汗日', o('', '烤雞（健身 G 達人）', '白飯 2/3 碗', '無糖綠茶'), o('', '烤雞（健身 G 達人）', '白飯 1 碗', '無糖黑豆漿')],
+    ['台式自助餐組', '菜色豐富、想吃原型食物', o('綠色青菜 2 格', '滷雞腿／蒸魚', '白飯半碗'), o('綠色青菜 2 格', '滷雞腿 ＋ 滷蛋 1 顆', '白飯 2/3 碗')],
+    ['便當店救援組', '外帶便當、聚餐避雷', o('', '台式滷排骨', '白飯半碗', '無糖烏龍茶', '', '去炸皮'), o('', '台式滷雞腿 ＋ 滷蛋', '白飯 2/3 碗', '無糖烏龍茶')],
+    ['涼麵沙拉輕食組', '夏天食欲不振', o('高纖沙拉蔬菜', '鮮蝦', '涼麵'), o('高纖沙拉蔬菜', '鮮蝦 ＋ 茶葉蛋 1 顆', '涼麵', '無糖豆漿')],
+    ['湯麵水餃外食組', '想吃小吃攤、麵食族', o('燙青菜', '滷蛋／豆干', '陽春麵', '', '', '少油蔥'), o('燙青菜', '嘴邊肉湯／肝連湯 ＋ 滷蛋', '水餃 8 顆')]
   ]},
   { icon: '🥗', title: '晚餐', items: [
-    ['雞腿蔬菜便當組', '下班想吃飽、晚餐首選', o('青菜 2 格 ＋ 烤雞腿 ＋ 飯半碗'), o('青菜 2 格 ＋ 烤雞腿 ＋ 滷蛋 ＋ 飯 2/3 碗')],
-    ['豆腐魚湯組', '想清爽、晚上不想太撐', o('燙青菜 ＋ 魚片豆腐湯 ＋ 小地瓜'), o('燙青菜 ＋ 魚片豆腐湯 ＋ 滷豆腐 ＋ 小地瓜')],
-    ['火鍋聰明選組', '聚餐火鍋、想安心吃', o('蔬菜盤 ＋ 肉片 1 份 ＋ 冬粉半份', '無糖茶'), o('蔬菜盤 ＋ 肉片 1.5 份 ＋ 豆腐／蛋 ＋ 冬粉半份')],
-    ['日式定食組', '喜歡魚類、想吃完整一餐', o('沙拉 ＋ 烤魚定食（飯半碗）', '味噌湯'), o('沙拉 ＋ 烤魚定食（飯 2/3 碗） ＋ 茶碗蒸')],
-    ['滷味自選組', '想吃多樣配料、外帶方便', o('青菜 2 份 ＋ 豆干／滷蛋 ＋ 玉米或冬粉'), o('青菜 2 份 ＋ 雞胸肉 ＋ 豆干／滷蛋 ＋ 玉米')],
-    ['超商沙拉晚餐組', '加班晚歸、快速解決', o('生菜沙拉 ＋ 舒肥雞胸 ＋ 烤地瓜'), o('生菜沙拉 ＋ 舒肥雞胸 ＋ 茶葉蛋 ＋ 烤地瓜')],
-    ['粥品小菜組', '胃口較弱、想吃溫熱', o('燙青菜 ＋ 滷蛋 ＋ 海鮮粥半碗'), o('燙青菜 ＋ 滷蛋 ＋ 豆腐 ＋ 海鮮粥 2/3 碗')]
+    ['雞腿蔬菜便當組', '下班想吃飽、晚餐首選', o('青菜 2 格', '烤雞腿', '白飯半碗'), o('青菜 2 格', '烤雞腿 ＋ 滷蛋', '白飯 2/3 碗')],
+    ['豆腐魚湯組', '想清爽、晚上不想太撐', o('燙青菜', '魚片豆腐湯', '小地瓜'), o('燙青菜', '魚片豆腐湯 ＋ 滷豆腐', '小地瓜')],
+    ['火鍋聰明選組', '聚餐火鍋、想安心吃', o('蔬菜盤', '肉片 1 份', '冬粉半份', '無糖茶'), o('蔬菜盤', '肉片 1.5 份 ＋ 豆腐／蛋', '冬粉半份')],
+    ['日式定食組', '喜歡魚類、想吃完整一餐', o('沙拉', '烤魚', '白飯半碗', '', '', '附味噌湯'), o('沙拉', '烤魚 ＋ 茶碗蒸', '白飯 2/3 碗', '', '', '附味噌湯')],
+    ['滷味自選組', '想吃多樣配料、外帶方便', o('青菜 2 份', '豆干／滷蛋', '玉米或冬粉'), o('青菜 2 份', '雞胸肉 ＋ 豆干／滷蛋', '玉米')],
+    ['超商沙拉晚餐組', '加班晚歸、快速解決', o('生菜沙拉', '舒肥雞胸', '烤地瓜'), o('生菜沙拉', '舒肥雞胸 ＋ 茶葉蛋', '烤地瓜')],
+    ['粥品小菜組', '胃口較弱、想吃溫熱', o('燙青菜', '滷蛋 ＋ 海鮮', '白粥半碗'), o('燙青菜', '滷蛋 ＋ 海鮮 ＋ 豆腐', '白粥 2/3 碗')]
   ]},
   { icon: '🧁', title: '下午茶', items: [
-    ['優格水果組', '嘴饞、想要清爽甜味', o('無糖優格 ＋ 小份水果', '', false), o('希臘式優格 ＋ 蛋白丁 ＋ 水果', '', false)],
-    ['茶葉蛋豆漿組', '下午容易餓、需要補蛋白質', o('茶葉蛋 1 顆', '無糖豆漿', false), o('茶葉蛋 2 顆', '高蛋白牛奶', false)],
-    ['咖啡小點組', '想喝咖啡、需要一點能量', o('小地瓜', '無糖咖啡', false), o('茶葉蛋 ＋ 小地瓜', '無糖咖啡', false)]
+    ['優格水果組', '嘴饞、想要清爽甜味', o('', '無糖優格', '', '', '小份水果'), o('', '希臘式優格 ＋ 蛋白丁', '', '', '水果')],
+    ['茶葉蛋豆漿組', '下午容易餓、配顆茶葉蛋', o('', '茶葉蛋 1 顆', '', '無糖豆漿'), o('', '茶葉蛋 2 顆', '', '高蛋白牛奶')],
+    ['咖啡小點組', '想喝咖啡、需要一點能量', o('', '', '小地瓜', '無糖咖啡'), o('', '茶葉蛋', '小地瓜', '無糖咖啡')],
+    ['關東煮暖食組', '下午想吃熱的、超商熱食櫃', o('關東煮蘿蔔', '茶葉蛋', '冬粉一小份', '無糖茶'), o('關東煮蘿蔔', '茶葉蛋 ＋ 豆干', '冬粉一小份', '無糖茶')],
+    ['毛豆茶葉蛋組', '想配一份小菜、毛豆配茶葉蛋', o('毛豆', '茶葉蛋 1 顆', '', '無糖茶'), o('毛豆', '茶葉蛋 2 顆', '', '無糖豆漿')]
   ]},
   { icon: '🌙', title: '宵夜', items: [
-    ['溫豆漿輕食組', '晚睡、需要溫熱飲品', o('茶葉蛋 1 顆', '無糖豆漿', false), o('茶葉蛋 1 顆', '高蛋白牛奶', false)],
-    ['小地瓜蛋白組', '運動後、想補一點碳水', o('無糖優格 ＋ 小地瓜', '', false), o('茶葉蛋 ＋ 小地瓜', '高蛋白牛奶', false)],
-    ['清湯豆腐組', '嘴饞但不想太有負擔', o('豆腐蔬菜清湯', '無糖茶'), o('豆腐蔬菜清湯 ＋ 滷蛋', '無糖茶')]
+    ['溫豆漿輕食組', '晚睡、需要溫熱飲品', o('', '茶葉蛋 1 顆', '', '無糖豆漿'), o('', '茶葉蛋 1 顆', '', '高蛋白牛奶')],
+    ['小地瓜蛋白組', '晚一點想吃點地瓜', o('', '無糖優格', '小地瓜'), o('', '茶葉蛋', '小地瓜', '高蛋白牛奶')],
+    ['清湯豆腐組', '嘴饞但不想太有負擔', o('清湯蔬菜', '豆腐', '', '無糖茶'), o('清湯蔬菜', '豆腐 ＋ 滷蛋', '', '無糖茶')],
+    ['鹽水雞組', '夜市想吃熱的、蔬菜可以多夾', o('高麗菜與豆芽', '鹽水雞肉', '', '無糖茶'), o('高麗菜與豆芽', '鹽水雞肉 ＋ 豆干', '', '無糖茶')]
   ]}
 ];
-const comboOptionHTML = opt => `${opt.foods}${opt.drink ? `<br><small class="meal-drink-note">飲品：${opt.drink}</small>` : ''}${opt.veg ? '' : '<br><small class="meal-veg-note">🌱 這組沒有蔬菜，方便的話可以加一份燙青菜或沙拉就很好囉</small>'}`;
-
+const VEG_TIP = '🌱 這組沒有蔬菜，方便的話可以加一份燙青菜或沙拉就很好囉';
+function slotFood(value) {
+  return value ? value : '（無）';
+}
+function editionSlots(opt, edition) {
+  const rows = [
+    ['🥬', '蔬菜', opt.veg],
+    ['🍳', '蛋白質', opt.protein],
+    ['🍚', '澱粉', opt.starch]
+  ].map(([icon, label, value]) => `<p class="food-slot meal-edition" data-edition="${edition}"><span class="food-slot-icon" aria-hidden="true">${icon}</span><span class="food-slot-label">${label}</span><span class="food-slot-food${value ? '' : ' is-empty'}">${slotFood(value)}</span></p>`).join('');
+  const fruit = opt.fruit ? `<p class="meal-fruit-note meal-edition" data-edition="${edition}">水果：${opt.fruit}</p>` : '';
+  const hint = opt.hint ? `<p class="meal-hint-note meal-edition" data-edition="${edition}">${opt.hint}</p>` : '';
+  const tip = opt.hasVeg ? '' : `<p class="meal-veg-note meal-edition" data-edition="${edition}">${VEG_TIP}</p>`;
+  const drink = opt.drink ? `<p class="meal-drink-note meal-edition" data-edition="${edition}">飲品：${opt.drink}</p>` : '';
+  return rows + fruit + hint + tip + drink;
+}
 function renderMealGuide() {
   const root = $('mealGuideAccordion');
   if (!root) return;
+  if (!root.previousElementSibling?.classList.contains('edition-toggle')) {
+    const bar = document.createElement('div');
+    bar.className = 'edition-toggle';
+    bar.setAttribute('role', 'group');
+    bar.setAttribute('aria-label', '211 或 221');
+    bar.innerHTML = '<button type="button" class="is-on" data-edition="211" aria-pressed="true">211 一般</button><button type="button" data-edition="221" aria-pressed="false">221 健身</button>';
+    bar.addEventListener('click', event => {
+      const button = event.target.closest('button[data-edition]');
+      if (!button) return;
+      document.documentElement.dataset.guideEdition = button.dataset.edition;
+      bar.querySelectorAll('button[data-edition]').forEach(el => {
+        const on = el === button;
+        el.classList.toggle('is-on', on);
+        el.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    });
+    root.before(bar);
+  }
   root.innerHTML = mealGuideData.map((group, groupIndex) => `
     <details class="meal-guide-group" ${groupIndex === 0 ? 'open' : ''}>
       <summary><span class="meal-guide-group-title">${group.icon} ${group.title} <small>｜ ${group.items.length}組</small></span><span class="meal-guide-chevron">⌄</span></summary>
@@ -146,7 +189,7 @@ function renderMealGuide() {
         ${group.items.map((item, index) => `
           <article class="meal-combo-card">
             <div class="meal-combo-head"><span class="meal-combo-name">${String(index + 1).padStart(2, '0')} ｜ ${item[0]}</span><span class="meal-combo-tag">${item[1]}</span></div>
-            <ul class="meal-combo-options"><li><b>211 一般</b><span><small class="meal-order-note">順序：🥗 蔬菜 ➔ 🥩 蛋白質 ➔ 🍠 澱粉</small>${comboOptionHTML(item[2])}</span></li><li><b>221 健身</b><span><small class="meal-order-note">順序：🥗 蔬菜 ➔ 🥩 蛋白質 ➔ 🍠 澱粉</small>${comboOptionHTML(item[3])}</span></li></ul>
+            ${editionSlots(item[2], '211')}${editionSlots(item[3], '221')}
           </article>`).join('')}
       </div>
     </details>`).join('');
@@ -273,13 +316,52 @@ function preferSampleMonth() {
   preferSampleMonth.done = true;
 }
 function saveDemoRows() { /* 免費體驗資料只存在記憶體，重新載入頁面即重置 */ }
+function syncGuideTeaser(on) {
+  const accordion = $('mealGuideAccordion');
+  if (!accordion) return;
+  const existing = accordion.querySelector('.guide-teaser-lock');
+  if (existing) {
+    const card = existing.querySelector('.meal-combo-card');
+    if (card) {
+      card.classList.remove('is-teaser-peek');
+      existing.before(card);
+    }
+    existing.remove();
+  }
+  accordion.querySelectorAll('.is-teaser-rest').forEach(card => card.classList.remove('is-teaser-rest'));
+  if (!on) return;
+  const firstGroup = accordion.querySelector('.meal-guide-group');
+  const items = firstGroup?.querySelector('.meal-guide-items');
+  if (firstGroup) firstGroup.open = true;
+  const cards = items ? [...items.querySelectorAll('.meal-combo-card')] : [];
+  cards.forEach((card, index) => {
+    if (index > 1) card.classList.add('is-teaser-rest');
+  });
+  const peek = cards[1];
+  if (!peek) return;
+  const lock = document.createElement('div');
+  lock.className = 'guide-teaser-lock';
+  peek.classList.add('is-teaser-peek');
+  peek.before(lock);
+  lock.appendChild(peek);
+  const label = document.createElement('span');
+  label.textContent = '🔒 其他組合在完整版';
+  lock.appendChild(label);
+}
 function updateGuideLock(show = false) {
   const locked = !paidAccess && !isGuideShowcase();
+  const teaser = locked && isDemo() && show;
+  const modal = locked && show && !teaser;
   const content = $('guideLockedContent'), wall = $('guidePaywall');
-  const open = locked && show;
-  if (content) content.classList.toggle('is-guide-locked', open);
-  if (wall) wall.classList.toggle('hidden', !open);
-  document.documentElement.classList.toggle('is-guide-paywall', open);
+  if (content) content.classList.toggle('is-guide-locked', modal);
+  if (wall) {
+    wall.classList.toggle('hidden', !(modal || teaser));
+    wall.setAttribute('aria-modal', modal ? 'true' : 'false');
+    wall.setAttribute('role', teaser ? 'region' : 'dialog');
+  }
+  document.documentElement.classList.toggle('is-guide-paywall', modal);
+  document.documentElement.classList.toggle('is-guide-teaser', teaser);
+  syncGuideTeaser(teaser);
 }
 function switchToTodayFromPaywall() {
   const todayTab = document.querySelector('.view-tab[data-view=\"todayView\"]');
@@ -844,8 +926,8 @@ $('logForm').addEventListener('submit', async e => {
     cache.push({ ...payload, id: `demo-${payload.log_date}` });
     cache = sortRows(cache);
     saveDemoRows();
-    msg('saveMessage', '先記在這一頁了。重新整理會消失喔。');
-    toast('先記在這一頁了');
+    showDemoSavedCard();
+    toast('記好了');
     updateProgress();
     renderMonth(); renderYear();
     return;

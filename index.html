@@ -24,7 +24,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="image" href="assets/acha-hero.png" fetchpriority="high">
-  <link rel="stylesheet" href="styles.css?v=7" />
+  <link rel="stylesheet" href="styles.css?v=10" />
 </head>
 <body>
   <a class="skip-link" href="#main">跳到主要內容</a>
@@ -41,7 +41,65 @@
 
     <section class="hero-feature-strip" aria-label="先記一餐就好"><div class="shell hero-feature-grid"><article><span class="feature-strip-icon">🍱</span><div><b>30 秒</b><small>今天先記這幾樣</small></div></article><article><span class="feature-strip-icon">🏪</span><div><b>外食也行</b><small>超商、便當、手搖</small></div></article><article><span class="feature-strip-icon">⚖️</span><div><b>其他可晚點</b><small>想記再補</small></div></article><article><span class="feature-strip-icon">📱</span><div><b>免下載 App</b><small>手機打開就用</small></div></article></div></section>
 
-    <section class="conversion-intro section-pad" aria-labelledby="conversion-intro-title"><div class="shell conversion-intro-grid"><div><span class="eyebrow">不用一次做完</span><h2 id="conversion-intro-title">你不需要更嚴格，<br><em>先記今天這一餐。</em></h2></div><div class="conversion-intro-copy"><p>今天先記這幾樣，30 秒就好：餐盤比例、外食幾餐、蛋白質和蔬菜、喝水跟運動。其他想記再補，沒填也不用內疚。</p><div class="conversion-pills"><span>30 秒就好</span><span>餐盤與外食</span><span>喝水跟運動</span><span>其他想記再補</span></div></div></div></section>
+    <section class="day-log" id="day-log" aria-labelledby="day-log-title">
+      <div class="shell day-log-grid">
+        <div class="day-log-main">
+          <div class="eyebrow">一天這樣記 <span class="demo-badge">示範資料</span></div>
+          <h2 id="day-log-title">天天外食，<br><em>一天這樣記</em>就好</h2>
+          <p class="day-lede">早餐超商、午餐便當、晚上聚餐，每餐記一句就好。不用算熱量，也不用拍照。</p>
+          <div class="day-timeline">
+            <article class="day-meal">
+              <div class="day-ico" aria-hidden="true">🏪</div>
+              <div class="day-card">
+                <div class="day-tag">早餐<span>超商</span></div>
+                <div class="day-what">茶葉蛋＋御飯糰</div>
+                <div class="day-sub">飲料：無糖豆漿</div>
+              </div>
+            </article>
+            <article class="day-meal">
+              <div class="day-ico" aria-hidden="true">🍱</div>
+              <div class="day-card">
+                <div class="day-tag">午餐<span>便當</span></div>
+                <div class="day-what">滷雞腿便當，飯半碗</div>
+                <div class="day-sub">備註：加一份燙青菜</div>
+              </div>
+            </article>
+            <article class="day-meal">
+              <div class="day-ico" aria-hidden="true">🍲</div>
+              <div class="day-card">
+                <div class="day-tag">晚餐<span>聚餐</span></div>
+                <div class="day-what">同事聚餐火鍋</div>
+                <div class="day-sub">備註：先吃菜跟肉，冬粉半份</div>
+              </div>
+            </article>
+          </div>
+          <div class="day-card day-sum">
+            <h3>今天先記這些・30 秒</h3>
+            <div class="day-chips">
+              <div class="day-chip"><small>餐盤比例</small><b>211</b></div>
+              <div class="day-chip"><small>外食</small><b>3 餐</b></div>
+              <div class="day-chip"><small>喝水</small><b>1600 ml</b></div>
+              <div class="day-chip"><small>運動</small><b>快走 20 分</b></div>
+            </div>
+          </div>
+          <div class="day-bubble">
+            <div class="day-av" aria-hidden="true">茶</div>
+            <p>聚餐也照記就好，不用補償，明天照常吃 🍵</p>
+          </div>
+        </div>
+        <figure class="day-shot-col">
+          <div class="day-shot">
+            <img src="assets/app_今天先記這些.png" alt="App 實際畫面：今天先記這些，餐盤比例 211、外食 3 餐、喝水 1600 ml、快走 20 分" width="720" height="730">
+            <span class="day-shot-lbl">App 實際畫面</span>
+          </div>
+          <figcaption>↑ App 實際畫面，填的是上面這一天的示範資料</figcaption>
+        </figure>
+      </div>
+      <div class="shell day-log-foot">
+        <a class="textlink" href="app/?demo=1&amp;locale=zh-TW">自己試記一餐 →</a>
+        <p class="day-fine">以上是示範資料，不是真實使用者紀錄。</p>
+      </div>
+    </section>
 
     <section class="quiz-section section-pad" id="quiz" aria-labelledby="quiz-title"><div class="shell quiz-shell"><div class="section-heading center"><span class="eyebrow">外食記錄小測試</span><h2 id="quiz-title">先選今天的情境，<br>看看怎麼記錄</h2><p>不用追求完美，先從記錄一餐開始。</p></div><div class="quiz-panel" aria-live="polite"><div class="quiz-progress"><span id="quiz-step-label">步驟 1／2</span><span id="quiz-step-hint">選一個今天最常遇到的情境</span></div><div id="quiz-step-one"><p class="quiz-kicker">第一步</p><h3 class="quiz-question">今天想吃哪一種？</h3><div class="quiz-grid quiz-scenarios" role="list"><button class="quiz-card" data-scenario="convenience" role="listitem"><span class="food-icon">🏪</span><span class="quiz-label">超商</span><span class="quiz-hint">7-11／全家／萊爾富</span><span class="card-arrow" aria-hidden="true">↗</span></button><button class="quiz-card" data-scenario="bento" role="listitem"><span class="food-icon">🍱</span><span class="quiz-label">便當店</span><span class="quiz-hint">排骨、雞腿、爌肉飯</span><span class="card-arrow" aria-hidden="true">↗</span></button><button class="quiz-card" data-scenario="fastfood" role="listitem"><span class="food-icon">🍔</span><span class="quiz-label">速食店</span><span class="quiz-hint">漢堡、薯條、套餐</span><span class="card-arrow" aria-hidden="true">↗</span></button><button class="quiz-card" data-scenario="buffet" role="listitem"><span class="food-icon">🍽️</span><span class="quiz-label">自助餐</span><span class="quiz-hint">夾夾樂、配菜選擇</span><span class="card-arrow" aria-hidden="true">↗</span></button><button class="quiz-card" data-scenario="tea" role="listitem"><span class="food-icon">🧋</span><span class="quiz-label">手搖飲</span><span class="quiz-hint">珍奶、綠茶、拿鐵</span><span class="card-arrow" aria-hidden="true">↗</span></button></div></div><div id="quiz-step-two" hidden><p class="quiz-kicker">第二步</p><h3 class="quiz-question" id="quiz-step-two-title" tabindex="-1">選一個餐點看看阿茶怎麼說</h3><div class="quiz-grid quiz-items" role="list"></div><button class="quiz-back" type="button" id="quiz-back">← 換一個情境</button></div><div class="result-card" id="result" aria-live="polite" hidden></div></div></div></section>
 
@@ -49,10 +107,107 @@
       <div class="shell empathy-grid"><div class="section-heading"><span class="eyebrow">外食也可以慢慢調整</span><h2>不用一次改很多，<br><em>先記下今天吃了什麼。</em></h2></div><div class="empathy-copy"><p>忙到只能外帶、下班只想喝杯喜歡的飲料，偶爾吃多一點……這些都不是「失敗」。</p><p>阿茶不會叫你重新開始，我們只一起看看：<strong>下一餐，能不能先做一個比較輕鬆的選擇？</strong></p><div class="quote">「不用完美，先讓照顧自己變得比較容易。」<span>— 阿茶</span></div></div></div>
     </section>
 
-    <section class="features section-pad" id="tools"><div class="shell tools-shell"><div class="section-heading center"><span class="eyebrow">一次買斷，打開就能記</span><h2>NT$ 99 一次買斷，<br><em>外食的日子也好記 🍵</em></h2><p>免下載 App。手機打開，先記一餐就好。</p></div><div class="tool-grid"><article class="tool-card"><span class="tool-number">01</span><div class="tool-icon">📱</div><h3>365 天餐點手記</h3><p>今天先記這幾樣，30 秒就好 ｜ 餐盤、外食、喝水、運動 ｜ 其他想記再補</p></article><article class="tool-card"><span class="tool-number">02</span><div class="tool-icon">🍱</div><h3>三大超商高蛋白 30 選</h3><p>7-11、全家、萊爾富，站在貨架前照著拿就好。</p></article><article class="tool-card"><span class="tool-number">03</span><div class="tool-icon">🍕</div><h3>外食聚餐怎麼點</h3><p>火鍋、鹹酥雞、外送，下一餐回到簡單一點的吃法就好。</p></article></div></div></section>
+    <section class="excerpt" id="tools" aria-labelledby="tools-title">
+      <div class="shell excerpt-shell">
+        <div class="section-heading">
+          <span class="eyebrow">完整版節錄 <span class="demo-badge">實際內容</span></span>
+          <h2 id="tools-title">不知道吃什麼？<br><em>打開照著點</em></h2>
+          <p>早餐、午餐、晚餐、下午茶、宵夜都有現成配法。先給你看 3 組：</p>
+        </div>
+        <div class="edition-toggle" role="group" aria-label="211 或 221">
+          <button type="button" class="is-on" data-edition="211" aria-pressed="true">211 一般</button>
+          <button type="button" data-edition="221" aria-pressed="false">221 健身</button>
+        </div>
+        <article class="excerpt-card">
+          <div class="excerpt-hd"><span class="excerpt-when">🍗 晚餐・便當</span></div>
+          <h3>雞腿蔬菜便當組</h3>
+          <div class="excerpt-edition" data-edition="211">
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food">青菜 2 格</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">烤雞腿</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">白飯半碗</span></p>
+          </div>
+          <div class="excerpt-edition" data-edition="221">
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food">青菜 2 格</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">烤雞腿 ＋ 滷蛋</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">白飯 2/3 碗</span></p>
+          </div>
+        </article>
+        <article class="excerpt-card">
+          <div class="excerpt-hd"><span class="excerpt-when">🍲 晚餐・聚餐</span></div>
+          <h3>火鍋聰明選組</h3>
+          <div class="excerpt-edition" data-edition="211">
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food">蔬菜盤</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">肉片 1 份</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">冬粉半份</span></p>
+            <p class="food-drink">飲品：無糖茶</p>
+          </div>
+          <div class="excerpt-edition" data-edition="221">
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food">蔬菜盤</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">肉片 1.5 份 ＋ 豆腐／蛋</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">冬粉半份</span></p>
+          </div>
+        </article>
+        <article class="excerpt-card">
+          <div class="excerpt-hd"><span class="excerpt-when">🍽️ 午餐・自助餐</span></div>
+          <h3>台式自助餐組</h3>
+          <div class="excerpt-edition" data-edition="211">
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food">綠色青菜 2 格</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">滷雞腿／蒸魚</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">白飯半碗</span></p>
+          </div>
+          <div class="excerpt-edition" data-edition="221">
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food">綠色青菜 2 格</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">滷雞腿 ＋ 滷蛋 1 顆</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">白飯 2/3 碗</span></p>
+          </div>
+        </article>
+        <div class="excerpt-lock">
+          <article class="excerpt-card" aria-hidden="true">
+            <h3>雞胸沙拉組</h3>
+            <div class="excerpt-edition" data-edition="211">
+              <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food">生菜沙拉</span></p>
+              <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">舒肥雞胸</span></p>
+              <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">小飯糰</span></p>
+            </div>
+            <div class="excerpt-edition" data-edition="221">
+              <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food">生菜沙拉</span></p>
+              <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">舒肥雞胸</span></p>
+              <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">飯糰</span></p>
+            </div>
+          </article>
+          <span>🔒 其他組合在完整版</span>
+        </div>
+        <h3 class="excerpt-next-title">聚餐吃多了？下一餐這樣接</h3>
+        <div class="excerpt-next">
+          <div><b>🍲 火鍋</b>先吃蔬菜＋蛋白質，主食半份</div>
+          <div><b>🍗 鹹酥雞</b>搭青菜或豆製品，醬料減半</div>
+          <div><b>🛵 外送</b>先選蛋白質與蔬菜，甜點分食</div>
+        </div>
+        <p class="day-fine">節錄自完整版內容。實際品項以各門市為準；這是外食選擇參考，不是醫療或營養處方。</p>
+      </div>
+    </section>
     <section class="steps section-pad" id="steps"><div class="shell steps-shell"><div class="section-heading center"><span class="eyebrow">3 步就開始</span><h2>今天就能記，<br><em>不用先學工具</em></h2><p>先免費記一餐。想留下 365 天，去 Portaly 一次買斷。</p></div><div class="step-list"><div class="step"><span class="step-badge">1</span><div><h3>先免費記這幾樣</h3><p>打開「今天先記這些」：餐盤比例、外食幾餐、蛋白質和蔬菜、喝水跟運動。30 秒就好。</p></div></div><div class="step"><span class="step-badge">2</span><div><h3>NT$ 99，去 Portaly 一次買斷</h3><p>不用備餐，也不用先學。想把紀錄留下來，再去 Portaly 買。</p></div></div><div class="step"><span class="step-badge">3</span><div><h3>買完加 LINE 開通</h3><p>開通之後，工作台不會記、卡住或畫面問題，也來這裡問。</p></div></div></div></div></section>
 
-    <section class="summary-preview section-pad" id="summaries"><div class="shell summary-preview-grid"><div class="summary-preview-copy"><span class="eyebrow">記完會幫你收一收</span><h2>每月、每年幫你整理</h2><p>記了幾天、喝了多少水、排便和早睡幾天，還有體重怎麼走。沒有百分比，也不拿來保證變瘦。有記的才顯示，自己看就好。</p></div><figure class="summary-preview-figure"><img src="assets/month-summary-example.png" alt="一個月手記範例：記錄天數、外食餐數、有記喝水的天數，以及早上體重曲線。沒有百分比。" width="724" height="4158"><figcaption>示範資料裡的一個月，實際會依你記下的內容顯示。</figcaption></figure></div></section>
+    <section class="month-peek" id="summaries" aria-labelledby="summaries-title">
+      <div class="shell month-peek-shell">
+        <div class="section-heading">
+          <span class="eyebrow">記一個月會看到 <span class="demo-badge">示範資料</span></span>
+          <h2 id="summaries-title">記了一個月，<br><em>自己看得到</em></h2>
+          <p>每個月幫你收一收：記了幾天、外食幾餐、喝水跟運動各幾天。</p>
+        </div>
+        <div class="month-card">
+          <div class="month-tiles">
+            <div class="month-tile month-tile-record"><b>13 天</b><small>有記錄</small></div>
+            <div class="month-tile month-tile-out"><b>23 餐</b><small>外食</small></div>
+            <div class="month-tile month-tile-water"><b>13 天</b><small>有記喝水</small></div>
+            <div class="month-tile month-tile-move"><b>9 天</b><small>有運動</small></div>
+          </div>
+          <p class="month-quote">「這個月記了 13 天，外食 23 餐，有運動 9 天，辛苦了。」</p>
+        </div>
+        <a class="textlink" href="app/?demo=1&amp;sample=month&amp;locale=zh-TW">看完整示範月摘要 →</a>
+        <p class="day-fine">示範資料，實際會依你記下的內容顯示。不保證任何體重變化。</p>
+      </div>
+    </section>
     <section class="plan section-pad" id="plan"><div class="shell sales-plan"><div class="section-heading center"><span class="eyebrow">一次買斷，打開就能開始</span><h2>外食的日子，<br><em>先記一餐就好</em></h2><p>吃飯、記錄、回頭看，都從今天這一餐開始就好。</p></div><div class="offer-grid"><article class="offer-card offer-main"><div class="offer-ribbon">一次買斷，打開就能記</div><div class="offer-price"><p class="offer-sub">免下載 App・手機打開就能記</p><strong>NT$ 99</strong><span class="price-divider">一次買斷・想留再買</span></div><ul class="offer-list"><li><b>📱 《阿茶 ｜ 365減脂打卡手記》</b><span>今天先記這幾樣，30 秒就好。免下載 App，手機打開就能記。</span></li><li><b>📅 每月、每年幫你整理</b><span>記了幾天、喝水、排便、早睡、運動各幾天。自己看就好。</span></li><li><b>🍱 《三大超商高蛋白 30 選》</b><span>7-11、全家、萊爾富，站在貨架前照著拿就好。</span></li><li><b>🍕 《外食聚餐怎麼點》</b><span>火鍋、鹹酥雞、外送，下一餐回到簡單一點的吃法就好。</span></li><li><b>💬 《阿茶 LINE》</b><span>工作台不會記、卡住了，也可以問。</span></li></ul><a class="button button-primary offer-buy buy-btn" href="https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw" target="_blank" rel="noopener noreferrer">NT$ 99 一次買斷</a><p class="login-text offer-email-login">已經買了？<a href="app/?unlock=1&amp;locale=zh-TW">用購買 Email 登入</a></p></article><p id="line-aftercare" class="offer-line"><a href="https://lin.ee/rOydflm" target="_blank" rel="noopener noreferrer">用起來卡住？加 LINE 問阿茶 →</a></p></div></div></section>
     <section class="faq section-pad" id="faq">
       <div class="shell faq-shell">
@@ -75,6 +230,6 @@
     <section class="final-cta section-pad" aria-labelledby="final-cta-title"><div class="shell final-cta-card"><div class="tea-character final-avatar-frame" aria-hidden="true"><img class="final-avatar" src="assets/acha-avatar.png" alt="" /></div><h2 id="final-cta-title">每天外食，<br>先記一餐就好</h2><p>不用算熱量，也不用一次做完。今天先記這幾樣，30 秒就好。</p><div class="final-price"><strong>NT$ 99</strong><span>一次買斷</span></div><div class="final-actions"><a class="button final-buy buy-btn" href="https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw" target="_blank" rel="noopener noreferrer">NT$ 99 一次買斷 →</a><a class="final-demo-link" href="https://swjonlyone.github.io/acha/app/?demo=1&locale=zh-TW" target="_blank" rel="noopener noreferrer">先免費記一餐</a></div><p class="final-note">免下載 App・買完加 LINE 開通</p></div></section>
     <div class="sticky-buy is-hidden" role="region" aria-label="快速購買" hidden><a class="buy-btn" href="https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw" target="_blank" rel="noopener noreferrer">NT$ 99 一次買斷 →</a></div>
   <footer class="site-footer"><div class="shell footer-wrap"><a class="brand" href="#top"><span class="brand-mark">🍵</span><span>阿茶 ｜ 365減脂打卡手記<span class="brand-sub">外食也行・先記一餐就好</span></span></a><p>不求完美，先記今天這一餐。</p><span class="copyright">© 2026 A-CHA</span></div></footer>
-  <script src="script.js?v=4"></script>
+  <script src="script.js?v=5"></script>
 </body>
 </html>
