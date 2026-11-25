@@ -51,8 +51,16 @@ const percent = value => value === null || !Number.isFinite(Number(value)) ? '�
 function msg(id, text, error = false) {
   const el = $(id);
   if (!el) return;
+  el.classList.remove('demo-saved-card');
   el.textContent = text;
   el.style.color = error ? '#bd4d3f' : 'var(--accent)';
+}
+function showDemoSavedCard() {
+  const el = $('saveMessage');
+  if (!el) return;
+  el.style.color = '';
+  el.classList.add('demo-saved-card');
+  el.innerHTML = '記好了 ✓ 今天這一筆先放這裡。想每天留下來，可以<a href="../#plan">買完整版</a>。';
 }
 function toast(text) {
   const el = $('toast');
@@ -273,13 +281,52 @@ function preferSampleMonth() {
   preferSampleMonth.done = true;
 }
 function saveDemoRows() { /* 免費體驗資料只存在記憶體，重新載入頁面即重置 */ }
+function syncGuideTeaser(on) {
+  const accordion = $('mealGuideAccordion');
+  if (!accordion) return;
+  const existing = accordion.querySelector('.guide-teaser-lock');
+  if (existing) {
+    const card = existing.querySelector('.meal-combo-card');
+    if (card) {
+      card.classList.remove('is-teaser-peek');
+      existing.before(card);
+    }
+    existing.remove();
+  }
+  accordion.querySelectorAll('.is-teaser-rest').forEach(card => card.classList.remove('is-teaser-rest'));
+  if (!on) return;
+  const firstGroup = accordion.querySelector('.meal-guide-group');
+  const items = firstGroup?.querySelector('.meal-guide-items');
+  if (firstGroup) firstGroup.open = true;
+  const cards = items ? [...items.querySelectorAll('.meal-combo-card')] : [];
+  cards.forEach((card, index) => {
+    if (index > 1) card.classList.add('is-teaser-rest');
+  });
+  const peek = cards[1];
+  if (!peek) return;
+  const lock = document.createElement('div');
+  lock.className = 'guide-teaser-lock';
+  peek.classList.add('is-teaser-peek');
+  peek.before(lock);
+  lock.appendChild(peek);
+  const label = document.createElement('span');
+  label.textContent = '🔒 其他組合在完整版';
+  lock.appendChild(label);
+}
 function updateGuideLock(show = false) {
   const locked = !paidAccess && !isGuideShowcase();
+  const teaser = locked && isDemo() && show;
+  const modal = locked && show && !teaser;
   const content = $('guideLockedContent'), wall = $('guidePaywall');
-  const open = locked && show;
-  if (content) content.classList.toggle('is-guide-locked', open);
-  if (wall) wall.classList.toggle('hidden', !open);
-  document.documentElement.classList.toggle('is-guide-paywall', open);
+  if (content) content.classList.toggle('is-guide-locked', modal);
+  if (wall) {
+    wall.classList.toggle('hidden', !(modal || teaser));
+    wall.setAttribute('aria-modal', modal ? 'true' : 'false');
+    wall.setAttribute('role', teaser ? 'region' : 'dialog');
+  }
+  document.documentElement.classList.toggle('is-guide-paywall', modal);
+  document.documentElement.classList.toggle('is-guide-teaser', teaser);
+  syncGuideTeaser(teaser);
 }
 function switchToTodayFromPaywall() {
   const todayTab = document.querySelector('.view-tab[data-view=\"todayView\"]');
@@ -844,8 +891,8 @@ $('logForm').addEventListener('submit', async e => {
     cache.push({ ...payload, id: `demo-${payload.log_date}` });
     cache = sortRows(cache);
     saveDemoRows();
-    msg('saveMessage', '先記在這一頁了。重新整理會消失喔。');
-    toast('先記在這一頁了');
+    showDemoSavedCard();
+    toast('記好了');
     updateProgress();
     renderMonth(); renderYear();
     return;
