@@ -84,3 +84,20 @@ function setupStickyBuy(){
   update();
 }
 setupStickyBuy();
+
+function setupEditionToggle() {
+  const root = document.querySelector('#tools');
+  const bar = root?.querySelector('.edition-toggle');
+  if (!root || !bar) return;
+  bar.addEventListener('click', event => {
+    const button = event.target.closest('button[data-edition]');
+    if (!button) return;
+    root.dataset.edition = button.dataset.edition;
+    bar.querySelectorAll('button[data-edition]').forEach(el => {
+      const on = el === button;
+      el.classList.toggle('is-on', on);
+      el.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  });
+}
+setupEditionToggle();

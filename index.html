@@ -24,7 +24,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="image" href="assets/acha-hero.png" fetchpriority="high">
-  <link rel="stylesheet" href="styles.css?v=8" />
+  <link rel="stylesheet" href="styles.css?v=9" />
 </head>
 <body>
   <a class="skip-link" href="#main">跳到主要內容</a>
@@ -114,26 +114,74 @@
           <h2 id="tools-title">不知道吃什麼？<br><em>打開照著點</em></h2>
           <p>早餐、午餐、晚餐、下午茶、宵夜都有現成配法。先給你看 3 組：</p>
         </div>
+        <div class="edition-toggle" role="group" aria-label="211 或 221">
+          <button type="button" class="is-on" data-edition="211" aria-pressed="true">211 一般</button>
+          <button type="button" data-edition="221" aria-pressed="false">221 健身</button>
+        </div>
         <article class="excerpt-card">
-          <div class="excerpt-hd"><span class="excerpt-when">☕ 早餐・超商</span><span class="excerpt-k">211 一般</span></div>
+          <div class="excerpt-hd"><span class="excerpt-when">☕ 早餐・超商</span></div>
           <h3>早安御飯糰組</h3>
-          <p class="excerpt-flow">茶葉蛋 ＋ 御飯糰・無糖茶</p>
-          <p class="excerpt-tip">🌱 方便的話，加一份燙青菜或沙拉就很好囉</p>
+          <div class="excerpt-edition" data-edition="211">
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food is-empty">（無）</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">茶葉蛋</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">御飯糰</span></p>
+            <p class="excerpt-tip">🌱 這組沒有蔬菜，方便的話可以加一份燙青菜或沙拉就很好囉</p>
+            <p class="food-drink">飲品：無糖茶</p>
+          </div>
+          <div class="excerpt-edition" data-edition="221">
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food is-empty">（無）</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">茶葉蛋 2 顆</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">御飯糰</span></p>
+            <p class="excerpt-tip">🌱 這組沒有蔬菜，方便的話可以加一份燙青菜或沙拉就很好囉</p>
+            <p class="food-drink">飲品：無糖茶</p>
+          </div>
         </article>
         <article class="excerpt-card">
-          <div class="excerpt-hd"><span class="excerpt-when">🍱 午餐・便當店</span><span class="excerpt-k">211 一般</span></div>
+          <div class="excerpt-hd"><span class="excerpt-when">🍱 午餐・便當店</span></div>
           <h3>便當店救援組</h3>
-          <p class="excerpt-flow">滷排骨便當（去炸皮、飯半碗）・無糖烏龍茶</p>
+          <div class="excerpt-edition" data-edition="211">
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food is-empty">（無）</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">台式滷排骨便當（去炸皮）</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">飯半碗</span></p>
+            <p class="excerpt-tip">🌱 這組沒有蔬菜，方便的話可以加一份燙青菜或沙拉就很好囉</p>
+            <p class="food-drink">飲品：無糖烏龍茶</p>
+          </div>
+          <div class="excerpt-edition" data-edition="221">
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food is-empty">（無）</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">台式滷雞腿便當 ＋ 加購滷蛋</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">飯 2/3 碗</span></p>
+            <p class="excerpt-tip">🌱 這組沒有蔬菜，方便的話可以加一份燙青菜或沙拉就很好囉</p>
+            <p class="food-drink">飲品：無糖烏龍茶</p>
+          </div>
         </article>
         <article class="excerpt-card">
-          <div class="excerpt-hd"><span class="excerpt-when">🍲 晚餐・聚餐</span><span class="excerpt-k">211 一般</span></div>
+          <div class="excerpt-hd"><span class="excerpt-when">🍲 晚餐・聚餐</span></div>
           <h3>火鍋聰明選組</h3>
-          <p class="excerpt-flow">蔬菜盤 ＋ 肉片 1 份 ＋ 冬粉半份・無糖茶</p>
+          <div class="excerpt-edition" data-edition="211">
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food">蔬菜盤</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">肉片 1 份</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">冬粉半份</span></p>
+            <p class="food-drink">飲品：無糖茶</p>
+          </div>
+          <div class="excerpt-edition" data-edition="221">
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food">蔬菜盤</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">肉片 1.5 份 ＋ 豆腐／蛋</span></p>
+            <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">冬粉半份</span></p>
+          </div>
         </article>
         <div class="excerpt-lock">
           <article class="excerpt-card" aria-hidden="true">
             <h3>雞腿蔬菜便當組</h3>
-            <p class="excerpt-flow">青菜 2 格 ＋ 烤雞腿 ＋ 飯半碗</p>
+            <div class="excerpt-edition" data-edition="211">
+              <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food">青菜 2 格</span></p>
+              <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">烤雞腿</span></p>
+              <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">飯半碗</span></p>
+            </div>
+            <div class="excerpt-edition" data-edition="221">
+              <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🥬</span><span class="food-slot-label">蔬菜</span><span class="food-slot-food">青菜 2 格</span></p>
+              <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍳</span><span class="food-slot-label">蛋白質</span><span class="food-slot-food">烤雞腿 ＋ 滷蛋</span></p>
+              <p class="food-slot"><span class="food-slot-icon" aria-hidden="true">🍚</span><span class="food-slot-label">澱粉</span><span class="food-slot-food">飯 2/3 碗</span></p>
+            </div>
           </article>
           <span>🔒 其他組合在完整版</span>
         </div>
@@ -190,6 +238,6 @@
     <section class="final-cta section-pad" aria-labelledby="final-cta-title"><div class="shell final-cta-card"><div class="tea-character final-avatar-frame" aria-hidden="true"><img class="final-avatar" src="assets/acha-avatar.png" alt="" /></div><h2 id="final-cta-title">每天外食，<br>先記一餐就好</h2><p>不用算熱量，也不用一次做完。今天先記這幾樣，30 秒就好。</p><div class="final-price"><strong>NT$ 99</strong><span>一次買斷</span></div><div class="final-actions"><a class="button final-buy buy-btn" href="https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw" target="_blank" rel="noopener noreferrer">NT$ 99 一次買斷 →</a><a class="final-demo-link" href="https://swjonlyone.github.io/acha/app/?demo=1&locale=zh-TW" target="_blank" rel="noopener noreferrer">先免費記一餐</a></div><p class="final-note">免下載 App・買完加 LINE 開通</p></div></section>
     <div class="sticky-buy is-hidden" role="region" aria-label="快速購買" hidden><a class="buy-btn" href="https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw" target="_blank" rel="noopener noreferrer">NT$ 99 一次買斷 →</a></div>
   <footer class="site-footer"><div class="shell footer-wrap"><a class="brand" href="#top"><span class="brand-mark">🍵</span><span>阿茶 ｜ 365減脂打卡手記<span class="brand-sub">外食也行・先記一餐就好</span></span></a><p>不求完美，先記今天這一餐。</p><span class="copyright">© 2026 A-CHA</span></div></footer>
-  <script src="script.js?v=4"></script>
+  <script src="script.js?v=5"></script>
 </body>
 </html>
