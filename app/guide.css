@@ -577,4 +577,6 @@ html[data-guide-edition="221"] .meal-edition[data-edition="211"]{display:none!im
 .food-slot-label{font-weight:800;color:#704331!important}
 .food-slot-food.is-empty{color:#a8988c!important}
 .meal-combo-card .meal-veg-note{display:block;margin:8px 0 0;color:#5f7a52!important;font-size:12px!important;line-height:1.55!important}
-.meal-combo-card .meal-drink-note{display:block;margin:6px 0 0;color:#857263!important;font-size:12px!important;line-height:1.5!important}
+.meal-combo-card .meal-drink-note,
+.meal-combo-card .meal-fruit-note,
+.meal-combo-card .meal-hint-note{display:block;margin:6px 0 0;color:#857263!important;font-size:12px!important;line-height:1.5!important}
