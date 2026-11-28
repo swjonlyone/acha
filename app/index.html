@@ -25,8 +25,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=22">
-  <link rel="stylesheet" href="guide.css?v=15">
+  <link rel="stylesheet" href="styles.css?v=23">
+  <link rel="stylesheet" href="guide.css?v=16">
 </head>
 <body>
 <div id="app" class="app-shell">
@@ -34,7 +34,7 @@
   <div id="accessStrip" class="access-strip" hidden><span id="accessBadge">免費體驗中・換頁會重置</span><a id="accessBuy" class="buy-btn" href="https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw" target="_blank" rel="noopener noreferrer">NT$ 99 買完整版</a></div>
   <main>
     <section id="authView" class="auth-panel card"><div class="brand-mark">茶</div><h1>先記一餐，<em>就很好</em></h1><p class="auth-lead">先免費記一餐看看。<br>想留下 365 天，NT$ 99 一次買斷。</p><a class="primary full auth-path buy-btn" href="https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw" target="_blank" rel="noopener noreferrer">NT$ 99 一次買斷</a><button id="demoBtn" class="secondary full demo-btn" type="button">先免費記一餐</button><p class="login-text">已經買了？<button id="authUnlockEmailBtn" class="login-text-link" type="button">用購買 Email 登入</button></p><!-- 密碼登入維持關閉。只填 Email 不會開通，要有有效權益才會打開。 --><form id="authForm" class="hidden" hidden><label>Email<input id="authEmail" type="email" required placeholder="you@example.com"></label><label>密碼<input id="authPassword" type="password" minlength="6" required placeholder="至少 6 個字元"></label><div class="auth-actions"><button class="primary" type="submit">登入</button><button class="secondary" type="button" id="signupBtn">建立帳號</button></div></form><p id="authMessage" class="message"></p><p class="auth-footnote">免下載 App・手機打開就能記</p></section>
-    <section id="purchaseAuthModal" class="modal hidden"><div class="modal-card purchase-modal"><div class="modal-head"><h2>用購買 Email 登入</h2><button id="closePurchaseAuth" class="icon-btn" type="button">×</button></div><p class="subtle">填你購買時的 Email，我們寄一封驗證連結給你，點開就登入。</p><form id="purchaseAuthForm"><label>購買 Email<input id="purchaseEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label><button class="primary full buy-btn" type="submit">寄送驗證連結</button></form><p id="purchaseAuthMessage" class="message"></p><p class="source-note">還沒開通？<a href="https://lin.ee/rOydflm" target="_blank" rel="noopener noreferrer">加 LINE 跟阿茶說一聲</a>，開通後再回來登入。</p></div></section>
+    <section id="purchaseAuthModal" class="modal hidden"><div class="modal-card purchase-modal"><div class="modal-head"><h2>用購買 Email 登入</h2><button id="closePurchaseAuth" class="icon-btn" type="button">×</button></div><p class="subtle">填你購買時的 Email，我們寄一封驗證連結給你，點開就登入。</p><form id="purchaseAuthForm"><label>購買 Email<input id="purchaseEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label><button class="primary full buy-btn" type="submit">寄送驗證連結</button></form><p id="purchaseAuthMessage" class="message"></p><p class="source-note">還沒開通？<a href="https://line.me/R/ti/p/@014rtkfn" target="_blank" rel="noopener noreferrer">加 LINE 跟阿茶說一聲</a>，開通後再回來登入。</p></div></section>
     <section id="configView" class="modal hidden"><div class="modal-card"><div class="modal-head"><h2>Supabase 設定</h2><button id="closeConfig" class="icon-btn">×</button></div><p class="subtle">只使用 anon public key；不要貼 service_role key。</p><label>Project URL<input id="supabaseUrl" type="url" placeholder="https://xxxx.supabase.co"></label><label>Anon public key<textarea id="supabaseKey" rows="3" placeholder="eyJhbGciOiJIUzI1NiIs..."></textarea></label><button id="saveConfig" class="primary full">儲存設定並重新連線</button><p id="configMessage" class="message"></p></div></section>
     <section id="mainView" class="hidden">
       <div class="view-tabs"><button class="view-tab active" data-view="todayView">今日打卡</button><button class="view-tab" data-view="guideView">外食建議</button><button class="view-tab" data-view="monthView">每月檢視</button><button class="view-tab" data-view="yearView">年度檢視</button></div>
@@ -53,6 +53,6 @@
   <div id="igStage" class="ig-stage hidden"></div>
   <div id="toast" class="toast"></div>
 </div>
-<script type="module" src="app.js?v=27"></script>
+<script type="module" src="app.js?v=28"></script>
 </body>
 </html>

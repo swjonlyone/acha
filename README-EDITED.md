@@ -22,4 +22,4 @@
 ## 目前連結
 
 - 購買：`https://portaly.cc/swjonlyone/product/AsJrabRIMk2IJMwtBclw`
-- LINE：`https://lin.ee/rOydflm`
+- LINE：`https://line.me/R/ti/p/@014rtkfn`
